@@ -53,9 +53,16 @@ export async function createCheckoutSession(
         line_items: lineItems,
         success_url: successUrl,
         cancel_url: cancelUrl,
-        course_id: courseId,
-        hole_number: finalHoleNumber,
-        notes: notes.trim(),
+        metadata: {
+          course_id: courseId,
+          hole_number: finalHoleNumber,
+          notes: notes.trim(),
+          ordered_items: JSON.stringify(lineItems.map(item => ({
+            item_name: item.price_data.product_data.name,
+            quantity: item.quantity,
+            price: item.price_data.unit_amount / 100
+          })))
+        },
         mode: 'payment',
       }),
     }

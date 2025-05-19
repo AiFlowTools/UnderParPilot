@@ -1,3 +1,4 @@
+// stripe-webhook/index.ts
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 import Stripe from 'npm:stripe@17.7.0';
 import { createClient } from 'npm:@supabase/supabase-js@2.49.1';
@@ -11,7 +12,10 @@ const stripe = new Stripe(stripeSecret, {
   },
 });
 
-const supabase = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
+const supabase = createClient(
+  Deno.env.get('SUPABASE_URL')!,
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+);
 
 Deno.serve(async (req) => {
   try {
@@ -38,7 +42,11 @@ Deno.serve(async (req) => {
     let event: Stripe.Event;
 
     try {
-      event = await stripe.webhooks.constructEventAsync(body, signature, stripeWebhookSecret);
+      event = await stripe.webhooks.constructEventAsync(
+        body,
+        signature,
+        stripeWebhookSecret
+      );
     } catch (error: any) {
       console.error(`Webhook signature verification failed: ${error.message}`);
       return new Response(`Webhook signature verification failed: ${error.message}`, { status: 400 });
@@ -58,99 +66,34 @@ async function handleEvent(event: Stripe.Event) {
     const session = event.data.object as Stripe.Checkout.Session;
 
     const {
-      id: sessionId,
-      amount_total,
+      metadata,
       customer_details,
-      metadata
+      amount_total
     } = session;
 
-    if (!metadata?.course_id || !metadata?.cart) {
-      console.error("Missing metadata in checkout session!");
+    if (!metadata?.course_id || !metadata?.hole_number) {
+      console.error("Missing required metadata in checkout session!");
       return;
     }
 
-    const cart = JSON.parse(metadata.cart);
-
+    // Create the order with the completed payment status
     const { error } = await supabase.from('orders').insert({
       course_id: metadata.course_id,
-      items: cart,
-      total_price: amount_total / 100,
+      ordered_items: JSON.parse(metadata.ordered_items || '[]'),
+      total_price: (amount_total || 0) / 100,
       customer_name: customer_details?.name || null,
       customer_email: customer_details?.email || null,
-      status: 'paid',
+      hole_number: parseInt(metadata.hole_number),
+      notes: metadata.notes || null,
+      fulfillment_status: 'new',
+      stripe_session_id: session.id
     });
 
     if (error) {
-      console.error('Error inserting food order:', error);
+      console.error('Error inserting order:', error);
       return;
     }
 
-    console.info('✅ Order inserted into orders table!');
-  }
-}
-
-// based on the excellent https://github.com/t3dotgg/stripe-recommendations
-async function syncCustomerFromStripe(customerId: string) {
-  try {
-    // fetch latest subscription data from Stripe
-    const subscriptions = await stripe.subscriptions.list({
-      customer: customerId,
-      limit: 1,
-      status: 'all',
-      expand: ['data.default_payment_method'],
-    });
-
-    // TODO verify if needed
-    if (subscriptions.data.length === 0) {
-      console.info(`No active subscriptions found for customer: ${customerId}`);
-      const { error: noSubError } = await supabase.from('stripe_subscriptions').upsert(
-        {
-          customer_id: customerId,
-          subscription_status: 'not_started',
-        },
-        {
-          onConflict: 'customer_id',
-        },
-      );
-
-      if (noSubError) {
-        console.error('Error updating subscription status:', noSubError);
-        throw new Error('Failed to update subscription status in database');
-      }
-    }
-
-    // assumes that a customer can only have a single subscription
-    const subscription = subscriptions.data[0];
-
-    // store subscription state
-    const { error: subError } = await supabase.from('stripe_subscriptions').upsert(
-      {
-        customer_id: customerId,
-        subscription_id: subscription.id,
-        price_id: subscription.items.data[0].price.id,
-        current_period_start: subscription.current_period_start,
-        current_period_end: subscription.current_period_end,
-        cancel_at_period_end: subscription.cancel_at_period_end,
-        ...(subscription.default_payment_method && typeof subscription.default_payment_method !== 'string'
-          ? {
-              payment_method_brand: subscription.default_payment_method.card?.brand ?? null,
-              payment_method_last4: subscription.default_payment_method.card?.last4 ?? null,
-            }
-          : {}),
-        status: subscription.status,
-      },
-      {
-        onConflict: 'customer_id',
-      },
-    );
-
-    if (subError) {
-      console.error('Error syncing subscription:', subError);
-      throw new Error('Failed to sync subscription in database');
-    }
-    console.info(`Successfully synced subscription for customer: ${customerId}`);
-  } catch (error) {
-    console.error(`Failed to sync subscription for customer ${customerId}:`, error);
-    throw error;
+    console.info('✅ Order successfully created!');
   }
 }
