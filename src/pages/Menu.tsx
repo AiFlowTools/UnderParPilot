@@ -49,6 +49,32 @@ export default function Menu() {
   const [isCategoryDrawerOpen, setIsCategoryDrawerOpen] = useState(false);
   const isMobile = window.innerWidth < 768;
 
+const [course, setCourse] = useState<any>(null);
+const [notFound, setNotFound] = useState(false);
+
+useEffect(() => {
+  const fetchCourse = async () => {
+    const subdomain = window.location.hostname.split('.')[0];
+    console.log("Detected subdomain:", subdomain);
+
+    const { data, error } = await supabase
+      .from('golf_courses')
+      .select('*')
+      .eq('subdomain', subdomain)
+      .single();
+
+    if (!data || error) {
+      console.error("Course fetch error:", error);
+      setNotFound(true);
+    } else {
+      console.log("Loaded course:", data);
+      setCourse(data);
+    }
+  };
+
+  fetchCourse();
+}, []);
+
   useEffect(() => {
     const saved = localStorage.getItem('cart');
     if (saved) {
