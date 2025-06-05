@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { Coffee, UtensilsCrossed, Pizza, Beer, Store, ShoppingBag, ChevronUp, Flame, Leaf, Trophy, X, Wine, Goal as GolfBall } from 'lucide-react';
+import { Coffee, UtensilsCrossed, Pizza, Beer, Store, ShoppingBag, ChevronUp, Flame, Leaf, Trophy, X, Wine, Goal as GolfBall, Menu as MenuIcon } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import MenuItemDetail from '../components/MenuItemDetail';
 
@@ -44,6 +44,7 @@ export default function Menu() {
   const [error, setError] = useState<string | null>(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
+  const [isCategoryDrawerOpen, setIsCategoryDrawerOpen] = useState(false);
   const isMobile = window.innerWidth < 768;
 
   useEffect(() => {
@@ -109,6 +110,11 @@ export default function Menu() {
 
   const cartTotal = cart.reduce((sum, c) => sum + c.price * c.quantity, 0);
   const cartItemCount = cart.reduce((sum, c) => sum + c.quantity, 0);
+
+  const handleCategorySelect = (categoryId: string) => {
+    setSelectedCategory(categoryId);
+    setIsCategoryDrawerOpen(false);
+  };
 
   const ItemTag = ({ type }: { type: string }) => {
     switch (type) {
@@ -184,7 +190,13 @@ export default function Menu() {
       <div className="max-w-7xl mx-auto px-4 pt-24">
         {/* Categories */}
         <div className="sticky top-20 bg-gray-50 z-10 py-4">
-          <div className="flex overflow-x-auto pb-4 gap-4 -mx-4 px-4">
+          <div className="flex items-center overflow-x-auto pb-4 gap-4 -mx-4 px-4">
+            <button
+              onClick={() => setIsCategoryDrawerOpen(true)}
+              className="flex-shrink-0 p-2 hover:bg-gray-100 rounded-full transition-colors"
+            >
+              <MenuIcon className="w-6 h-6" />
+            </button>
             {categories.map(({ id, name, icon: Icon, color }) => (
               <button
                 key={id}
@@ -230,6 +242,43 @@ export default function Menu() {
           ))}
         </div>
       </div>
+
+      {/* Category Drawer */}
+      {isCategoryDrawerOpen && (
+        <>
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-50 z-50"
+            onClick={() => setIsCategoryDrawerOpen(false)}
+          />
+          <div className="fixed inset-x-0 bottom-0 bg-white rounded-t-xl z-50 transform transition-transform duration-300 ease-out">
+            <div className="p-4 border-b">
+              <div className="flex justify-between items-center">
+                <h2 className="text-lg font-semibold">Categories</h2>
+                <button
+                  onClick={() => setIsCategoryDrawerOpen(false)}
+                  className="p-2 hover:bg-gray-100 rounded-full"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+            </div>
+            <div className="py-2 max-h-[70vh] overflow-y-auto">
+              {categories.map(({ id, name, icon: Icon }) => (
+                <button
+                  key={id}
+                  onClick={() => handleCategorySelect(id)}
+                  className={`w-full flex items-center px-4 py-3 hover:bg-gray-50 ${
+                    selectedCategory === id ? 'bg-green-50 text-green-600 font-medium' : ''
+                  }`}
+                >
+                  <Icon className="w-6 h-6 mr-3" />
+                  {name}
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Menu Item Detail Modal */}
       {selectedItem && (
