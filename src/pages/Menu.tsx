@@ -194,6 +194,7 @@ export default function Menu() {
             <button
               onClick={() => setIsCategoryDrawerOpen(true)}
               className="flex-shrink-0 p-2 hover:bg-gray-100 rounded-full transition-colors"
+              aria-label="Open category menu"
             >
               <MenuIcon className="w-6 h-6" />
             </button>
@@ -250,31 +251,45 @@ export default function Menu() {
             className="fixed inset-0 bg-black bg-opacity-50 z-50"
             onClick={() => setIsCategoryDrawerOpen(false)}
           />
-          <div className="fixed inset-x-0 bottom-0 bg-white rounded-t-xl z-50 transform transition-transform duration-300 ease-out">
-            <div className="p-4 border-b">
-              <div className="flex justify-between items-center">
-                <h2 className="text-lg font-semibold">Categories</h2>
-                <button
-                  onClick={() => setIsCategoryDrawerOpen(false)}
-                  className="p-2 hover:bg-gray-100 rounded-full"
-                >
-                  <X className="w-6 h-6" />
-                </button>
+          <div className="fixed inset-x-0 bottom-0 bg-white rounded-t-2xl z-50 transform transition-transform duration-300 ease-out">
+            <div className="relative">
+              {/* Drawer Header */}
+              <div className="sticky top-0 bg-white border-b px-4 py-3 rounded-t-2xl">
+                <div className="flex justify-between items-center">
+                  <h2 className="text-lg font-semibold">Menu Categories</h2>
+                  <button
+                    onClick={() => setIsCategoryDrawerOpen(false)}
+                    className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                    aria-label="Close menu"
+                  >
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
               </div>
-            </div>
-            <div className="py-2 max-h-[70vh] overflow-y-auto">
-              {categories.map(({ id, name, icon: Icon }) => (
-                <button
-                  key={id}
-                  onClick={() => handleCategorySelect(id)}
-                  className={`w-full flex items-center px-4 py-3 hover:bg-gray-50 ${
-                    selectedCategory === id ? 'bg-green-50 text-green-600 font-medium' : ''
-                  }`}
-                >
-                  <Icon className="w-6 h-6 mr-3" />
-                  {name}
-                </button>
-              ))}
+
+              {/* Scrollable Content */}
+              <div 
+                className="overflow-y-auto overscroll-contain"
+                style={{
+                  maxHeight: 'calc(70vh - 60px)', // Subtract header height
+                  scrollBehavior: 'smooth'
+                }}
+              >
+                {categories.map(({ id, name, icon: Icon }) => (
+                  <button
+                    key={id}
+                    onClick={() => handleCategorySelect(id)}
+                    className={`w-full flex items-center px-6 py-4 hover:bg-gray-50 transition-colors ${
+                      selectedCategory === id 
+                        ? 'bg-green-50 text-green-600 font-medium border-l-4 border-green-600' 
+                        : ''
+                    }`}
+                  >
+                    <Icon className="w-6 h-6 mr-4" />
+                    <span className="text-base">{name}</span>
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </>
