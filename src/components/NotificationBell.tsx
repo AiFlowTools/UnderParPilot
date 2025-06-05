@@ -17,6 +17,8 @@ interface NotificationBellProps {
 export default function NotificationBell({ onNotificationClick }: NotificationBellProps) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchNotifications();
@@ -32,7 +34,10 @@ export default function NotificationBell({ onNotificationClick }: NotificationBe
           table: 'notifications' 
         },
         (payload) => {
-          setNotifications(prev => [payload.new as Notification, ...prev]);
+          const newNotification = payload.new as Notification;
+          if (!newNotification.read) {
+            setNotifications(prev => [newNotification, ...prev]);
+          }
         }
       )
       .subscribe();
@@ -43,37 +48,62 @@ export default function NotificationBell({ onNotificationClick }: NotificationBe
   }, []);
 
   const fetchNotifications = async () => {
-    const { data } = await supabase
-      .from('notifications')
-      .select('*')
-      .eq('read', false)
-      .order('created_at', { ascending: false });
-    
-    setNotifications(data || []);
+    try {
+      setLoading(true);
+      const { data, error: fetchError } = await supabase
+        .from('notifications')
+        .select('*')
+        .eq('read', false)
+        .order('created_at', { ascending: false })
+        .limit(10);
+      
+      if (fetchError) throw fetchError;
+      setNotifications(data || []);
+      setError(null);
+    } catch (err: any) {
+      console.error('Error fetching notifications:', err);
+      setError('Failed to load notifications');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const markAsRead = async (id: string) => {
-    await supabase
-      .from('notifications')
-      .update({ read: true })
-      .eq('id', id);
-    
-    setNotifications(prev => prev.filter(n => n.id !== id));
-    
-    if (notifications.length === 1) {
-      setIsOpen(false);
-    }
+    try {
+      const { error: updateError } = await supabase
+        .from('notifications')
+        .update({ read: true })
+        .eq('id', id);
+      
+      if (updateError) throw updateError;
+      
+      setNotifications(prev => prev.filter(n => n.id !== id));
+      
+      if (notifications.length === 1) {
+        setIsOpen(false);
+      }
 
-    // Call the onNotificationClick callback when a notification is clicked
-    if (onNotificationClick) {
-      onNotificationClick();
+      // Call the onNotificationClick callback when a notification is clicked
+      if (onNotificationClick) {
+        onNotificationClick();
+      }
+    } catch (err: any) {
+      console.error('Error marking notification as read:', err);
+      setError('Failed to update notification');
+    }
+  };
+
+  const handleBellClick = () => {
+    setIsOpen(!isOpen);
+    if (!isOpen) {
+      fetchNotifications(); // Refresh notifications when opening
     }
   };
 
   return (
     <div className="relative">
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={handleBellClick}
         className="relative p-2 hover:bg-gray-100 rounded-full transition-colors"
       >
         <Bell className="h-6 w-6 text-gray-600" />
@@ -91,7 +121,15 @@ export default function NotificationBell({ onNotificationClick }: NotificationBe
             onClick={() => setIsOpen(false)}
           />
           <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg z-20 max-h-[400px] overflow-y-auto">
-            {notifications.length === 0 ? (
+            {loading ? (
+              <div className="p-4 text-center text-gray-500">
+                Loading notifications...
+              </div>
+            ) : error ? (
+              <div className="p-4 text-center text-red-500">
+                {error}
+              </div>
+            ) : notifications.length === 0 ? (
               <div className="p-4 text-center text-gray-500">
                 No new notifications
               </div>
