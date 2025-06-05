@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { Coffee, UtensilsCrossed, Pizza, Beer, Store, ShoppingBag, ChevronUp, Flame, Leaf, Trophy, X, Wine, Goal as GolfBall, Menu as MenuIcon } from 'lucide-react';
+import { Coffee, UtensilsCrossed, Pizza, Beer, Store, ShoppingBag, ChevronUp, Flame, Leaf, Trophy, X, Wine, Menu as MenuIcon } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import MenuItemDetail from '../components/MenuItemDetail';
+import Logo from '../components/Logo';
 
 interface MenuItem {
   id: string;
@@ -173,14 +174,11 @@ export default function Menu() {
       {/* Fixed Banner Header */}
       <div className="fixed top-0 left-0 right-0 bg-white shadow-md z-50">
         <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
-          <button 
+          <Logo 
             onClick={() => setSelectedCategory('Breakfast')}
-            className="flex items-center space-x-2 text-green-600 hover:text-green-700 transition-colors"
-          >
-            <GolfBall className="w-8 h-8" />
-            <span className="text-lg font-semibold">Pine Valley</span>
-          </button>
-          <h1 className="text-2xl font-bold text-center text-gray-900">
+            className="cursor-pointer hover:opacity-90 transition-opacity"
+          />
+          <h1 className="text-2xl font-bold text-center text-gray-900 hidden md:block">
             Pine Valley Golf Club
           </h1>
           <div className="w-24" /> {/* Spacer for alignment */}
