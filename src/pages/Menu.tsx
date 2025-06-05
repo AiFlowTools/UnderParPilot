@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import {
   Search,
@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import MenuItemDetail from '../components/MenuItemDetail';
+import debounce from 'lodash/debounce';
 
 interface MenuItem {
   id: string;
@@ -62,6 +63,9 @@ export default function Menu() {
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const isMobile = window.innerWidth < 768;
 
+  // Cache for search results
+  const searchCache = useMemo(() => new Map<string, MenuItem[]>(), []);
+
   useEffect(() => {
     const saved = localStorage.getItem('cart');
     if (saved) {
@@ -91,12 +95,45 @@ export default function Menu() {
       .finally(() => setLoading(false));
   }, [courseId]);
 
-  const filteredItems = menuItems.filter(
-    item =>
-      item.category === selectedCategory &&
-      (item.item_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.description?.toLowerCase().includes(searchQuery.toLowerCase()))
+  // Debounced search function
+  const debouncedSearch = useCallback(
+    debounce((query: string, items: MenuItem[]) => {
+      if (!query.trim()) return items;
+      
+      const normalizedQuery = query.toLowerCase().trim();
+      
+      // Check cache first
+      if (searchCache.has(normalizedQuery)) {
+        return searchCache.get(normalizedQuery);
+      }
+
+      // Perform search
+      const results = items.filter(item => {
+        const nameMatch = item.item_name.toLowerCase().includes(normalizedQuery);
+        const descMatch = item.description?.toLowerCase().includes(normalizedQuery);
+        return nameMatch || descMatch;
+      }).sort((a, b) => {
+        // Sort by relevance: name matches first, then description matches
+        const aNameMatch = a.item_name.toLowerCase().includes(normalizedQuery);
+        const bNameMatch = b.item_name.toLowerCase().includes(normalizedQuery);
+        if (aNameMatch && !bNameMatch) return -1;
+        if (!aNameMatch && bNameMatch) return 1;
+        return 0;
+      });
+
+      // Cache results
+      searchCache.set(normalizedQuery, results);
+      return results;
+    }, 300),
+    []
   );
+
+  const filteredItems = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return menuItems.filter(item => item.category === selectedCategory);
+    }
+    return debouncedSearch(searchQuery, menuItems) || [];
+  }, [searchQuery, menuItems, selectedCategory, debouncedSearch]);
 
   const persist = (newCart: CartItem[]) => {
     localStorage.setItem('cart', JSON.stringify(newCart));
@@ -130,6 +167,10 @@ export default function Menu() {
 
   const cartTotal = cart.reduce((sum, c) => sum + c.price * c.quantity, 0);
   const cartItemCount = cart.reduce((sum, c) => sum + c.quantity, 0);
+
+  const handleClearSearch = () => {
+    setSearchQuery('');
+  };
 
   const ItemTag = ({ type }: { type: string }) => {
     switch (type) {
@@ -193,19 +234,30 @@ export default function Menu() {
             <input
               type="text"
               placeholder="Search menu items..."
-              className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
+              className="w-full pl-10 pr-12 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
             />
+            {searchQuery && (
+              <button
+                onClick={handleClearSearch}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            )}
           </div>
 
           <div className="flex overflow-x-auto pb-4 gap-4 -mx-4 px-4">
             {categories.map(({ id, name, icon: Icon, color }) => (
               <button
                 key={id}
-                onClick={() => setSelectedCategory(id)}
+                onClick={() => {
+                  setSelectedCategory(id);
+                  if (searchQuery) setSearchQuery('');
+                }}
                 className={`category-icon flex-shrink-0 ${color} ${
-                  selectedCategory === id ? 'active' : ''
+                  selectedCategory === id && !searchQuery ? 'active' : ''
                 }`}
               >
                 <Icon className="w-6 h-6 mb-2" />
@@ -217,32 +269,38 @@ export default function Menu() {
 
         {/* Menu Items */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredItems.map(item => (
-            <div 
-              key={item.id} 
-              className="menu-item-card cursor-pointer"
-              onClick={() => setSelectedItem(item)}
-            >
-              {item.image_url && (
-                <div
-                  className="h-48 bg-cover bg-center"
-                  style={{ backgroundImage: `url(${item.image_url})` }}
-                />
-              )}
-              <div className="p-4">
-                <div className="mb-2">
-                  {item.tags?.map(tag => (
-                    <ItemTag key={tag} type={tag} />
-                  ))}
-                </div>
-                <h3 className="text-xl font-semibold mb-2">{item.item_name}</h3>
-                <p className="text-gray-600 mb-4">{item.description}</p>
-                <div className="flex justify-between items-center">
-                  <span className="text-2xl font-bold">${item.price.toFixed(2)}</span>
+          {filteredItems.length === 0 ? (
+            <div className="col-span-full text-center py-12">
+              <p className="text-gray-500 text-lg">No items found</p>
+            </div>
+          ) : (
+            filteredItems.map(item => (
+              <div 
+                key={item.id} 
+                className="menu-item-card cursor-pointer"
+                onClick={() => setSelectedItem(item)}
+              >
+                {item.image_url && (
+                  <div
+                    className="h-48 bg-cover bg-center"
+                    style={{ backgroundImage: `url(${item.image_url})` }}
+                  />
+                )}
+                <div className="p-4">
+                  <div className="mb-2">
+                    {item.tags?.map(tag => (
+                      <ItemTag key={tag} type={tag} />
+                    ))}
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2">{item.item_name}</h3>
+                  <p className="text-gray-600 mb-4">{item.description}</p>
+                  <div className="flex justify-between items-center">
+                    <span className="text-2xl font-bold">${item.price.toFixed(2)}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
 
