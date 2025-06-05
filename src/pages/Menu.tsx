@@ -258,59 +258,61 @@ export default function Menu() {
         />
       )}
 
-      {/* Sticky Cart Drawer */}
+      {/* Sticky Cart Preview Bar */}
       {cart.length > 0 && (
         <div className={`cart-drawer ${isCartOpen ? 'animate-slideUp' : ''}`}>
-          <div className="p-4">
-            <div className="flex justify-between items-center mb-4">
-              <div className="flex items-center">
-                <ShoppingBag className="w-5 h-5 text-green-600 mr-2" />
-                <span className="font-medium">
-                  {cartItemCount} {cartItemCount === 1 ? 'item' : 'items'} • ${cartTotal.toFixed(2)}
-                </span>
-              </div>
-              <button
-                onClick={() => setIsCartOpen(!isCartOpen)}
-                className="p-2 hover:bg-gray-100 rounded-full"
-              >
-                {isCartOpen ? <X className="w-5 h-5" /> : <ChevronUp className="w-5 h-5" />}
-              </button>
+          <button
+            onClick={() => setIsCartOpen(!isCartOpen)}
+            className="w-full bg-[#28a745] text-white p-4 flex items-center justify-between hover:bg-[#218838] transition-colors"
+          >
+            <div className="flex items-center">
+              <ShoppingBag className="w-5 h-5 mr-2" />
+              <span className="font-medium">
+                {cartItemCount} {cartItemCount === 1 ? 'item' : 'items'} • ${cartTotal.toFixed(2)}
+              </span>
             </div>
+            {isCartOpen ? <X className="w-5 h-5" /> : <ChevronUp className="w-5 h-5" />}
+          </button>
             
-            {isCartOpen && (
-              <div className="space-y-4">
-                {cart.map((item, index) => (
-                  <div key={`${item.id}-${index}`} className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
-                    <div>
-                      <h4 className="font-medium">{item.item_name}</h4>
-                      <p className="text-sm text-gray-600">${item.price.toFixed(2)} each</p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <button
-                        onClick={() => updateQuantity(item.id, -1)}
-                        className="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-full"
-                      >
-                        -
-                      </button>
-                      <span className="w-8 text-center">{item.quantity}</span>
-                      <button
-                        onClick={() => updateQuantity(item.id, 1)}
-                        className="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-full"
-                      >
-                        +
-                      </button>
-                    </div>
+          {isCartOpen && (
+            <div className="bg-white p-4 space-y-4">
+              {cart.map((item, index) => (
+                <div key={`${item.id}-${index}`} className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
+                  <div>
+                    <h4 className="font-medium">{item.item_name}</h4>
+                    <p className="text-sm text-gray-600">${item.price.toFixed(2)} each</p>
                   </div>
-                ))}
-                <Link
-                  to={`/checkout/${courseId}`}
-                  className="block w-full mobile-button bg-green-600 text-white text-center hover:bg-green-700"
-                >
-                  Proceed to Checkout
-                </Link>
-              </div>
-            )}
-          </div>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        updateQuantity(item.id, -1);
+                      }}
+                      className="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-full"
+                    >
+                      -
+                    </button>
+                    <span className="w-8 text-center">{item.quantity}</span>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        updateQuantity(item.id, 1);
+                      }}
+                      className="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-full"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              ))}
+              <Link
+                to={`/checkout/${courseId}`}
+                className="block w-full mobile-button bg-[#28a745] text-white text-center hover:bg-[#218838]"
+              >
+                Proceed to Checkout
+              </Link>
+            </div>
+          )}
         </div>
       )}
     </div>
