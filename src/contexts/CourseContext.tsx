@@ -40,10 +40,14 @@ export function CourseProvider({ children }: { children: React.ReactNode }) {
           const { data, error: fetchError } = await supabase
             .from('golf_courses')
             .select('*')
-            .single();
+            .maybeSingle();
 
           if (fetchError) throw fetchError;
-          if (!data) throw new Error('No golf course found');
+          if (!data) {
+            setError('No default golf course found in development environment');
+            navigate('/404');
+            return;
+          }
           
           setCourse(data);
           return;
@@ -51,7 +55,9 @@ export function CourseProvider({ children }: { children: React.ReactNode }) {
         
         // No subdomain found
         if (!subdomain) {
-          throw new Error('No golf course specified');
+          setError('No golf course specified');
+          navigate('/404');
+          return;
         }
 
         // Fetch course by subdomain
@@ -59,10 +65,14 @@ export function CourseProvider({ children }: { children: React.ReactNode }) {
           .from('golf_courses')
           .select('*')
           .eq('subdomain', subdomain)
-          .single();
+          .maybeSingle();
 
         if (fetchError) throw fetchError;
-        if (!data) throw new Error('Golf course not found');
+        if (!data) {
+          setError(`Golf course not found for subdomain: ${subdomain}`);
+          navigate('/404');
+          return;
+        }
 
         setCourse(data);
       } catch (err: any) {
