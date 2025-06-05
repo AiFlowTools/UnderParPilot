@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Coffee, UtensilsCrossed, Pizza, Beer, Store, ShoppingBag, ChevronUp, Flame, Leaf, Trophy, X, Wine, Menu as MenuIcon } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import MenuItemDetail from '../components/MenuItemDetail';
 import Logo from '../components/Logo';
+import { useCourse } from '../contexts/CourseContext';
 
 interface MenuItem {
   id: string;
@@ -36,8 +37,8 @@ const categories = [
 ];
 
 export default function Menu() {
-  const { courseId } = useParams();
   const navigate = useNavigate();
+  const { course, loading: courseLoading, error: courseError } = useCourse();
   const [selectedCategory, setSelectedCategory] = useState<string>('Breakfast');
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -60,22 +61,22 @@ export default function Menu() {
   }, []);
 
   useEffect(() => {
-    if (!courseId) {
-      setError('No golf course ID provided');
-      setLoading(false);
+    if (!course?.id) {
       return;
     }
+
+    setLoading(true);
     supabase
       .from('menu_items')
       .select('*')
-      .eq('golf_course_id', courseId)
+      .eq('golf_course_id', course.id)
       .then(({ data, error: e }) => {
         if (e) throw e;
         setMenuItems(data || []);
       })
       .catch(err => setError(err.message))
       .finally(() => setLoading(false));
-  }, [courseId]);
+  }, [course?.id]);
 
   const filteredItems = menuItems.filter(item => item.category === selectedCategory);
 
@@ -145,7 +146,7 @@ export default function Menu() {
     }
   };
 
-  if (loading) {
+  if (courseLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="animate-spin h-12 w-12 border-b-2 border-green-600 rounded-full"></div>
@@ -153,11 +154,11 @@ export default function Menu() {
     );
   }
 
-  if (error) {
+  if (courseError || error) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="bg-white p-6 rounded-xl shadow-md text-center">
-          <p className="text-gray-800 text-xl mb-4">{error}</p>
+          <p className="text-gray-800 text-xl mb-4">{courseError || error}</p>
           <button
             onClick={() => window.location.reload()}
             className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
@@ -169,6 +170,10 @@ export default function Menu() {
     );
   }
 
+  if (!course) {
+    return null;
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 pb-32">
       {/* Fixed Banner Header */}
@@ -177,9 +182,10 @@ export default function Menu() {
           <Logo 
             onClick={() => setSelectedCategory('Breakfast')}
             className="cursor-pointer hover:opacity-90 transition-opacity"
+            courseName={course.name}
           />
           <h1 className="text-2xl font-bold text-center text-gray-900 hidden md:block">
-            Pine Valley Golf Club
+            {course.name}
           </h1>
           <div className="w-24" /> {/* Spacer for alignment */}
         </div>
@@ -345,7 +351,7 @@ export default function Menu() {
                 </div>
               ))}
               <Link
-                to={`/checkout/${courseId}`}
+                to="/checkout"
                 className="block w-full mobile-button bg-[#28a745] text-white text-center hover:bg-[#218838]"
               >
                 Proceed to Checkout
