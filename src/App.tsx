@@ -26,7 +26,7 @@ export default function App() {
             </div>
           </div>
         } />
-        <Route path="*" element={<Navigate to="/404" replace />} />
+        <Route path="*" element={<Navigate to="/404\" replace />} />
       </Routes>
     </CourseProvider>
   );
