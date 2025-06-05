@@ -13,7 +13,8 @@ import {
   Flame,
   Leaf,
   Trophy,
-  X
+  X,
+  Wine
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import MenuItemDetail from '../components/MenuItemDetail';
@@ -43,6 +44,7 @@ const categories = [
   { id: 'Breakfast', name: 'Breakfast', icon: Coffee, color: 'bg-amber-100' },
   { id: 'Lunch & Dinner', name: 'Lunch & Dinner', icon: UtensilsCrossed, color: 'bg-blue-100' },
   { id: 'Snacks', name: 'Snacks', icon: Pizza, color: 'bg-red-100' },
+  { id: 'Drinks', name: 'Drinks', icon: Wine, color: 'bg-purple-100' },
   { id: 'Beer', name: 'Beer', icon: Beer, color: 'bg-yellow-100' },
   { id: 'Pro Shop', name: 'Pro Shop', icon: Store, color: 'bg-purple-100' }
 ];
