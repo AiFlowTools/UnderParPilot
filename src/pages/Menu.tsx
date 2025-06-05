@@ -1,20 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import {
-  Coffee,
-  UtensilsCrossed,
-  Pizza,
-  Beer,
-  Store,
-  ShoppingBag,
-  ChevronUp,
-  Flame,
-  Leaf,
-  Trophy,
-  X,
-  Wine,
-  GolfBall
-} from 'lucide-react';
+import { Coffee, UtensilsCrossed, Pizza, Beer, Store, ShoppingBag, ChevronUp, Flame, Leaf, Trophy, X, Wine, Goal as GolfBall } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import MenuItemDetail from '../components/MenuItemDetail';
 
