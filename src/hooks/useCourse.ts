@@ -28,25 +28,24 @@ export function useCourse(): UseCourseResult {
         setLoading(true);
         setError(null);
 
-        // Extract subdomain from current URL
-        const hostname = window.location.hostname;
-        const parts = hostname.split('.');
+        // Default to 'pinevalley' for development environment
+        let subdomain = 'pinevalley';
         
-        // Handle different scenarios:
-        // - localhost:3000 -> use default course
-        // - subdomain.domain.com -> use subdomain
-        // - domain.com -> use default course
-        let subdomain = 'default';
-        
-        if (hostname === 'localhost' || hostname === '127.0.0.1') {
-          // Development environment - use default course
-          subdomain = 'pinevalley';
-        } else if (parts.length >= 3) {
-          // Has subdomain (e.g., testcourse.aiflowtools.com)
-          subdomain = parts[0];
-        } else if (parts.length === 2) {
-          // No subdomain (e.g., aiflowtools.com) - use default
-          subdomain = 'pinevalley';
+        // Only attempt to extract subdomain from hostname in production
+        if (!import.meta.env.DEV) {
+          const hostname = window.location.hostname;
+          const parts = hostname.split('.');
+          
+          // Handle different scenarios:
+          // - subdomain.domain.com -> use subdomain
+          // - domain.com -> use default course
+          if (parts.length >= 3) {
+            // Has subdomain (e.g., testcourse.aiflowtools.com)
+            subdomain = parts[0];
+          } else if (parts.length === 2) {
+            // No subdomain (e.g., aiflowtools.com) - use default
+            subdomain = 'pinevalley';
+          }
         }
 
         console.log('Looking for course with subdomain:', subdomain);
