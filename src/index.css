@@ -65,8 +65,10 @@
   @apply text-xs font-medium text-center leading-tight;
   /* Ensure text wraps properly within fixed width */
   word-wrap: break-word;
-  hyphens: auto;
+  hyphens: none;
   max-width: 100%;
+  /* Force line break after "&" for "Lunch & Dinner" */
+  white-space: pre-line;
 }
 
 /* Menu Item Cards */

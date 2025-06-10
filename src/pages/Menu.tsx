@@ -28,7 +28,7 @@ interface CartItem extends MenuItem {
 
 const categories = [
   { id: 'Breakfast', name: 'Breakfast', icon: Coffee, color: 'bg-amber-100' },
-  { id: 'Lunch & Dinner', name: 'Lunch & Dinner', icon: UtensilsCrossed, color: 'bg-blue-100' },
+  { id: 'Lunch & Dinner', name: 'Lunch &\nDinner', icon: UtensilsCrossed, color: 'bg-blue-100' },
   { id: 'Snacks', name: 'Snacks', icon: Pizza, color: 'bg-red-100' },
   { id: 'Drinks', name: 'Drinks', icon: Wine, color: 'bg-purple-100' },
   { id: 'Beer', name: 'Beer', icon: Beer, color: 'bg-yellow-100' },
@@ -275,7 +275,7 @@ export default function Menu() {
                   }`}
                 >
                   <Icon className="w-6 h-6 mr-4" />
-                  <span className="text-base">{name}</span>
+                  <span className="text-base">{id}</span>
                 </button>
               ))}
               {/* Extra padding at bottom to account for home bar on mobile */}
