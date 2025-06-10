@@ -45,6 +45,11 @@
 /* Category Icons */
 .category-icon {
   @apply flex flex-col items-center justify-center p-3 rounded-xl transition-all duration-200;
+  /* Fixed dimensions for consistency */
+  min-width: 80px;
+  width: 80px;
+  height: 80px;
+  min-height: 80px;
 }
 
 .category-icon:hover {
@@ -53,6 +58,15 @@
 
 .category-icon.active {
   @apply bg-green-50 border-2 border-green-500;
+}
+
+/* Category icon text styling */
+.category-icon span {
+  @apply text-xs font-medium text-center leading-tight;
+  /* Ensure text wraps properly within fixed width */
+  word-wrap: break-word;
+  hyphens: auto;
+  max-width: 100%;
 }
 
 /* Menu Item Cards */
