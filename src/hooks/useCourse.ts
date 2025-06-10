@@ -41,7 +41,7 @@ export function useCourse(): UseCourseResult {
           // - domain.com -> use default course
           if (parts.length >= 3) {
             // Has subdomain (e.g., testcourse.aiflowtools.com)
-            subdomain = parts[0];
+            subdomain = parts[0].toLowerCase();
           } else if (parts.length === 2) {
             // No subdomain (e.g., aiflowtools.com) - use default
             subdomain = 'pinevalley';
