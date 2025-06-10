@@ -1,19 +1,19 @@
 import React from 'react';
 import { Goal as GolfBall } from 'lucide-react';
 
-interface LogoProps {
-  className?: string;
-  onClick?: () => void;
+interface CourseHeaderProps {
   courseName?: string;
   logoUrl?: string;
+  className?: string;
+  onClick?: () => void;
 }
 
-export default function Logo({ 
+export default function CourseHeader({ 
+  courseName = 'Pine Valley Golf Club', 
+  logoUrl, 
   className = '', 
-  onClick, 
-  courseName = 'Pine Valley Golf Club',
-  logoUrl 
-}: LogoProps) {
+  onClick 
+}: CourseHeaderProps) {
   return (
     <div 
       className={`flex items-center gap-2 ${className}`}

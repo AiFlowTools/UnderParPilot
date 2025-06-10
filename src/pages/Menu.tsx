@@ -3,7 +3,9 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Coffee, UtensilsCrossed, Pizza, Beer, Store, ShoppingBag, ChevronUp, Flame, Leaf, Trophy, X, Wine, Menu as MenuIcon } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import MenuItemDetail from '../components/MenuItemDetail';
-import Logo from '../components/Logo';
+import CourseHeader from '../components/CourseHeader';
+import CourseNotFound from '../components/CourseNotFound';
+import { useCourse } from '../hooks/useCourse';
 
 interface MenuItem {
   id: string;
@@ -38,6 +40,7 @@ const categories = [
 export default function Menu() {
   const { courseId } = useParams();
   const navigate = useNavigate();
+  const { course, loading: courseLoading, error: courseError } = useCourse();
   const [selectedCategory, setSelectedCategory] = useState<string>('Breakfast');
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -47,6 +50,19 @@ export default function Menu() {
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const [isCategoryDrawerOpen, setIsCategoryDrawerOpen] = useState(false);
   const isMobile = window.innerWidth < 768;
+
+  // Handle course loading states
+  if (courseLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="animate-spin h-12 w-12 border-b-2 border-green-600 rounded-full"></div>
+      </div>
+    );
+  }
+
+  if (courseError || !course) {
+    return <CourseNotFound onRetry={() => window.location.reload()} />;
+  }
 
   useEffect(() => {
     const saved = localStorage.getItem('cart');
@@ -60,22 +76,19 @@ export default function Menu() {
   }, []);
 
   useEffect(() => {
-    if (!courseId) {
-      setError('No golf course ID provided');
-      setLoading(false);
-      return;
-    }
+    if (!course?.id) return;
+    
     supabase
       .from('menu_items')
       .select('*')
-      .eq('golf_course_id', courseId)
+      .eq('golf_course_id', course.id)
       .then(({ data, error: e }) => {
         if (e) throw e;
         setMenuItems(data || []);
       })
       .catch(err => setError(err.message))
       .finally(() => setLoading(false));
-  }, [courseId]);
+  }, [course?.id]);
 
   const filteredItems = menuItems.filter(item => item.category === selectedCategory);
 
@@ -174,12 +187,14 @@ export default function Menu() {
       {/* Fixed Banner Header */}
       <div className="fixed top-0 left-0 right-0 bg-white shadow-md z-50">
         <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
-          <Logo 
+          <CourseHeader 
+            courseName={course.name}
+            logoUrl={course.logo_url}
             onClick={() => setSelectedCategory('Breakfast')}
             className="cursor-pointer hover:opacity-90 transition-opacity"
           />
           <h1 className="text-2xl font-bold text-center text-gray-900 hidden md:block">
-            Pine Valley Golf Club
+            {course.name}
           </h1>
           <div className="w-24" /> {/* Spacer for alignment */}
         </div>
@@ -205,7 +220,7 @@ export default function Menu() {
                 }`}
               >
                 <Icon className="w-6 h-6 mb-2" />
-                <span className="text-sm font-medium whitespace-nowrap">{name}</span>
+                <span>{name}</span>
               </button>
             ))}
           </div>
@@ -345,7 +360,7 @@ export default function Menu() {
                 </div>
               ))}
               <Link
-                to={`/checkout/${courseId}`}
+                to={`/checkout/${course.id}`}
                 className="block w-full mobile-button bg-[#28a745] text-white text-center hover:bg-[#218838]"
               >
                 Proceed to Checkout
