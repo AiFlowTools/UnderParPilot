@@ -3,7 +3,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Coffee, UtensilsCrossed, Pizza, Beer, Store, ShoppingBag, ChevronUp, Flame, Leaf, Trophy, X, Wine, Menu as MenuIcon } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import MenuItemDetail from '../components/MenuItemDetail';
-import Header from '../components/Header';
+import Logo from '../components/Logo';
 
 interface MenuItem {
   id: string;
@@ -172,7 +172,18 @@ export default function Menu() {
   return (
     <div className="min-h-screen bg-gray-50 pb-32">
       {/* Fixed Banner Header */}
-      <Header onLogoClick={() => setSelectedCategory('Breakfast')} />
+      <div className="fixed top-0 left-0 right-0 bg-white shadow-md z-50">
+        <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
+          <Logo 
+            onClick={() => setSelectedCategory('Breakfast')}
+            className="cursor-pointer hover:opacity-90 transition-opacity"
+          />
+          <h1 className="text-2xl font-bold text-center text-gray-900 hidden md:block">
+            Pine Valley Golf Club
+          </h1>
+          <div className="w-24" /> {/* Spacer for alignment */}
+        </div>
+      </div>
 
       <div className="max-w-7xl mx-auto px-4 pt-24">
         {/* Categories */}
