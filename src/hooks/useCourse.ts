@@ -1,84 +1,77 @@
-import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
+import { useState, useEffect } from 'react'
+import { supabase } from '../lib/supabase'
 
 interface Course {
-  id: string;
-  name: string;
-  logo_url?: string;
-  subdomain: string;
-  slug: string;
-  contact_email?: string;
-  location?: string;
+  id: string
+  name: string
+  logo_url?: string
+  subdomain: string
+  slug: string
+  contact_email?: string
+  location?: string
 }
 
 interface UseCourseResult {
-  course: Course | null;
-  loading: boolean;
-  error: string | null;
+  course: Course | null
+  loading: boolean
+  error: string | null
 }
 
 export function useCourse(): UseCourseResult {
-  const [course, setCourse] = useState<Course | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [course, setCourse] = useState<Course | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function fetchCourse() {
-      try {
-        setLoading(true);
-        setError(null);
+      setLoading(true)
+      setError(null)
 
-        // Default to 'pinevalley' for development environment
-        let subdomain = 'pinevalley';
-        
-        // Only attempt to extract subdomain from hostname in production
+      try {
+        let subdomain = 'pinevalley' // fallback for local/dev
+
         if (!import.meta.env.DEV) {
-          const hostname = window.location.hostname;
-          const parts = hostname.split('.');
-          
-          // Handle different scenarios:
-          // - subdomain.domain.com -> use subdomain
-          // - domain.com -> use default course
+          const hostname = window.location.hostname
+          const parts = hostname.split('.')
+
+          // Example: testcourse.aiflowtools.com → testcourse
           if (parts.length >= 3) {
-            // Has subdomain (e.g., testcourse.aiflowtools.com)
-            subdomain = parts[0].toLowerCase();
-          } else if (parts.length === 2) {
-            // No subdomain (e.g., aiflowtools.com) - use default
-            subdomain = 'pinevalley';
+            subdomain = parts[0].toLowerCase()
+          } else {
+            subdomain = 'pinevalley'
           }
         }
 
-        console.log('Looking for course with subdomain:', subdomain);
+        console.log('[useCourse] Subdomain detected:', subdomain)
 
-        // Query the golf_courses table
         const { data, error: fetchError } = await supabase
           .from('golf_courses')
           .select('*')
-          .ilike('subdomain', subdomain)
-          .single();
+          .ilike('subdomain', subdomain) // case-insensitive match
+          .single()
 
         if (fetchError) {
+          console.error('[useCourse] Supabase fetch error:', fetchError)
           if (fetchError.code === 'PGRST116') {
-            // No rows returned - course not found
-            setError('Course not found');
+            setError('Course not found')
           } else {
-            console.error('Error fetching course:', fetchError);
-            setError('Failed to load course information');
+            setError('Failed to load course information')
           }
-          return;
+          setCourse(null)
+        } else {
+          setCourse(data)
         }
-
-        setCourse(data);
       } catch (err) {
-        console.error('Error in fetchCourse:', err);
-        setError('An unexpected error occurred');
+        console.error('[useCourse] Unexpected error:', err)
+        setError('An unexpected error occurred')
+        setCourse(null)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
     }
 
-    fetchCourse();
-  }, []);
+    fetchCourse()
+  }, [])
 
-  return { course, loading, error };
+  return { course, loading, error }
 }
