@@ -8,8 +8,6 @@ interface HeaderProps {
   onClick?: () => void;
 }
 
-console.log('[Header] course:', course)
-
 export default function Header({ className = '', onClick }: HeaderProps) {
   const { course } = useCourse()
 
