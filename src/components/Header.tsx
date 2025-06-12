@@ -7,23 +7,25 @@ interface HeaderProps {
   className?: string;
   onClick?: () => void;
 }
+
 export default function Header({ className = '', onClick }: HeaderProps) {
   const { course } = useCourse()
+console.log('[Header] course:', course)
 
   return (
     <div className={`fixed top-0 left-0 right-0 bg-white shadow-md z-50 ${className}`}>
       <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
         <div className="flex items-center" onClick={onClick}>
           {course?.logo_url ? (
-  <img
-    src={course.logo_url}
-    alt={`${course.name} Logo`}
-    className="h-10 max-h-[40px] mr-3 object-contain"
-  />
-) : (
-  <Logo className="cursor-pointer hover:opacity-90 transition-opacity mr-3" />
-)}
-
+            <img 
+              src={course.logo_url} 
+              alt="Course Logo" 
+              className="h-10 max-h-[40px] mr-3"
+            />
+          ) : (
+            <Logo className="cursor-pointer hover:opacity-90 transition-opacity" />
+          )}
+          
           {course?.name && (
             <h1 className="font-bold text-xl">{course.name}</h1>
           )}
