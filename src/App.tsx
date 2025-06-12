@@ -7,6 +7,7 @@ import Checkout from './pages/Checkout';
 import ThankYou from './pages/ThankYou';
 import EmployeeDashboard from './pages/EmployeeDashboard';
 import Orders from './pages/Orders';
+import { useCourse } from './hooks/useCourse';
 
 interface TeeTime {
   id: number;
@@ -14,6 +15,8 @@ interface TeeTime {
   price: number;
   players: number;
 }
+
+const { course } = useCourse();
 
 // Default course ID
 const DEFAULT_COURSE_ID = "c4a48f69-a535-4f57-8716-d34cff63059b";
@@ -67,9 +70,10 @@ function App() {
             }}
           >
             <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-              <h1 className="text-white text-5xl font-bold">Pine Valley Golf Club</h1>
-            </div>
-          </div>
+  <h1 className="text-white text-5xl font-bold">
+    {course?.name || 'Golf Course'}
+  </h1>
+</div>
 
           <div className="max-w-7xl mx-auto px-4 py-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
