@@ -28,16 +28,20 @@ export function useCourse(): UseCourseResult {
       setError(null)
 
       try {
-        let subdomain = 'testcourse' // fallback for dev
+       let subdomain = 'testcourse' // fallback for dev & Bolt preview
 
-        if (!import.meta.env.DEV) {
-          const hostname = window.location.hostname
-          const parts = hostname.split('.')
+if (!import.meta.env.DEV && typeof window !== 'undefined') {
+  const hostname = window.location.hostname
+  const parts = hostname.split('.')
 
-          if (parts.length >= 3) {
-            subdomain = parts[0].toLowerCase()
-          }
-        }
+  if (parts.length >= 3) {
+    subdomain = parts[0].toLowerCase()
+  } else {
+    console.warn('[useCourse] No subdomain found — falling back to:', subdomain)
+  }
+} else {
+  console.log('[useCourse] DEV mode — using fallback subdomain:', subdomain)
+}
 
         console.log('[useCourse] Detected subdomain:', subdomain)
 
