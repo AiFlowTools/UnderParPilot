@@ -7,7 +7,7 @@ import Checkout from './pages/Checkout';
 import ThankYou from './pages/ThankYou';
 import EmployeeDashboard from './pages/EmployeeDashboard';
 import Orders from './pages/Orders';
-import { useCourse } from './hooks/useCourse';
+import { useCourse } from './hooks/useCourse'; // ✅ NEW
 
 interface TeeTime {
   id: number;
@@ -16,9 +16,6 @@ interface TeeTime {
   players: number;
 }
 
-const { course } = useCourse();
-
-// Default course ID
 const DEFAULT_COURSE_ID = "c4a48f69-a535-4f57-8716-d34cff63059b";
 
 function App() {
@@ -27,6 +24,8 @@ function App() {
   );
   const [players, setPlayers] = useState<number>(2);
   const [cart, setCart] = useState<TeeTime[]>([]);
+
+  const { course, loading } = useCourse(); // ✅ NEW
 
   const availableTimes: TeeTime[] = [
     { id: 1, time: '07:00', price: 85, players },
@@ -48,10 +47,7 @@ function App() {
 
   return (
     <Routes>
-      {/* Redirect root to default course menu */}
       <Route path="/" element={<Navigate to={`/menu/${DEFAULT_COURSE_ID}`} replace />} />
-
-      {/* Main pages */}
       <Route path="/menu/:courseId" element={<Menu />} />
       <Route path="/login" element={<Login />} />
       <Route path="/employee-dashboard" element={<EmployeeDashboard />} />
@@ -59,7 +55,6 @@ function App() {
       <Route path="/checkout/:courseId" element={<Checkout />} />
       <Route path="/thank-you" element={<ThankYou />} />
 
-      {/* Tee Time Booking Page */}
       <Route path="/tee-times/:courseId" element={
         <div className="min-h-screen bg-[#f8f9fa]">
           {/* Hero Banner */}
@@ -70,10 +65,11 @@ function App() {
             }}
           >
             <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-  <h1 className="text-white text-5xl font-bold">
-    {course?.name || 'Golf Course'}
-  </h1>
-</div>
+              <h1 className="text-white text-5xl font-bold">
+                {loading ? 'Loading...' : (course?.name || 'Golf Course')}
+              </h1>
+            </div>
+          </div>
 
           <div className="max-w-7xl mx-auto px-4 py-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
