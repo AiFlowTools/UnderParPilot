@@ -7,6 +7,7 @@ interface HeaderProps {
   className?: string;
   onClick?: () => void;
 }
+
 console.log('[Header] course:', course)
 
 export default function Header({ className = '', onClick }: HeaderProps) {
