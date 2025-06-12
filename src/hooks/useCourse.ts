@@ -41,11 +41,11 @@ export function useCourse(): UseCourseResult {
 
         console.log('[useCourse] Detected subdomain:', subdomain)
 
-        const { data, error: fetchError } = await supabase
-          .from('golf_courses')
-          .select('id, name, logo_url, subdomain, slug, contact_email, location')
-          .eq('subdomain', subdomain.toLowerCase())
-          .single()
+    const { data, error: fetchError } = await supabase
+      .from('golf_courses')
+      .select('id, name, logo_url, subdomain, slug, contact_email, location')
+     .eq('subdomain', subdomain.toLowerCase())
+      .single()
 
         if (fetchError) {
           console.error('[useCourse] Supabase fetch error:', fetchError)
