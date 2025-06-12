@@ -9,8 +9,7 @@ interface HeaderProps {
 }
 
 export default function Header({ className = '', onClick }: HeaderProps) {
-  const { courseId } = useParams<{ courseId: string }>();
-  const { course } = useCourse(courseId);
+  const { course } = useCourse()
 
   return (
     <div className={`fixed top-0 left-0 right-0 bg-white shadow-md z-50 ${className}`}>
