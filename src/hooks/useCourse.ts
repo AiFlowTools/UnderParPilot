@@ -26,7 +26,7 @@ export function useCourse(courseId?: string) {
 
         const { data, error: fetchError } = await supabase
           .from('golf_courses')
-          .select('id, name, logo_url, description')
+          .select('id, name, logo_url, subdomain, slug, contact_email, location')
           .eq('id', courseId)
           .single();
 
