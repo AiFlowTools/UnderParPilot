@@ -16,15 +16,15 @@ export default function Header({ className = '', onClick }: HeaderProps) {
       <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
         <div className="flex items-center" onClick={onClick}>
           {course?.logo_url ? (
-            <img 
-              src={course.logo_url} 
-              alt="Course Logo" 
-              className="h-10 max-h-[40px] mr-3"
-            />
-          ) : (
-            <Logo className="cursor-pointer hover:opacity-90 transition-opacity" />
-          )}
-          
+  <img
+    src={course.logo_url}
+    alt={`${course.name} Logo`}
+    className="h-10 max-h-[40px] mr-3 object-contain"
+  />
+) : (
+  <Logo className="cursor-pointer hover:opacity-90 transition-opacity mr-3" />
+)}
+
           {course?.name && (
             <h1 className="font-bold text-xl">{course.name}</h1>
           )}
