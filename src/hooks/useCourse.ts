@@ -1,50 +1,70 @@
-import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
+import { useState, useEffect } from 'react'
+import { supabase } from '../lib/supabase'
 
 interface Course {
-  id: string;
-  name: string;
-  logo_url?: string;
-  description?: string;
+  id: string
+  name: string
+  logo_url?: string
+  subdomain: string
+  slug: string
+  contact_email?: string
+  location?: string
 }
 
-export function useCourse(courseId?: string) {
-  const [course, setCourse] = useState<Course | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+interface UseCourseResult {
+  course: Course | null
+  loading: boolean
+  error: string | null
+}
+
+export function useCourse(): UseCourseResult {
+  const [course, setCourse] = useState<Course | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function fetchCourse() {
-      if (!courseId) {
-        setLoading(false);
-        return;
-      }
+      setLoading(true)
+      setError(null)
 
       try {
-        setLoading(true);
-        setError(null);
+        let subdomain = 'testcourse' // fallback for dev
+
+        if (!import.meta.env.DEV) {
+          const hostname = window.location.hostname
+          const parts = hostname.split('.')
+
+          if (parts.length >= 3) {
+            subdomain = parts[0].toLowerCase()
+          }
+        }
+
+        console.log('[useCourse] Detected subdomain:', subdomain)
 
         const { data, error: fetchError } = await supabase
           .from('golf_courses')
           .select('id, name, logo_url, subdomain, slug, contact_email, location')
-          .eq('id', courseId)
-          .single();
+          .ilike('subdomain', subdomain)
+          .single()
 
         if (fetchError) {
-          throw fetchError;
+          console.error('[useCourse] Supabase fetch error:', fetchError)
+          setError('Golf course not found')
+          setCourse(null)
+        } else {
+          setCourse(data)
         }
-
-        setCourse(data);
-      } catch (err: any) {
-        console.error('Error fetching course:', err);
-        setError(err.message);
+      } catch (err) {
+        console.error('[useCourse] Unexpected error:', err)
+        setError('An unexpected error occurred')
+        setCourse(null)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
     }
 
-    fetchCourse();
-  }, [courseId]);
+    fetchCourse()
+  }, [])
 
-  return { course, loading, error };
+  return { course, loading, error }
 }
