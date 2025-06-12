@@ -42,10 +42,10 @@ export function useCourse(): UseCourseResult {
         console.log('[useCourse] Detected subdomain:', subdomain)
 
     const { data, error: fetchError } = await supabase
-      .from('golf_courses')
-      .select('id, name, logo_url, subdomain, slug, contact_email, location')
-     .eq('subdomain', subdomain.toLowerCase())
-      .single()
+  .from('golf_courses')
+  .select('id, name, logo_url, subdomain, slug, contact_email, location')
+  .eq('subdomain', subdomain.toLowerCase())
+  .maybeSingle() // ✅ <- prevents "must return exactly 1 row" error
 
         if (fetchError) {
           console.error('[useCourse] Supabase fetch error:', fetchError)
