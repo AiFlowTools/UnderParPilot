@@ -44,7 +44,7 @@ export function useCourse(): UseCourseResult {
         const { data, error: fetchError } = await supabase
           .from('golf_courses')
           .select('id, name, logo_url, subdomain, slug, contact_email, location')
-          .ilike('subdomain', subdomain)
+          .eq('subdomain', subdomain)
           .single()
 
         if (fetchError) {
