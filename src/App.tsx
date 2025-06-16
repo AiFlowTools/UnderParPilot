@@ -47,7 +47,7 @@ function App() {
 
   return (
     <Routes>
-      <Route path="/" element={<Navigate to={`/menu/${DEFAULT_COURSE_ID}`} replace />} />
+      <Route path="/" element={<Navigate to="/menu" replace />} />
       <Route path="/menu" element={<Menu />} />
       <Route path="/login" element={<Login />} />
       <Route path="/employee-dashboard" element={<EmployeeDashboard />} />
