@@ -48,14 +48,14 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Navigate to={`/menu/${DEFAULT_COURSE_ID}`} replace />} />
-      <Route path="/menu/:courseId" element={<Menu />} />
+      <Route path="/menu" element={<Menu />} />
       <Route path="/login" element={<Login />} />
       <Route path="/employee-dashboard" element={<EmployeeDashboard />} />
       <Route path="/orders" element={<Orders />} />
-      <Route path="/checkout/:courseId" element={<Checkout />} />
+      <Route path="/checkout" element={<Checkout />} />
       <Route path="/thank-you" element={<ThankYou />} />
 
-      <Route path="/tee-times/:courseId" element={
+      <Route path="/tee-times" element={
         <div className="min-h-screen bg-[#f8f9fa]">
           {/* Hero Banner */}
           <div 
