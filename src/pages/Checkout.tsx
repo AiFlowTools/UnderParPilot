@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   ShoppingBag,
   AlertCircle,
@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { createCheckoutSession } from '../lib/stripe';
 import { requestGeolocation, GeolocationError } from '../lib/geolocation';
+import { useCourse } from '../hooks/useCourse';
 
 interface CartItem {
   id: string;
@@ -33,7 +34,7 @@ interface SubmitOrderOptions {
 
 export default function Checkout() {
   const navigate = useNavigate();
-  const { course } = useCourse();
+  const { course, loading: courseLoading, error: courseError } = useCourse();
   const [cart, setCart] = useState<CartItem[]>([]);
   const [notes, setNotes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -75,7 +76,7 @@ export default function Checkout() {
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const submitOrder = async (options: SubmitOrderOptions = {}) => {
-    if (!courseId || cart.length === 0) return;
+    if (!course?.id || cart.length === 0) return;
     setIsSubmitting(true);
     setOrderStatus(null);
 
@@ -102,8 +103,8 @@ export default function Checkout() {
       const { url } = await createCheckoutSession(
         lineItems,
         `${window.location.origin}/thank-you?session_id={CHECKOUT_SESSION_ID}`,
-        `${window.location.origin}/checkout/${courseId}`,
-        courseId,
+        `${window.location.origin}/checkout`,
+        course.id,
         combinedNotes,
         options.location,
         options.hole
@@ -148,12 +149,38 @@ export default function Checkout() {
     await submitOrder({ hole: selectedHole });
   };
 
+  // Show loading state while course is loading
+  if (courseLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="animate-spin h-12 w-12 border-b-2 border-green-600 rounded-full"></div>
+      </div>
+    );
+  }
+
+  // Show error if course failed to load
+  if (courseError || !course) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="bg-white p-6 rounded-xl shadow-md text-center">
+          <p className="text-gray-800 text-xl mb-4">{courseError || 'Course not found'}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Back Button */}
         <button
-          onClick={() => navigate(courseId ? `/menu/${courseId}` : '/')}
+          onClick={() => navigate('/menu')}
           className="mb-6 flex items-center text-gray-600 hover:text-gray-900 transition-colors"
           aria-label="Return to menu"
         >
