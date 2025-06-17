@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase';
 import MenuItemDetail from '../components/MenuItemDetail';
 import Header from '../components/Header';
 import { useCourse } from '../hooks/useCourse';
+import DebugInfo from '../components/DebugInfo';
 
 interface MenuItem {
   id: string;
@@ -47,6 +48,7 @@ export default function Menu() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const [isCategoryDrawerOpen, setIsCategoryDrawerOpen] = useState(false);
+  const [showDebug, setShowDebug] = useState(false);
   const isMobile = window.innerWidth < 768;
 
   useEffect(() => {
@@ -140,9 +142,15 @@ export default function Menu() {
   if (error || courseError || !course) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="bg-white p-6 rounded-xl shadow-md text-center">
+        <div className="bg-white p-6 rounded-xl shadow-md text-center max-w-2xl">
           <p className="text-gray-800 text-xl mb-4">{error || courseError || 'Course not found'}</p>
-          <button onClick={() => window.location.reload()} className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">Try Again</button>
+          <div className="space-y-2 mb-4">
+            <button onClick={() => window.location.reload()} className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition mr-2">Try Again</button>
+            <button onClick={() => setShowDebug(!showDebug)} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+              {showDebug ? 'Hide' : 'Show'} Debug Info
+            </button>
+          </div>
+          {showDebug && <DebugInfo />}
         </div>
       </div>
     );
@@ -188,6 +196,46 @@ export default function Menu() {
         </div>
       </div>
 
+      {/* Category Drawer */}
+      {isCategoryDrawerOpen && (
+        <>
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-50 z-50"
+            onClick={() => setIsCategoryDrawerOpen(false)}
+          />
+          <div className="fixed inset-x-0 bottom-0 bg-white rounded-t-2xl z-50 max-h-[85vh] flex flex-col">
+            <div className="flex items-center justify-between px-4 py-3 border-b">
+              <h2 className="text-lg font-semibold">Menu Categories</h2>
+              <button
+                onClick={() => setIsCategoryDrawerOpen(false)}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                aria-label="Close menu"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto overscroll-contain pb-safe">
+              {categories.map(({ id, name, icon: Icon }) => (
+                <button
+                  key={id}
+                  onClick={() => handleCategorySelect(id)}
+                  className={`w-full flex items-center px-6 py-4 hover:bg-gray-50 transition-colors ${
+                    selectedCategory === id 
+                      ? 'bg-green-50 text-green-600 font-medium border-l-4 border-green-600' 
+                      : ''
+                  }`}
+                >
+                  <Icon className="w-6 h-6 mr-4" />
+                  <span className="text-base">{id}</span>
+                </button>
+              ))}
+              <div className="h-safe" />
+            </div>
+          </div>
+        </>
+      )}
+
       {selectedItem && (
         <MenuItemDetail
           item={selectedItem}
@@ -231,6 +279,16 @@ export default function Menu() {
           )}
         </div>
       )}
+
+      {/* Debug toggle button */}
+      <button
+        onClick={() => setShowDebug(!showDebug)}
+        className="fixed top-24 right-4 bg-blue-600 text-white p-2 rounded-full text-xs z-40"
+      >
+        Debug
+      </button>
+
+      {showDebug && <DebugInfo />}
     </div>
   );
 }
