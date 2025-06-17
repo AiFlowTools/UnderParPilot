@@ -33,7 +33,7 @@ interface SubmitOrderOptions {
 
 export default function Checkout() {
   const navigate = useNavigate();
-  const { courseId } = useParams<{ courseId: string }>();
+  const { course } = useCourse();
   const [cart, setCart] = useState<CartItem[]>([]);
   const [notes, setNotes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
