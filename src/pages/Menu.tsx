@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Coffee, UtensilsCrossed, Pizza, Beer, Store, ShoppingBag, ChevronUp, Flame, Leaf, Trophy, X, Wine, Menu as MenuIcon } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import MenuItemDetail from '../components/MenuItemDetail';
 import Header from '../components/Header';
+import { useCourse } from '../hooks/useCourse';
 
 interface MenuItem {
   id: string;
@@ -36,7 +37,7 @@ const categories = [
 ];
 
 export default function Menu() {
-  const { course, loading, error } = useCourse();
+  const { course, loading: courseLoading, error: courseError } = useCourse();
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<string>('Breakfast');
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
@@ -60,22 +61,20 @@ export default function Menu() {
   }, []);
 
   useEffect(() => {
-    if (!courseId) {
-      setError('No golf course ID provided');
-      setLoading(false);
-      return;
-    }
+    if (!course?.id) return;
+
+    setLoading(true);
     supabase
       .from('menu_items')
       .select('*')
-      .eq('golf_course_id', courseId)
+      .eq('golf_course_id', course.id)
       .then(({ data, error: e }) => {
         if (e) throw e;
         setMenuItems(data || []);
       })
       .catch(err => setError(err.message))
       .finally(() => setLoading(false));
-  }, [courseId]);
+  }, [course?.id]);
 
   const filteredItems = menuItems.filter(item => item.category === selectedCategory);
 
@@ -89,13 +88,13 @@ export default function Menu() {
       c.id === item.id && 
       JSON.stringify(c.selectedModifiers) === JSON.stringify(selectedModifiers)
     );
-    
+
     if (existing) {
       existing.quantity += quantity;
     } else {
       newCart.push({ ...item, quantity, selectedModifiers });
     }
-    
+
     setCart(newCart);
     persist(newCart);
     setIsCartOpen(true);
@@ -120,32 +119,17 @@ export default function Menu() {
   const ItemTag = ({ type }: { type: string }) => {
     switch (type) {
       case 'spicy':
-        return (
-          <span className="item-tag tag-spicy">
-            <Flame className="w-3 h-3 mr-1" />
-            Spicy
-          </span>
-        );
+        return <span className="item-tag tag-spicy"><Flame className="w-3 h-3 mr-1" />Spicy</span>;
       case 'vegetarian':
-        return (
-          <span className="item-tag tag-vegetarian">
-            <Leaf className="w-3 h-3 mr-1" />
-            Vegetarian
-          </span>
-        );
+        return <span className="item-tag tag-vegetarian"><Leaf className="w-3 h-3 mr-1" />Vegetarian</span>;
       case 'bestseller':
-        return (
-          <span className="item-tag tag-bestseller">
-            <Trophy className="w-3 h-3 mr-1" />
-            Best Seller
-          </span>
-        );
+        return <span className="item-tag tag-bestseller"><Trophy className="w-3 h-3 mr-1" />Best Seller</span>;
       default:
         return null;
     }
   };
 
-  if (loading) {
+  if (courseLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="animate-spin h-12 w-12 border-b-2 border-green-600 rounded-full"></div>
@@ -153,17 +137,12 @@ export default function Menu() {
     );
   }
 
-  if (error) {
+  if (error || courseError || !course) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="bg-white p-6 rounded-xl shadow-md text-center">
-          <p className="text-gray-800 text-xl mb-4">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
-          >
-            Try Again
-          </button>
+          <p className="text-gray-800 text-xl mb-4">{error || courseError || 'Course not found'}</p>
+          <button onClick={() => window.location.reload()} className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">Try Again</button>
         </div>
       </div>
     );
@@ -171,31 +150,16 @@ export default function Menu() {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-32">
-      {/* Fixed Banner Header */}
-      <Header 
-        onClick={() => setSelectedCategory('Breakfast')}
-        className="cursor-pointer hover:opacity-90 transition-opacity"
-      />
+      <Header onClick={() => setSelectedCategory('Breakfast')} className="cursor-pointer hover:opacity-90 transition-opacity" />
 
       <div className="max-w-7xl mx-auto px-4 pt-24">
-        {/* Categories */}
         <div className="sticky top-20 bg-gray-50 z-10 py-4">
           <div className="flex items-center overflow-x-auto pb-4 gap-4 -mx-4 px-4">
-            <button
-              onClick={() => setIsCategoryDrawerOpen(true)}
-              className="flex-shrink-0 p-2 hover:bg-gray-100 rounded-full transition-colors"
-              aria-label="Open category menu"
-            >
+            <button onClick={() => setIsCategoryDrawerOpen(true)} className="flex-shrink-0 p-2 hover:bg-gray-100 rounded-full transition-colors" aria-label="Open category menu">
               <MenuIcon className="w-6 h-6" />
             </button>
             {categories.map(({ id, name, icon: Icon, color }) => (
-              <button
-                key={id}
-                onClick={() => setSelectedCategory(id)}
-                className={`category-icon flex-shrink-0 ${color} ${
-                  selectedCategory === id ? 'active' : ''
-                }`}
-              >
+              <button key={id} onClick={() => setSelectedCategory(id)} className={`category-icon flex-shrink-0 ${color} ${selectedCategory === id ? 'active' : ''}`}>
                 <Icon className="w-6 h-6 mb-2" />
                 <span className="text-sm font-medium whitespace-pre-line">{name}</span>
               </button>
@@ -203,25 +167,15 @@ export default function Menu() {
           </div>
         </div>
 
-        {/* Menu Items */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredItems.map(item => (
-            <div 
-              key={item.id} 
-              className="menu-item-card cursor-pointer"
-              onClick={() => setSelectedItem(item)}
-            >
+            <div key={item.id} className="menu-item-card cursor-pointer" onClick={() => setSelectedItem(item)}>
               {item.image_url && (
-                <div
-                  className="h-48 bg-cover bg-center"
-                  style={{ backgroundImage: `url(${item.image_url})` }}
-                />
+                <div className="h-48 bg-cover bg-center" style={{ backgroundImage: `url(${item.image_url})` }} />
               )}
               <div className="p-4">
                 <div className="mb-2">
-                  {item.tags?.map(tag => (
-                    <ItemTag key={tag} type={tag} />
-                  ))}
+                  {item.tags?.map(tag => <ItemTag key={tag} type={tag} />)}
                 </div>
                 <h3 className="text-xl font-semibold mb-2">{item.item_name}</h3>
                 <p className="text-gray-600 mb-4">{item.description}</p>
@@ -234,68 +188,18 @@ export default function Menu() {
         </div>
       </div>
 
-      {/* Category Drawer */}
-      {isCategoryDrawerOpen && (
-        <>
-          <div 
-            className="fixed inset-0 bg-black bg-opacity-50 z-50"
-            onClick={() => setIsCategoryDrawerOpen(false)}
-          />
-          <div className="fixed inset-x-0 bottom-0 bg-white rounded-t-2xl z-50 max-h-[85vh] flex flex-col">
-            {/* Drawer Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b">
-              <h2 className="text-lg font-semibold">Menu Categories</h2>
-              <button
-                onClick={() => setIsCategoryDrawerOpen(false)}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                aria-label="Close menu"
-              >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-
-            {/* Scrollable Category List */}
-            <div className="flex-1 overflow-y-auto overscroll-contain pb-safe">
-              {categories.map(({ id, name, icon: Icon }) => (
-                <button
-                  key={id}
-                  onClick={() => handleCategorySelect(id)}
-                  className={`w-full flex items-center px-6 py-4 hover:bg-gray-50 transition-colors ${
-                    selectedCategory === id 
-                      ? 'bg-green-50 text-green-600 font-medium border-l-4 border-green-600' 
-                      : ''
-                  }`}
-                >
-                  <Icon className="w-6 h-6 mr-4" />
-                  <span className="text-base">{id}</span>
-                </button>
-              ))}
-              {/* Extra padding at bottom to account for home bar on mobile */}
-              <div className="h-safe" />
-            </div>
-          </div>
-        </>
-      )}
-
-      {/* Menu Item Detail Modal */}
       {selectedItem && (
         <MenuItemDetail
           item={selectedItem}
           onClose={() => setSelectedItem(null)}
-          onAddToCart={(quantity, selectedModifiers) => 
-            addToCart(selectedItem, quantity, selectedModifiers)
-          }
+          onAddToCart={(quantity, selectedModifiers) => addToCart(selectedItem, quantity, selectedModifiers)}
           isMobile={isMobile}
         />
       )}
 
-      {/* Sticky Cart Preview Bar */}
       {cart.length > 0 && (
         <div className={`cart-drawer ${isCartOpen ? 'animate-slideUp' : ''}`}>
-          <button
-            onClick={() => setIsCartOpen(!isCartOpen)}
-            className="w-full bg-[#28a745] text-white p-4 flex items-center justify-between hover:bg-[#218838] transition-colors"
-          >
+          <button onClick={() => setIsCartOpen(!isCartOpen)} className="w-full bg-[#28a745] text-white p-4 flex items-center justify-between hover:bg-[#218838] transition-colors">
             <div className="flex items-center">
               <ShoppingBag className="w-5 h-5 mr-2" />
               <span className="font-medium">
@@ -304,7 +208,7 @@ export default function Menu() {
             </div>
             {isCartOpen ? <X className="w-5 h-5" /> : <ChevronUp className="w-5 h-5" />}
           </button>
-            
+
           {isCartOpen && (
             <div className="bg-white p-4 space-y-4">
               {cart.map((item, index) => (
@@ -314,32 +218,13 @@ export default function Menu() {
                     <p className="text-sm text-gray-600">${item.price.toFixed(2)} each</p>
                   </div>
                   <div className="flex items-center gap-3">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        updateQuantity(item.id, -1);
-                      }}
-                      className="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-full"
-                    >
-                      -
-                    </button>
+                    <button onClick={(e) => { e.stopPropagation(); updateQuantity(item.id, -1); }} className="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-full">-</button>
                     <span className="w-8 text-center">{item.quantity}</span>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        updateQuantity(item.id, 1);
-                      }}
-                      className="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-full"
-                    >
-                      +
-                    </button>
+                    <button onClick={(e) => { e.stopPropagation(); updateQuantity(item.id, 1); }} className="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-full">+</button>
                   </div>
                 </div>
               ))}
-              <Link
-                to={`/checkout/${courseId}`}
-                className="block w-full mobile-button bg-[#28a745] text-white text-center hover:bg-[#218838]"
-              >
+              <Link to="/checkout" className="block w-full mobile-button bg-[#28a745] text-white text-center hover:bg-[#218838]">
                 Proceed to Checkout
               </Link>
             </div>
