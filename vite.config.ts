@@ -2,12 +2,12 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
+  base: '/', // ✅ Ensures proper asset paths for Netlify
   plugins: [react()],
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
   server: {
-    // ✅ Enable fallback routing for React Router
-    historyApiFallback: true,
+    historyApiFallback: true, // ✅ Local dev support
   },
 });
