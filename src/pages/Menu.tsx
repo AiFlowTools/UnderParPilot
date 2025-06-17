@@ -36,7 +36,7 @@ const categories = [
 ];
 
 export default function Menu() {
-  const { courseId } = useParams();
+  const { course, loading, error } = useCourse();
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<string>('Breakfast');
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
