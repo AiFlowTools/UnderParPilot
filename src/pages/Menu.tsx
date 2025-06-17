@@ -5,7 +5,6 @@ import { supabase } from '../lib/supabase';
 import MenuItemDetail from '../components/MenuItemDetail';
 import Header from '../components/Header';
 import { useCourse } from '../hooks/useCourse';
-import DebugInfo from '../components/DebugInfo';
 
 interface MenuItem {
   id: string;
