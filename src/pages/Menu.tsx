@@ -47,7 +47,6 @@ export default function Menu() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const [isCategoryDrawerOpen, setIsCategoryDrawerOpen] = useState(false);
-  const [showDebug, setShowDebug] = useState(false);
   const isMobile = window.innerWidth < 768;
 
   useEffect(() => {
@@ -278,16 +277,3 @@ export default function Menu() {
           )}
         </div>
       )}
-
-      {/* Debug toggle button */}
-      <button
-        onClick={() => setShowDebug(!showDebug)}
-        className="fixed top-24 right-4 bg-blue-600 text-white p-2 rounded-full text-xs z-40"
-      >
-        Debug
-      </button>
-
-      {showDebug && <DebugInfo />}
-    </div>
-  );
-}
