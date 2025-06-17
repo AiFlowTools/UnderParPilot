@@ -7,7 +7,7 @@ import Checkout from './pages/Checkout';
 import ThankYou from './pages/ThankYou';
 import EmployeeDashboard from './pages/EmployeeDashboard';
 import Orders from './pages/Orders';
-import { useCourse } from './hooks/useCourse'; // ✅ NEW
+import { useCourse } from './hooks/useCourse'; // ✅ Subdomain-based course fetch
 
 interface TeeTime {
   id: number;
@@ -16,8 +16,6 @@ interface TeeTime {
   players: number;
 }
 
-const DEFAULT_COURSE_ID = "c4a48f69-a535-4f57-8716-d34cff63059b";
-
 function App() {
   const [selectedDate, setSelectedDate] = useState<string>(
     new Date().toISOString().split('T')[0]
@@ -25,7 +23,7 @@ function App() {
   const [players, setPlayers] = useState<number>(2);
   const [cart, setCart] = useState<TeeTime[]>([]);
 
-  const { course, loading } = useCourse(); // ✅ NEW
+  const { course, loading } = useCourse();
 
   const availableTimes: TeeTime[] = [
     { id: 1, time: '07:00', price: 85, players },
@@ -57,7 +55,6 @@ function App() {
 
       <Route path="/tee-times" element={
         <div className="min-h-screen bg-[#f8f9fa]">
-          {/* Hero Banner */}
           <div 
             className="h-[40vh] bg-cover bg-center relative"
             style={{
@@ -73,12 +70,11 @@ function App() {
 
           <div className="max-w-7xl mx-auto px-4 py-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              
-              {/* Booking Section */}
+
               <div className="md:col-span-2 space-y-6">
                 <div className="bg-white rounded-lg shadow-md p-6">
                   <h2 className="text-2xl font-semibold mb-4">Book a Tee Time</h2>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -93,7 +89,7 @@ function App() {
                         min={new Date().toISOString().split('T')[0]}
                       />
                     </div>
-                    
+
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         <Users className="inline-block w-4 h-4 mr-2" />
@@ -136,14 +132,13 @@ function App() {
                 </div>
               </div>
 
-              {/* Cart Section */}
               <div className="md:col-span-1">
                 <div className="bg-white rounded-lg shadow-md p-6 sticky top-8">
                   <div className="flex items-center mb-6">
                     <ShoppingCart className="w-6 h-6 mr-2 text-green-600" />
                     <h2 className="text-2xl font-bold text-gray-900">Your Cart</h2>
                   </div>
-                  
+
                   {cart.length === 0 ? (
                     <div className="text-center py-8 text-gray-500">
                       <GolfBall className="w-12 h-12 mx-auto mb-3" />
@@ -169,15 +164,13 @@ function App() {
                           </div>
                         ))}
                       </div>
-                      
+
                       <div className="border-t pt-4">
                         <div className="flex justify-between mb-4">
                           <span className="font-semibold">Total:</span>
                           <span className="font-semibold">${totalPrice}</span>
                         </div>
-                        <button
-                          className="w-full bg-green-600 text-white py-3 rounded-md hover:bg-green-700 transition"
-                        >
+                        <button className="w-full bg-green-600 text-white py-3 rounded-md hover:bg-green-700 transition">
                           Proceed to Checkout
                         </button>
                       </div>
