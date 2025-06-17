@@ -142,13 +142,12 @@ export default function Menu() {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="bg-white p-6 rounded-xl shadow-md text-center max-w-2xl">
           <p className="text-gray-800 text-xl mb-4">{error || courseError || 'Course not found'}</p>
-          <div className="space-y-2 mb-4">
-            <button onClick={() => window.location.reload()} className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition mr-2">Try Again</button>
-            <button onClick={() => setShowDebug(!showDebug)} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-              {showDebug ? 'Hide' : 'Show'} Debug Info
-            </button>
-          </div>
-          {showDebug && <DebugInfo />}
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+          >
+            Try Again
+          </button>
         </div>
       </div>
     );
@@ -277,3 +276,6 @@ export default function Menu() {
           )}
         </div>
       )}
+    </div>
+  );
+}
