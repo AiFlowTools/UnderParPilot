@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Coffee, UtensilsCrossed, Pizza, Beer, Store, ShoppingBag, ChevronUp, Flame, Leaf, Trophy, X, Wine, Menu as MenuIcon } from 'lucide-react';
+import { Coffee, UtensilsCrossed, Pizza, Beer, Store, ShoppingBag, ChevronUp, X, Wine, Menu as MenuIcon } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import MenuItemDetail from '../components/MenuItemDetail';
+import MenuItemCard from '../components/MenuItemCard';
 import Header from '../components/Header';
 import { useCourse } from '../hooks/useCourse';
 
@@ -116,19 +117,6 @@ export default function Menu() {
     setIsCategoryDrawerOpen(false);
   };
 
-  const ItemTag = ({ type }: { type: string }) => {
-    switch (type) {
-      case 'spicy':
-        return <span className="item-tag tag-spicy"><Flame className="w-3 h-3 mr-1" />Spicy</span>;
-      case 'vegetarian':
-        return <span className="item-tag tag-vegetarian"><Leaf className="w-3 h-3 mr-1" />Vegetarian</span>;
-      case 'bestseller':
-        return <span className="item-tag tag-bestseller"><Trophy className="w-3 h-3 mr-1" />Best Seller</span>;
-      default:
-        return null;
-    }
-  };
-
   if (courseLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -174,21 +162,11 @@ export default function Menu() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredItems.map(item => (
-            <div key={item.id} className="menu-item-card cursor-pointer" onClick={() => setSelectedItem(item)}>
-              {item.image_url && (
-                <div className="h-48 bg-cover bg-center" style={{ backgroundImage: `url(${item.image_url})` }} />
-              )}
-              <div className="p-4">
-                <div className="mb-2">
-                  {item.tags?.map(tag => <ItemTag key={tag} type={tag} />)}
-                </div>
-                <h3 className="text-xl font-semibold mb-2">{item.item_name}</h3>
-                <p className="text-gray-600 mb-4">{item.description}</p>
-                <div className="flex justify-between items-center">
-                  <span className="text-2xl font-bold">${item.price.toFixed(2)}</span>
-                </div>
-              </div>
-            </div>
+            <MenuItemCard
+              key={item.id}
+              item={item}
+              onClick={() => setSelectedItem(item)}
+            />
           ))}
         </div>
       </div>
