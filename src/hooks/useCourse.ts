@@ -45,16 +45,16 @@ export function useCourse(): UseCourseResult {
             // Local development - use fallback
             console.log('[useCourse] Local development detected')
             subdomain = 'testcourse'
-          } else if (hostname.includes('aiflowtools.com')) {
+          } else if (hostname.includes('fairwaymate.com')) {
             // Production domain
             const parts = hostname.split('.')
             console.log('[useCourse] Domain parts:', parts)
             
             if (parts.length >= 3) {
-              // Extract subdomain (e.g., "testcourse" from "testcourse.aiflowtools.com")
+              // Extract subdomain (e.g., "testcourse" from "testcourse.fairwaymate.com")
               subdomain = parts[0].toLowerCase()
               console.log('[useCourse] Extracted subdomain from production:', subdomain)
-            } else if (hostname === 'aiflowtools.com') {
+            } else if (hostname === 'fairwaymate.com') {
               // Main domain without subdomain - use fallback
               console.log('[useCourse] Main domain detected - using fallback')
               subdomain = 'testcourse'
