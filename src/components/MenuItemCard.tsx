@@ -78,7 +78,7 @@ export default function MenuItemCard({ item, onClick }: MenuItemCardProps) {
 
   return (
     <>
-      <div className="menu-item-card cursor-pointer group relative" onClick={handleCardClick}>
+      <div className="menu-item-card cursor-pointer group" onClick={handleCardClick}>
         {item.image_url && (
           <div className="relative h-48 w-full overflow-hidden">
             <img
@@ -90,7 +90,7 @@ export default function MenuItemCard({ item, onClick }: MenuItemCardProps) {
             
             {/* Image zoom overlay */}
             <div 
-              className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
               onClick={handleImageClick}
             >
               <div className="bg-white bg-opacity-90 rounded-full p-2 hover:bg-opacity-100 transition-all duration-200 shadow-lg">
@@ -98,18 +98,13 @@ export default function MenuItemCard({ item, onClick }: MenuItemCardProps) {
               </div>
             </div>
             
-            {/* Tags Display */}
-            <TagDisplay tags={item.tags || []} />
-            
             {/* Hover overlay */}
             <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300" />
           </div>
         )}
         
         <div className="p-4">
-          <div className="mb-2">
-            {item.tags?.map(tag => <ItemTag key={tag} type={tag} />)}
-          </div>
+          <TagDisplay tags={item.tags || []} />
           <h3 className="text-xl font-semibold mb-2 group-hover:text-green-600 transition-colors duration-200">
             {item.item_name}
           </h3>
