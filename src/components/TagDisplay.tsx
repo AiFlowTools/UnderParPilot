@@ -16,7 +16,7 @@ export default function TagDisplay({ tags, className = '' }: TagDisplayProps) {
 
   return (
     <div 
-      className={`flex flex-wrap gap-1 mb-2 ${className}`}
+      className={`absolute top-2 right-2 flex flex-wrap gap-1 ${className}`}
       role="group"
       aria-label="Item tags"
     >
