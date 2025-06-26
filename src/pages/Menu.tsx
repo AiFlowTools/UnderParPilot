@@ -71,7 +71,16 @@ export default function Menu() {
       .eq('golf_course_id', course.id)
       .then(({ data, error: e }) => {
         if (e) throw e;
-        setMenuItems(data || []);
+        
+        // Parse tags from string to array if needed
+        const processedData = (data || []).map(item => ({
+          ...item,
+          tags: typeof item.tags === 'string' 
+            ? item.tags.split(',').map(tag => tag.trim()).filter(Boolean)
+            : item.tags || []
+        }));
+        
+        setMenuItems(processedData);
       })
       .catch(err => setError(err.message))
       .finally(() => setLoading(false));
