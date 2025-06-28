@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase';
 import MenuItemDetail from '../components/MenuItemDetail';
 import MenuItemCard from '../components/MenuItemCard';
 import Header from '../components/Header';
+import HowItWorksModal from '../components/HowItWorksModal';
 import { useCourse } from '../hooks/useCourse';
 
 interface MenuItem {
@@ -48,6 +49,7 @@ export default function Menu() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const [isCategoryDrawerOpen, setIsCategoryDrawerOpen] = useState(false);
+  const [isHowItWorksOpen, setIsHowItWorksOpen] = useState(false);
   const isMobile = window.innerWidth < 768;
 
   useEffect(() => {
@@ -152,7 +154,11 @@ export default function Menu() {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-32">
-      <Header onClick={() => setSelectedCategory('Breakfast')} className="cursor-pointer hover:opacity-90 transition-opacity" />
+      <Header 
+        onClick={() => setSelectedCategory('Breakfast')} 
+        onHowItWorksClick={() => setIsHowItWorksOpen(true)}
+        className="cursor-pointer hover:opacity-90 transition-opacity" 
+      />
 
       <div className="max-w-7xl mx-auto px-4 pt-24">
         <div className="sticky top-20 bg-gray-50 z-10 py-4">
@@ -179,6 +185,12 @@ export default function Menu() {
           ))}
         </div>
       </div>
+
+      {/* How It Works Modal */}
+      <HowItWorksModal 
+        isOpen={isHowItWorksOpen}
+        onClose={() => setIsHowItWorksOpen(false)}
+      />
 
       {/* Category Drawer */}
       {isCategoryDrawerOpen && (
