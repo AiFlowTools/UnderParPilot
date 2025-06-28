@@ -42,10 +42,11 @@ export default function Header({ className = '', onClick, onHowItWorksClick }: H
             >
               <Info className="w-6 h-6 text-gray-600 group-hover:text-green-600 transition-colors" />
               
-              {/* Tooltip */}
-              <div className="absolute bottom-full right-0 mb-2 px-3 py-1 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap">
+              {/* Tooltip - positioned below the icon */}
+              <div className="absolute top-full right-0 mt-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap shadow-lg transform translate-y-1 group-hover:translate-y-0">
                 How It Works
-                <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                {/* Triangle pointer pointing up */}
+                <div className="absolute bottom-full right-4 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-900"></div>
               </div>
             </button>
           )}
