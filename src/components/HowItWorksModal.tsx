@@ -9,8 +9,8 @@ interface HowItWorksModalProps {
 const steps = [
   {
     icon: MapPin,
-    title: 'Scan & Browse the Menu',
-    description: 'Once you scan the QR code at your hole, you\'ll instantly see this digital menu. No app download needed.',
+    title: 'No App. No Account. Just Order.',
+    description: 'You\'re already in — no downloads or signups needed. Just tap and go.',
     emoji: '⛳'
   },
   {
