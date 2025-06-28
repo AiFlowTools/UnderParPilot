@@ -42,7 +42,7 @@ export default function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProp
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto animate-fadeIn">
           {/* Header */}
-          <div className="sticky top-0 bg-white rounded-t-2xl border-b border-gray-100 px-6 py-4 flex items-center justify-between">
+          <div className="sticky top-0 bg-white rounded-t-2xl border-b border-gray-100 px-6 py-4 flex items-center justify-between z-10">
             <h2 className="text-xl font-bold text-gray-900">How FairwayMate Works</h2>
             <button
               onClick={onClose}
@@ -56,16 +56,16 @@ export default function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProp
           {/* Content */}
           <div className="px-6 py-6">
             {/* Steps */}
-            <div className="space-y-6">
+            <div className="space-y-8">
               {steps.map((step, index) => (
                 <div key={index} className="flex items-start space-x-4">
                   {/* Step Number & Icon */}
-                  <div className="flex-shrink-0">
-                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center relative">
+                  <div className="flex-shrink-0 relative">
+                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
                       <span className="text-2xl">{step.emoji}</span>
-                      <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-xs font-bold">
-                        {index + 1}
-                      </div>
+                    </div>
+                    <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-xs font-bold">
+                      {index + 1}
                     </div>
                   </div>
                   
