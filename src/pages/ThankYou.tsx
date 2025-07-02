@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CheckCircle2, AlertCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
@@ -12,6 +12,15 @@ interface Order {
   hole_number: number;
 }
 
+// Extend Window interface to include typeform
+declare global {
+  interface Window {
+    typeform?: {
+      open: (options: { id: string }) => void;
+    };
+  }
+}
+
 export default function ThankYou() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -19,6 +28,7 @@ export default function ThankYou() {
   const [loading, setLoading] = useState(true);
   const [order, setOrder] = useState<Order | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     // Clear cart once we arrive on this page
@@ -62,6 +72,39 @@ export default function ThankYou() {
 
     fetchOrder();
   }, [sessionId]);
+
+  useEffect(() => {
+    // Load Typeform embed script
+    const script = document.createElement("script");
+    script.src = "//embed.typeform.com/next/embed.js";
+    script.async = true;
+    document.body.appendChild(script);
+
+    // Auto-open Typeform once per session
+    const hasShown = sessionStorage.getItem("typeformShown");
+    if (!hasShown) {
+      const interval = setInterval(() => {
+        if (window?.typeform) {
+          window.typeform.open({
+            id: "01JZ6QNNAEQ8YV8020RQBXV9VV",
+          });
+          sessionStorage.setItem("typeformShown", "true");
+          clearInterval(interval);
+        }
+      }, 500);
+
+      // Cleanup interval on component unmount
+      return () => clearInterval(interval);
+    }
+  }, []);
+
+  const openTypeform = () => {
+    if (window?.typeform) {
+      window.typeform.open({
+        id: "01JZ6QNNAEQ8YV8020RQBXV9VV",
+      });
+    }
+  };
 
   const getOrderSummary = () => {
     if (!order?.ordered_items) return '';
@@ -110,12 +153,27 @@ export default function ThankYou() {
               Your payment was successful. Your order will be prepared shortly!
             </p>
           )}
+          
+          {/* Feedback Button */}
+          <div className="mb-6">
+            <button
+              onClick={openTypeform}
+              ref={buttonRef}
+              className="bg-green-600 hover:bg-green-700 hover:shadow-lg text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105"
+            >
+              Give Feedback 💬
+            </button>
+          </div>
+
           <button
             onClick={() => navigate('/')}
             className="bg-primary-green hover:bg-primary-dark text-white px-6 py-3 rounded-lg font-medium transition"
           >
             Back to Menu
           </button>
+
+          {/* Hidden div required for Typeform's live embed to work */}
+          <div data-tf-live="01JZ6QNNAEQ8YV8020RQBXV9VV" style={{ display: "none" }}></div>
         </div>
       )}
     </div>
