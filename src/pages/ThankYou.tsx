@@ -24,29 +24,48 @@ export default function ThankYou() {
     // Clear cart once we arrive on this page
     localStorage.removeItem('cart');
 
+    // Inject Typeform script once
+    if (!document.getElementById('typeform-script')) {
+      const script = document.createElement('script');
+      script.id = 'typeform-script';
+      script.src = '//embed.typeform.com/next/embed.js';
+      script.async = true;
+      document.body.appendChild(script);
+    }
+
+    // Show Typeform only once per session
+    if (!sessionStorage.getItem('typeformShown')) {
+      sessionStorage.setItem('typeformShown', 'true');
+
+      // Wait for script to be ready, then simulate a click
+      const interval = setInterval(() => {
+        const trigger = document.querySelector('[data-tf-live]');
+        if (trigger) {
+          const event = new MouseEvent('click', { bubbles: true });
+          trigger.dispatchEvent(event);
+          clearInterval(interval);
+        }
+      }, 500);
+    }
+
     if (!sessionId) {
       setLoading(false);
       setError('No session ID provided');
       return;
     }
 
-    // Look up the order by stripe_session_id
     const fetchOrder = async () => {
       try {
         const { data, error: fetchError } = await supabase
           .from('orders')
           .select('id, ordered_items, hole_number')
           .eq('stripe_session_id', sessionId)
-          .maybeSingle(); // Use maybeSingle() instead of single() to handle no results gracefully
+          .maybeSingle();
 
-        if (fetchError) {
-          throw fetchError;
-        }
+        if (fetchError) throw fetchError;
 
         if (!data) {
-          // Order not found - this is expected immediately after payment
-          // as there might be a slight delay before the webhook creates the order
-          setTimeout(fetchOrder, 2000); // Retry after 2 seconds
+          setTimeout(fetchOrder, 2000);
           return;
         }
 
@@ -65,10 +84,17 @@ export default function ThankYou() {
 
   const getOrderSummary = () => {
     if (!order?.ordered_items) return '';
-    
     return order.ordered_items
       .map(item => `${item.quantity}x ${item.item_name}`)
       .join(', ');
+  };
+
+  const openTypeform = () => {
+    const trigger = document.querySelector('[data-tf-live]');
+    if (trigger) {
+      const event = new MouseEvent('click', { bubbles: true });
+      trigger.dispatchEvent(event);
+    }
   };
 
   return (
@@ -110,12 +136,25 @@ export default function ThankYou() {
               Your payment was successful. Your order will be prepared shortly!
             </p>
           )}
+
+          {/* Feedback Button */}
+          <button
+            onClick={openTypeform}
+            className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition mb-3"
+          >
+            Give Feedback 💬
+          </button>
+
+          {/* Return to Menu Button */}
           <button
             onClick={() => navigate('/')}
             className="bg-primary-green hover:bg-primary-dark text-white px-6 py-3 rounded-lg font-medium transition"
           >
             Back to Menu
           </button>
+
+          {/* Hidden Typeform Trigger */}
+          <div data-tf-live="01JZ6QNNAEQ8YV8020RQBXV9VV" style={{ display: 'none' }}></div>
         </div>
       )}
     </div>
