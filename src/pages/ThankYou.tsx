@@ -21,32 +21,39 @@ export default function ThankYou() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Clear cart once we arrive on this page
     localStorage.removeItem('cart');
 
-    // Inject Typeform script once
+    // Inject Typeform script
     if (!document.getElementById('typeform-script')) {
       const script = document.createElement('script');
       script.id = 'typeform-script';
       script.src = '//embed.typeform.com/next/embed.js';
       script.async = true;
+      script.onload = () => {
+        console.log('✅ Typeform script loaded');
+
+        // Auto-popup after short delay, only once per session
+        if (!sessionStorage.getItem('typeformShown') && window?.typeformEmbed?.makePopup) {
+          setTimeout(() => {
+            const popup = window.typeformEmbed.makePopup(
+              'https://form.typeform.com/to/pMxEV0gN',
+              {
+                mode: 'popup',
+                autoClose: 0,
+                hideHeaders: true,
+                hideFooter: true,
+              }
+            );
+            popup.open();
+            sessionStorage.setItem('typeformShown', 'true');
+          }, 2000); // 2-second delay
+        }
+      };
       document.body.appendChild(script);
     }
+  }, []);
 
-    // Auto-open Typeform once per session
-    if (!sessionStorage.getItem('typeformShown')) {
-      sessionStorage.setItem('typeformShown', 'true');
-
-      const interval = setInterval(() => {
-        const trigger = document.querySelector('[data-tf-live]');
-        if (trigger) {
-          const event = new MouseEvent('click', { bubbles: true });
-          trigger.dispatchEvent(event);
-          clearInterval(interval);
-        }
-      }, 500);
-    }
-
+  useEffect(() => {
     if (!sessionId) {
       setLoading(false);
       setError('No session ID provided');
@@ -62,7 +69,6 @@ export default function ThankYou() {
           .maybeSingle();
 
         if (fetchError) throw fetchError;
-
         if (!data) {
           setTimeout(fetchOrder, 2000);
           return;
@@ -87,33 +93,6 @@ export default function ThankYou() {
       .map(item => `${item.quantity}x ${item.item_name}`)
       .join(', ');
   };
-
-  const openTypeform = () => {
-  const trigger = document.querySelector('[data-tf-live]');
-
-  // Try to click the live trigger (preferred)
-  if (trigger) {
-    const event = new MouseEvent('click', { bubbles: true });
-    trigger.dispatchEvent(event);
-    return;
-  }
-
-  // Fallback using SDK method
-  if (window?.typeformEmbed?.makePopup) {
-    const popup = window.typeformEmbed.makePopup(
-      'https://form.typeform.com/to/pMxEV0gN', // ✅ your correct URL
-      {
-        mode: 'popup',
-        autoClose: 0,
-        hideHeaders: true,
-        hideFooter: true,
-      }
-    );
-    popup.open();
-  } else {
-    console.warn('Typeform popup fallback failed: script not loaded.');
-  }
-};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-green-50 p-4">
@@ -154,26 +133,12 @@ export default function ThankYou() {
               Your payment was successful. Your order will be prepared shortly!
             </p>
           )}
-
-          {/* Buttons Container */}
-          <div className="mt-6 flex flex-col items-center space-y-3">
-            <button
-              onClick={openTypeform}
-              className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition w-full max-w-xs"
-            >
-              Give Feedback 💬
-            </button>
-
-            <button
-              onClick={() => navigate('/')}
-              className="bg-primary-green hover:bg-primary-dark text-white px-6 py-3 rounded-lg font-medium transition w-full max-w-xs"
-            >
-              Back to Menu
-            </button>
-          </div>
-
-          {/* Hidden Typeform trigger */}
-          <div data-tf-live="pMxEV0gN" style={{ display: 'none' }}></div>
+          <button
+            onClick={() => navigate('/')}
+            className="bg-primary-green hover:bg-primary-dark text-white px-6 py-3 rounded-lg font-medium transition w-full max-w-xs mx-auto"
+          >
+            Back to Menu
+          </button>
         </div>
       )}
     </div>
