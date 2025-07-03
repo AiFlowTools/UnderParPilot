@@ -137,26 +137,18 @@ export default function ThankYou() {
             </p>
           )}
 
-          {/* Feedback Button */}
-          <button
-            onClick={openTypeform}
-            className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition mb-3"
-          >
-            Give Feedback 💬
-          </button>
+          <div className="flex flex-col items-center gap-3 mt-6">
+  <button
+    onClick={openTypeform}
+    className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition w-full max-w-xs"
+  >
+    Give Feedback 💬
+  </button>
 
-          {/* Return to Menu Button */}
-          <button
-            onClick={() => navigate('/')}
-            className="bg-primary-green hover:bg-primary-dark text-white px-6 py-3 rounded-lg font-medium transition"
-          >
-            Back to Menu
-          </button>
-
-          {/* Hidden Typeform Trigger */}
-          <div data-tf-live="01JZ6QNNAEQ8YV8020RQBXV9VV" style={{ display: 'none' }}></div>
-        </div>
-      )}
-    </div>
-  );
-}
+  <button
+    onClick={() => navigate('/')}
+    className="bg-primary-green hover:bg-primary-dark text-white px-6 py-3 rounded-lg font-medium transition w-full max-w-xs"
+  >
+    Back to Menu
+  </button>
+</div>
