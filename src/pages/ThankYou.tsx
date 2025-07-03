@@ -89,19 +89,19 @@ export default function ThankYou() {
   };
 
   const openTypeform = () => {
-  const liveTrigger = document.querySelector('[data-tf-live]');
+  const trigger = document.querySelector('[data-tf-live]');
 
-  // Try live embed trigger first
-  if (liveTrigger) {
+  // Try to click the live trigger (preferred)
+  if (trigger) {
     const event = new MouseEvent('click', { bubbles: true });
-    liveTrigger.dispatchEvent(event);
+    trigger.dispatchEvent(event);
     return;
   }
 
-  // Fallback: use SDK popup
+  // Fallback using SDK method
   if (window?.typeformEmbed?.makePopup) {
     const popup = window.typeformEmbed.makePopup(
-      'https://form.typeform.com/to/pMxEV0gN',
+      'https://form.typeform.com/to/pMxEV0gN', // ✅ your correct URL
       {
         mode: 'popup',
         autoClose: 0,
@@ -111,7 +111,7 @@ export default function ThankYou() {
     );
     popup.open();
   } else {
-    console.warn('Typeform popup failed: embed script not ready');
+    console.warn('Typeform popup fallback failed: script not loaded.');
   }
 };
 
