@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CheckCircle2, AlertCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
@@ -11,6 +11,9 @@ interface Order {
   }[];
   hole_number: number;
 }
+
+const TYPEFORM_ID = "01JZ6QNNAEQ8YV8020RQBXV9VV";
+const TYPEFORM_SCRIPT_URL = "//embed.typeform.com/next/embed.js";
 
 // Extend Window interface to include typeform
 declare global {
@@ -28,7 +31,7 @@ export default function ThankYou() {
   const [loading, setLoading] = useState(true);
   const [order, setOrder] = useState<Order | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [isTypeformLoaded, setIsTypeformLoaded] = useState(false);
 
   useEffect(() => {
     // Clear cart once we arrive on this page
@@ -74,35 +77,54 @@ export default function ThankYou() {
   }, [sessionId]);
 
   useEffect(() => {
-    // Load Typeform embed script
+    // Check if script is already loaded
+    if (document.querySelector(`script[src="${TYPEFORM_SCRIPT_URL}"]`)) {
+      setIsTypeformLoaded(true);
+      handleAutoOpen();
+      return;
+    }
+
+    // Inject Typeform embed script
     const script = document.createElement("script");
-    script.src = "//embed.typeform.com/next/embed.js";
+    script.src = TYPEFORM_SCRIPT_URL;
     script.async = true;
+    
+    script.onload = () => {
+      setIsTypeformLoaded(true);
+      handleAutoOpen();
+    };
+
+    script.onerror = (error) => {
+      console.error("Failed to load Typeform script:", error);
+    };
+
     document.body.appendChild(script);
 
-    // Auto-open Typeform once per session
-    const hasShown = sessionStorage.getItem("typeformShown");
-    if (!hasShown) {
-      const interval = setInterval(() => {
-        if (window?.typeform) {
-          window.typeform.open({
-            id: "01JZ6QNNAEQ8YV8020RQBXV9VV",
-          });
-          sessionStorage.setItem("typeformShown", "true");
-          clearInterval(interval);
-        }
-      }, 500);
-
-      // Cleanup interval on component unmount
-      return () => clearInterval(interval);
-    }
+    return () => {
+      // Cleanup script on component unmount
+      const existingScript = document.querySelector(`script[src="${TYPEFORM_SCRIPT_URL}"]`);
+      if (existingScript) {
+        document.body.removeChild(existingScript);
+      }
+    };
   }, []);
 
+  const handleAutoOpen = () => {
+    const hasShown = sessionStorage.getItem("typeformShown");
+    if (!hasShown && window?.typeform?.open) {
+      window.typeform.open({ id: TYPEFORM_ID });
+      sessionStorage.setItem("typeformShown", "true");
+    }
+  };
+
   const openTypeform = () => {
-    if (window?.typeform) {
-      window.typeform.open({
-        id: "01JZ6QNNAEQ8YV8020RQBXV9VV",
-      });
+    if (!isTypeformLoaded) {
+      console.warn("Typeform is still loading. Please try again.");
+      return;
+    }
+
+    if (window?.typeform?.open) {
+      window.typeform.open({ id: TYPEFORM_ID });
     }
   };
 
@@ -158,8 +180,14 @@ export default function ThankYou() {
           <div className="mb-6">
             <button
               onClick={openTypeform}
-              ref={buttonRef}
-              className="bg-green-600 hover:bg-green-700 hover:shadow-lg text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105"
+              disabled={!isTypeformLoaded}
+              className={`
+                bg-green-600 text-white font-medium px-6 py-3 rounded-lg shadow-lg mb-3 transition-all duration-200
+                ${isTypeformLoaded 
+                  ? 'hover:bg-green-700 hover:shadow-xl transform hover:scale-105' 
+                  : 'opacity-50 cursor-not-allowed'
+                }
+              `}
             >
               Give Feedback 💬
             </button>
@@ -167,13 +195,13 @@ export default function ThankYou() {
 
           <button
             onClick={() => navigate('/')}
-            className="bg-primary-green hover:bg-primary-dark text-white px-6 py-3 rounded-lg font-medium transition"
+            className="bg-primary-green hover:bg-primary-dark text-white px-6 py-3 rounded-lg font-medium transition w-full"
           >
             Back to Menu
           </button>
 
-          {/* Hidden div required for Typeform's live embed to work */}
-          <div data-tf-live="01JZ6QNNAEQ8YV8020RQBXV9VV" style={{ display: "none" }}></div>
+          {/* Required Typeform container */}
+          <div data-tf-live={TYPEFORM_ID} style={{ display: "none" }} />
         </div>
       )}
     </div>
