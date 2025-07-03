@@ -89,12 +89,31 @@ export default function ThankYou() {
   };
 
   const openTypeform = () => {
-    const trigger = document.querySelector('[data-tf-live]');
-    if (trigger) {
-      const event = new MouseEvent('click', { bubbles: true });
-      trigger.dispatchEvent(event);
-    }
-  };
+  const liveTrigger = document.querySelector('[data-tf-live]');
+
+  // Try live embed trigger first
+  if (liveTrigger) {
+    const event = new MouseEvent('click', { bubbles: true });
+    liveTrigger.dispatchEvent(event);
+    return;
+  }
+
+  // Fallback: use SDK popup
+  if (window?.typeformEmbed?.makePopup) {
+    const popup = window.typeformEmbed.makePopup(
+      'https://form.typeform.com/to/pMxEV0gN',
+      {
+        mode: 'popup',
+        autoClose: 0,
+        hideHeaders: true,
+        hideFooter: true,
+      }
+    );
+    popup.open();
+  } else {
+    console.warn('Typeform popup failed: embed script not ready');
+  }
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-green-50 p-4">
@@ -154,7 +173,7 @@ export default function ThankYou() {
           </div>
 
           {/* Hidden Typeform trigger */}
-          <div data-tf-live="01JZ6QNNAEQ8YV8020RQBXV9VV" style={{ display: 'none' }}></div>
+          <div data-tf-live="pMxEV0gN" style={{ display: 'none' }}></div>
         </div>
       )}
     </div>
