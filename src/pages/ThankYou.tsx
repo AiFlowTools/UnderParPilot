@@ -33,11 +33,10 @@ export default function ThankYou() {
       document.body.appendChild(script);
     }
 
-    // Show Typeform only once per session
+    // Auto-open Typeform once per session
     if (!sessionStorage.getItem('typeformShown')) {
       sessionStorage.setItem('typeformShown', 'true');
 
-      // Wait for script to be ready, then simulate a click
       const interval = setInterval(() => {
         const trigger = document.querySelector('[data-tf-live]');
         if (trigger) {
@@ -137,22 +136,26 @@ export default function ThankYou() {
             </p>
           )}
 
-          {/* Feedback Button */}
+          {/* Buttons Container */}
           <div className="mt-6 flex flex-col items-center space-y-3">
-  <button
-    onClick={openTypeform}
-    className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition w-full max-w-xs"
-  >
-    Give Feedback 💬
-  </button>
+            <button
+              onClick={openTypeform}
+              className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition w-full max-w-xs"
+            >
+              Give Feedback 💬
+            </button>
 
-  <button
-    onClick={() => navigate('/')}
-    className="bg-primary-green hover:bg-primary-dark text-white px-6 py-3 rounded-lg font-medium transition w-full max-w-xs"
-  >
-    Back to Menu
-  </button>
-</div>
+            <button
+              onClick={() => navigate('/')}
+              className="bg-primary-green hover:bg-primary-dark text-white px-6 py-3 rounded-lg font-medium transition w-full max-w-xs"
+            >
+              Back to Menu
+            </button>
+          </div>
+
+          {/* Hidden Typeform trigger */}
+          <div data-tf-live="01JZ6QNNAEQ8YV8020RQBXV9VV" style={{ display: 'none' }}></div>
+        </div>
       )}
     </div>
   );
