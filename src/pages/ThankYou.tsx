@@ -153,7 +153,6 @@ export default function ThankYou() {
     Back to Menu
   </button>
 </div>
-
       )}
     </div>
   );
