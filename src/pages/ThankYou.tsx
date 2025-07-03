@@ -138,7 +138,7 @@ export default function ThankYou() {
           )}
 
           {/* Feedback Button */}
-          <div className="flex flex-col items-center gap-3 mt-6">
+          <div className="mt-6 flex flex-col items-center space-y-3">
   <button
     onClick={openTypeform}
     className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition w-full max-w-xs"
@@ -154,3 +154,7 @@ export default function ThankYou() {
   </button>
 </div>
 
+      )}
+    </div>
+  );
+}
