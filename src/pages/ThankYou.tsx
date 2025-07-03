@@ -137,6 +137,7 @@ export default function ThankYou() {
             </p>
           )}
 
+          {/* Feedback Button */}
           <div className="flex flex-col items-center gap-3 mt-6">
   <button
     onClick={openTypeform}
@@ -152,3 +153,4 @@ export default function ThankYou() {
     Back to Menu
   </button>
 </div>
+
