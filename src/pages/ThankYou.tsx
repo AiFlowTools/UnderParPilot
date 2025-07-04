@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CheckCircle2, AlertCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
-import { makePopup } from '@typeform/embed-react'; // ✅ CORRECT SDK for React usage
+import { makePopup } from '@typeform/embed'; // ✅ FIXED: Import from @typeform/embed instead of @typeform/embed-react
 
 interface Order {
   id: string;
@@ -25,7 +25,7 @@ export default function ThankYou() {
     localStorage.removeItem('cart');
   }, []);
 
-  // ✅ Correctly use makePopup from @typeform/embed-react
+  // ✅ Correctly use makePopup from @typeform/embed
   useEffect(() => {
     if (sessionStorage.getItem('typeformShown')) return;
 
