@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CheckCircle2, AlertCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
-import { makePopup } from '@typeform/embed'; // ✅ FIXED: Import from @typeform/embed instead of @typeform/embed-react
 
 interface Order {
   id: string;
@@ -23,29 +22,6 @@ export default function ThankYou() {
 
   useEffect(() => {
     localStorage.removeItem('cart');
-  }, []);
-
-  // ✅ Correctly use makePopup from @typeform/embed
-  useEffect(() => {
-    if (sessionStorage.getItem('typeformShown')) return;
-
-    try {
-      const popup = makePopup('https://form.typeform.com/to/pMxEV0gN', {
-        mode: 'drawer_right',
-        autoClose: 0,
-        hideHeaders: true,
-        hideFooter: true,
-        width: '100%',
-        height: '100%',
-      });
-
-      setTimeout(() => {
-        popup.open();
-        sessionStorage.setItem('typeformShown', 'true');
-      }, 1500);
-    } catch (err) {
-      console.error('❌ Failed to open Typeform popup:', err);
-    }
   }, []);
 
   useEffect(() => {
@@ -122,14 +98,12 @@ export default function ThankYou() {
             </p>
           )}
           <div className="mt-4 text-sm text-center">
-  <p className="font-bold text-black">
-    🎉 Help us improve!
-  </p>
-  <p className="text-charcoal">
-    A short survey will arrive in your inbox soon — and it only takes 30 seconds 🕒
-  </p>
-</div>
-          
+            <p className="font-bold text-black">🎉 Help us improve!</p>
+            <p className="text-charcoal">
+              A short survey will arrive in your inbox soon — and it only takes 30 seconds 🕒
+            </p>
+          </div>
+
           <button
             onClick={() => navigate('/')}
             className="mt-6 bg-primary-green hover:bg-primary-dark text-white px-6 py-3 rounded-lg font-medium transition w-full max-w-xs mx-auto"
