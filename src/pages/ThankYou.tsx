@@ -20,8 +20,7 @@ export default function ThankYou() {
   const [order, setOrder] = useState<Order | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-  // Only inject the script once
+ useEffect(() => {
   if (!document.getElementById('typeform-script')) {
     const script = document.createElement('script');
     script.id = 'typeform-script';
@@ -31,26 +30,27 @@ export default function ThankYou() {
     script.onload = () => {
       console.log('✅ Typeform script loaded');
 
-      // Only show popup once per session
-      if (!sessionStorage.getItem('typeformShown')) {
-        sessionStorage.setItem('typeformShown', 'true');
+      // Wait until window.typeformEmbed is defined
+      const checkInterval = setInterval(() => {
+        if (window?.typeformEmbed?.makePopup && !sessionStorage.getItem('typeformShown')) {
+          sessionStorage.setItem('typeformShown', 'true');
 
-        // Delay popup slightly for smoother UX
-        setTimeout(() => {
-          if (window?.typeformEmbed?.makePopup) {
-            window.typeformEmbed
-              .makePopup('https://form.typeform.com/to/pMxEV0gN', {
-                mode: 'popup',
-                autoClose: 0,
-                hideHeaders: true,
-                hideFooter: true,
-              })
-              .open();
-          } else {
-            console.warn('❌ Typeform popup method not found.');
-          }
-        }, 2000);
-      }
+          window.typeformEmbed
+            .makePopup('https://form.typeform.com/to/pMxEV0gN', {
+              mode: 'popup',
+              autoClose: 0,
+              hideHeaders: true,
+              hideFooter: true,
+            })
+            .open();
+
+          console.log('✅ Typeform popup launched');
+          clearInterval(checkInterval);
+        }
+      }, 200); // check every 200ms
+
+      // safety timeout after 5s
+      setTimeout(() => clearInterval(checkInterval), 5000);
     };
 
     document.body.appendChild(script);
