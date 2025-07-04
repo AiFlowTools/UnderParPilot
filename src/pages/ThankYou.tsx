@@ -122,8 +122,8 @@ export default function ThankYou() {
             </p>
           )}
           <p className="text-sm text-center mt-4 font-bold text-primary-green">
-  🎉 We value your feedback! <br />
-  Look for a quick 30-second survey in your email soon 💌
+  🎉 Help us improve! <br />
+  A short survey will arrive in your inbox soon — and it only takes 30 seconds 💌
 </p>
           <button
             onClick={() => navigate('/')}
