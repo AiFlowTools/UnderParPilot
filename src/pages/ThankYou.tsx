@@ -132,7 +132,7 @@ export default function ThankYou() {
           
           <button
             onClick={() => navigate('/')}
-            className="bg-primary-green hover:bg-primary-dark text-white px-6 py-3 rounded-lg font-medium transition w-full max-w-xs mx-auto"
+            className="mt-6 bg-primary-green hover:bg-primary-dark text-white px-6 py-3 rounded-lg font-medium transition w-full max-w-xs mx-auto"
           >
             Back to Menu
           </button>
