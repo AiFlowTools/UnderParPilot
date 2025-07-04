@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CheckCircle2, AlertCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
-import { makePopup } from '@typeform/embed';
+import * as typeformEmbed from '@typeform/embed';
 
 interface Order {
   id: string;
@@ -32,7 +32,7 @@ export default function ThankYou() {
     if (popupAlreadyShown) return;
 
     try {
-      const popup = makePopup('https://form.typeform.com/to/pMxEV0gN', {
+      const popup = typeformEmbed.makePopup('https://form.typeform.com/to/pMxEV0gN', {
         mode: 'slider',
         autoClose: 0,
         hideHeaders: true,
