@@ -37,96 +37,25 @@ export default function ThankYou() {
     localStorage.removeItem('cart');
   }, []);
 
-  // Load Typeform script and show popup
-  useEffect(() => {
-    // Check if popup was already shown in this session
-    if (sessionStorage.getItem('typeformShown')) {
-      return;
-    }
+  /// Show Typeform popup once script is already loaded globally
+useEffect(() => {
+  const popupAlreadyShown = sessionStorage.getItem('typeformShown');
+  if (popupAlreadyShown || !window.typeformEmbed?.makePopup) return;
 
-    const loadTypeformScript = () => {
-      return new Promise<void>((resolve, reject) => {
-        // Check if script already exists
-        const existingScript = document.getElementById('typeform-embed-script');
-        if (existingScript) {
-          // Script exists, check if typeformEmbed is available
-          if (window.typeformEmbed?.makePopup) {
-            resolve();
-          } else {
-            // Wait for it to be available
-            const checkInterval = setInterval(() => {
-              if (window.typeformEmbed?.makePopup) {
-                clearInterval(checkInterval);
-                resolve();
-              }
-            }, 100);
-            
-            // Timeout after 10 seconds
-            setTimeout(() => {
-              clearInterval(checkInterval);
-              reject(new Error('Typeform script timeout'));
-            }, 10000);
-          }
-          return;
-        }
-
-        // Create and load the script
-        const script = document.createElement('script');
-        script.src = 'https://embed.typeform.com/next/embed.js';
-        script.id = 'typeform-embed-script';
-        script.async = true;
-
-        script.onload = () => {
-          // Wait for typeformEmbed to be available on window
-          const checkInterval = setInterval(() => {
-            if (window.typeformEmbed?.makePopup) {
-              clearInterval(checkInterval);
-              resolve();
-            }
-          }, 100);
-          
-          // Timeout after 5 seconds
-          setTimeout(() => {
-            clearInterval(checkInterval);
-            reject(new Error('Typeform embed object not available'));
-          }, 5000);
-        };
-
-        script.onerror = () => {
-          reject(new Error('Failed to load Typeform script'));
-        };
-
-        document.head.appendChild(script);
-      });
-    };
-
-    const showTypeformPopup = async () => {
-      try {
-        await loadTypeformScript();
-        
-        // Add a small delay before showing the popup
-        setTimeout(() => {
-          if (window.typeformEmbed?.makePopup) {
-            const popup = window.typeformEmbed.makePopup('https://form.typeform.com/to/pMxEV0gN', {
-              mode: 'popup',
-              autoClose: 0,
-              hideHeaders: true,
-              hideFooter: true,
-            });
-            
-            popup.open();
-            sessionStorage.setItem('typeformShown', 'true');
-            console.log('✅ Typeform popup opened successfully');
-          }
-        }, 2000); // 2-second delay for better UX
-        
-      } catch (error) {
-        console.error('❌ Failed to load Typeform:', error);
-      }
-    };
-
-    showTypeformPopup();
-  }, []);
+  try {
+    const popup = window.typeformEmbed.makePopup('https://form.typeform.com/to/pMxEV0gN', {
+      mode: 'popup',
+      autoClose: 0,
+      hideHeaders: true,
+      hideFooter: true,
+    });
+    popup.open();
+    sessionStorage.setItem('typeformShown', 'true');
+    console.log('✅ Typeform popup opened successfully');
+  } catch (err) {
+    console.error('❌ Failed to open Typeform popup:', err);
+  }
+}, []);
 
   useEffect(() => {
     if (!sessionId) {
