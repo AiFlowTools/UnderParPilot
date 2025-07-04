@@ -26,23 +26,21 @@ export default function ThankYou() {
     localStorage.removeItem('cart');
   }, []);
 
- useEffect(() => {
-  const popupAlreadyShown = sessionStorage.getItem('typeformShown');
-  if (popupAlreadyShown || !window.typeformEmbed?.makePopup) return;
+useEffect(() => {
+  if (sessionStorage.getItem('typeformShown')) return;
 
-  try {
-    const popup = window.typeformEmbed.makePopup('https://form.typeform.com/to/pMxEV0gN', {
-      mode: 'popup',
-      autoClose: 0,
-      hideHeaders: true,
-      hideFooter: true,
-    });
+  const popup = createPopup('https://form.typeform.com/to/pMxEV0gN', {
+    mode: 'popup',
+    autoClose: 0,
+    hideHeaders: true,
+    hideFooter: true,
+  });
+
+  setTimeout(() => {
     popup.open();
     sessionStorage.setItem('typeformShown', 'true');
-    console.log('✅ Typeform popup opened successfully');
-  } catch (err) {
-    console.error('❌ Failed to open Typeform popup:', err);
-  }
+    console.log('✅ Typeform popup opened using SDK');
+  }, 2000);
 }, []);
 
   useEffect(() => {
