@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CheckCircle2, AlertCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
-import * as typeformEmbed from '@typeform/embed';
+import { makePopup } from '@typeform/embed-react'; // ✅ CORRECT SDK for React usage
 
 interface Order {
   id: string;
@@ -21,19 +21,17 @@ export default function ThankYou() {
   const [order, setOrder] = useState<Order | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // ✅ Clear cart on mount
   useEffect(() => {
     localStorage.removeItem('cart');
   }, []);
 
-  // ✅ Show Typeform popup once
+  // ✅ Correctly use makePopup from @typeform/embed-react
   useEffect(() => {
-    const popupAlreadyShown = sessionStorage.getItem('typeformShown');
-    if (popupAlreadyShown) return;
+    if (sessionStorage.getItem('typeformShown')) return;
 
     try {
-      const popup = typeformEmbed.makePopup('https://form.typeform.com/to/pMxEV0gN', {
-        mode: 'slider',
+      const popup = makePopup('https://form.typeform.com/to/pMxEV0gN', {
+        mode: 'drawer_right',
         autoClose: 0,
         hideHeaders: true,
         hideFooter: true,
@@ -44,14 +42,12 @@ export default function ThankYou() {
       setTimeout(() => {
         popup.open();
         sessionStorage.setItem('typeformShown', 'true');
-        console.log('✅ Typeform popup opened using SDK');
-      }, 2000);
+      }, 1500);
     } catch (err) {
       console.error('❌ Failed to open Typeform popup:', err);
     }
   }, []);
 
-  // ✅ Fetch order from Supabase
   useEffect(() => {
     if (!sessionId) {
       setLoading(false);
@@ -76,7 +72,6 @@ export default function ThankYou() {
         setOrder(data);
         setError(null);
       } catch (err: any) {
-        console.error('Failed to fetch order:', err);
         setError('Unable to find your order. Please contact support.');
       } finally {
         setLoading(false);
@@ -86,15 +81,11 @@ export default function ThankYou() {
     fetchOrder();
   }, [sessionId]);
 
-  // ✅ Order summary
   const getOrderSummary = () => {
     if (!order?.ordered_items) return '';
-    return order.ordered_items
-      .map(item => `${item.quantity}x ${item.item_name}`)
-      .join(', ');
+    return order.ordered_items.map(item => `${item.quantity}x ${item.item_name}`).join(', ');
   };
 
-  // ✅ UI
   return (
     <div className="min-h-screen flex items-center justify-center bg-green-50 p-4">
       {loading ? (
@@ -104,9 +95,7 @@ export default function ThankYou() {
           <div className="flex justify-center mb-6">
             <AlertCircle className="text-red-600 w-20 h-20" />
           </div>
-          <h1 className="text-3xl font-serif text-charcoal mb-4">
-            Oops! Something went wrong
-          </h1>
+          <h1 className="text-3xl font-serif text-charcoal mb-4">Oops! Something went wrong</h1>
           <p className="text-charcoal mb-6">{error}</p>
           <button
             onClick={() => navigate('/')}
@@ -120,9 +109,7 @@ export default function ThankYou() {
           <div className="flex justify-center mb-6">
             <CheckCircle2 className="text-green-600 w-20 h-20 animate-bounce-subtle" />
           </div>
-          <h1 className="text-3xl font-serif text-charcoal mb-4">
-            Thank you for your order!
-          </h1>
+          <h1 className="text-3xl font-serif text-charcoal mb-4">Thank you for your order!</h1>
           {order ? (
             <p className="text-charcoal mb-6">
               Order <strong>#{order.id.slice(0, 8)}</strong> confirmed!<br />
