@@ -121,10 +121,14 @@ export default function ThankYou() {
               Your payment was successful. Your order will be prepared shortly!
             </p>
           )}
-          <p className="text-sm text-center mt-4 font-bold text-primary-green">
-  🎉 Help us improve! <br />
-  A short survey will arrive in your inbox soon — and it only takes 30 seconds 💌
-</p>
+          <div className="mt-4 text-sm text-center">
+  <p className="font-bold text-black">
+    🎉 Help us improve!
+  </p>
+  <p className="text-charcoal">
+    A short survey will arrive in your inbox soon — and it only takes 30 seconds 🕒
+  </p>
+</div>
           <button
             onClick={() => navigate('/')}
             className="bg-primary-green hover:bg-primary-dark text-white px-6 py-3 rounded-lg font-medium transition w-full max-w-xs mx-auto"
