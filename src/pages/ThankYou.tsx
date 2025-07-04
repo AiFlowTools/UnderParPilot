@@ -29,12 +29,14 @@ export default function ThankYou() {
 useEffect(() => {
   if (sessionStorage.getItem('typeformShown')) return;
 
-  const popup = createPopup('https://form.typeform.com/to/pMxEV0gN', {
-    mode: 'popup',
-    autoClose: 0,
-    hideHeaders: true,
-    hideFooter: true,
-  });
+  const popup = window.typeformEmbed.makePopup('https://form.typeform.com/to/pMxEV0gN', {
+  mode: 'slider',
+  autoClose: 0,
+  hideHeaders: true,
+  hideFooter: true,
+  width: '100%',
+  height: '100%',
+});
 
   setTimeout(() => {
     popup.open();
