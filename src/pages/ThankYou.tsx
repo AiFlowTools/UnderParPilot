@@ -129,6 +129,7 @@ export default function ThankYou() {
     A short survey will arrive in your inbox soon — and it only takes 30 seconds 🕒
   </p>
 </div>
+          
           <button
             onClick={() => navigate('/')}
             className="bg-primary-green hover:bg-primary-dark text-white px-6 py-3 rounded-lg font-medium transition w-full max-w-xs mx-auto"
