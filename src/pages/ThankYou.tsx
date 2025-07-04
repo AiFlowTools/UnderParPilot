@@ -121,6 +121,9 @@ export default function ThankYou() {
               Your payment was successful. Your order will be prepared shortly!
             </p>
           )}
+          <p className="text-sm text-charcoal mt-4 italic">
+  💬 Help us improve! A short survey will arrive in your inbox soon — and it only takes 30 seconds.
+</p>
           <button
             onClick={() => navigate('/')}
             className="bg-primary-green hover:bg-primary-dark text-white px-6 py-3 rounded-lg font-medium transition w-full max-w-xs mx-auto"
