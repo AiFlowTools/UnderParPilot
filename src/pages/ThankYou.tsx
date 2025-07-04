@@ -21,36 +21,36 @@ export default function ThankYou() {
   const [error, setError] = useState<string | null>(null);
 
  useEffect(() => {
-  if (!document.getElementById('typeform-script')) {
+  // Prevent multiple popups in a session
+  if (sessionStorage.getItem('typeformShown')) return;
+
+  // Check if script already exists
+  const existingScript = document.getElementById('typeform-embed-script');
+
+  if (!existingScript) {
     const script = document.createElement('script');
-    script.id = 'typeform-script';
-    script.src = '//embed.typeform.com/next/embed.js';
+    script.src = 'https://embed.typeform.com/next/embed.js';
+    script.id = 'typeform-embed-script';
     script.async = true;
 
     script.onload = () => {
-      console.log('✅ Typeform script loaded');
+      // Wait for the global to be available
+      const interval = setInterval(() => {
+        if (window?.typeformEmbed?.makePopup) {
+          clearInterval(interval);
 
-      // Wait until window.typeformEmbed is defined
-      const checkInterval = setInterval(() => {
-        if (window?.typeformEmbed?.makePopup && !sessionStorage.getItem('typeformShown')) {
           sessionStorage.setItem('typeformShown', 'true');
 
-          window.typeformEmbed
-            .makePopup('https://form.typeform.com/to/pMxEV0gN', {
-              mode: 'popup',
-              autoClose: 0,
-              hideHeaders: true,
-              hideFooter: true,
-            })
-            .open();
+          window.typeformEmbed.makePopup('https://form.typeform.com/to/pMxEV0gN', {
+            mode: 'popup',
+            autoClose: 0,
+            hideHeaders: true,
+            hideFooter: true,
+          }).open();
 
-          console.log('✅ Typeform popup launched');
-          clearInterval(checkInterval);
+          console.log('✅ Typeform popup opened');
         }
-      }, 200); // check every 200ms
-
-      // safety timeout after 5s
-      setTimeout(() => clearInterval(checkInterval), 5000);
+      }, 300);
     };
 
     document.body.appendChild(script);
