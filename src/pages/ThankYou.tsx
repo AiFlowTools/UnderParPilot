@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CheckCircle2, AlertCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
-import { createPopup } from '@typeform/embed';
+import { makePopup } from '@typeform/embed';
 
 interface Order {
   id: string;
