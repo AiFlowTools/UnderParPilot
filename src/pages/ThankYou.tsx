@@ -21,30 +21,37 @@ export default function ThankYou() {
   const [order, setOrder] = useState<Order | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Clear cart on mount
+  // ✅ Clear cart on mount
   useEffect(() => {
     localStorage.removeItem('cart');
   }, []);
 
-useEffect(() => {
-  if (sessionStorage.getItem('typeformShown')) return;
+  // ✅ Show Typeform popup once
+  useEffect(() => {
+    const popupAlreadyShown = sessionStorage.getItem('typeformShown');
+    if (popupAlreadyShown) return;
 
-  const popup = window.typeformEmbed.makePopup('https://form.typeform.com/to/pMxEV0gN', {
-  mode: 'slider',
-  autoClose: 0,
-  hideHeaders: true,
-  hideFooter: true,
-  width: '100%',
-  height: '100%',
-});
+    try {
+      const popup = makePopup('https://form.typeform.com/to/pMxEV0gN', {
+        mode: 'slider',
+        autoClose: 0,
+        hideHeaders: true,
+        hideFooter: true,
+        width: '100%',
+        height: '100%',
+      });
 
-  setTimeout(() => {
-    popup.open();
-    sessionStorage.setItem('typeformShown', 'true');
-    console.log('✅ Typeform popup opened using SDK');
-  }, 2000);
-}, []);
+      setTimeout(() => {
+        popup.open();
+        sessionStorage.setItem('typeformShown', 'true');
+        console.log('✅ Typeform popup opened using SDK');
+      }, 2000);
+    } catch (err) {
+      console.error('❌ Failed to open Typeform popup:', err);
+    }
+  }, []);
 
+  // ✅ Fetch order from Supabase
   useEffect(() => {
     if (!sessionId) {
       setLoading(false);
@@ -79,6 +86,7 @@ useEffect(() => {
     fetchOrder();
   }, [sessionId]);
 
+  // ✅ Order summary
   const getOrderSummary = () => {
     if (!order?.ordered_items) return '';
     return order.ordered_items
@@ -86,6 +94,7 @@ useEffect(() => {
       .join(', ');
   };
 
+  // ✅ UI
   return (
     <div className="min-h-screen flex items-center justify-center bg-green-50 p-4">
       {loading ? (
