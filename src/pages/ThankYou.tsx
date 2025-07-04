@@ -2,18 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CheckCircle2, AlertCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
-
-// Extend Window interface to include typeformEmbed
-declare global {
-  interface Window {
-    typeformEmbed?: {
-      makePopup: (url: string, options?: any) => {
-        open: () => void;
-        close: () => void;
-      };
-    };
-  }
-}
+import { createPopup } from '@typeform/embed';
 
 interface Order {
   id: string;
