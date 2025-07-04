@@ -26,8 +26,7 @@ export default function ThankYou() {
     localStorage.removeItem('cart');
   }, []);
 
-  /// Show Typeform popup once script is already loaded globally
-useEffect(() => {
+ useEffect(() => {
   const popupAlreadyShown = sessionStorage.getItem('typeformShown');
   if (popupAlreadyShown || !window.typeformEmbed?.makePopup) return;
 
