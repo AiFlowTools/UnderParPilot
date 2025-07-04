@@ -21,37 +21,41 @@ export default function ThankYou() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    localStorage.removeItem('cart');
+  // Only inject the script once
+  if (!document.getElementById('typeform-script')) {
+    const script = document.createElement('script');
+    script.id = 'typeform-script';
+    script.src = '//embed.typeform.com/next/embed.js';
+    script.async = true;
 
-    // Inject Typeform script
-    if (!document.getElementById('typeform-script')) {
-      const script = document.createElement('script');
-      script.id = 'typeform-script';
-      script.src = '//embed.typeform.com/next/embed.js';
-      script.async = true;
-      script.onload = () => {
-        console.log('✅ Typeform script loaded');
+    script.onload = () => {
+      console.log('✅ Typeform script loaded');
 
-        // Auto-popup after short delay, only once per session
-        if (!sessionStorage.getItem('typeformShown') && window?.typeformEmbed?.makePopup) {
-          setTimeout(() => {
-            const popup = window.typeformEmbed.makePopup(
-              'https://form.typeform.com/to/pMxEV0gN',
-              {
+      // Only show popup once per session
+      if (!sessionStorage.getItem('typeformShown')) {
+        sessionStorage.setItem('typeformShown', 'true');
+
+        // Delay popup slightly for smoother UX
+        setTimeout(() => {
+          if (window?.typeformEmbed?.makePopup) {
+            window.typeformEmbed
+              .makePopup('https://form.typeform.com/to/pMxEV0gN', {
                 mode: 'popup',
                 autoClose: 0,
                 hideHeaders: true,
                 hideFooter: true,
-              }
-            );
-            popup.open();
-            sessionStorage.setItem('typeformShown', 'true');
-          }, 2000); // 2-second delay
-        }
-      };
-      document.body.appendChild(script);
-    }
-  }, []);
+              })
+              .open();
+          } else {
+            console.warn('❌ Typeform popup method not found.');
+          }
+        }, 2000);
+      }
+    };
+
+    document.body.appendChild(script);
+  }
+}, []);
 
   useEffect(() => {
     if (!sessionId) {
