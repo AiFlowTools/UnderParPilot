@@ -153,7 +153,7 @@ export default function Menu() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-20 pb-32">
+    <div className="min-h-screen bg-gray-50 pb-32">
       <Header 
         onClick={() => setSelectedCategory('Breakfast')} 
         onHowItWorksClick={() => setIsHowItWorksOpen(true)}
