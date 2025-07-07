@@ -13,7 +13,7 @@ export default function Header({ className = '', onClick, onHowItWorksClick }: H
   const { course } = useCourse();
 
   return (
-    <div className={`fixed top-0 left-0 right-0 bg-white shadow-md z-50 h-20 ${className}`}>
+    <div className={`fixed top-0 left-0 right-0 bg-white shadow-md z-50 ${className}`}>
       <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
         <div className="flex items-center" onClick={onClick}>
           {course?.logo_url ? (

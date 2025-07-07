@@ -54,7 +54,7 @@ function App() {
       <Route path="/thank-you" element={<ThankYou />} />
 
       <Route path="/tee-times" element={
-        <div className="min-h-screen bg-[#f8f9fa] pt-20">
+        <div className="min-h-screen bg-[#f8f9fa]">
           <div 
             className="h-[40vh] bg-cover bg-center relative"
             style={{
