@@ -80,7 +80,7 @@ export default function MenuItemCard({ item, onClick }: MenuItemCardProps) {
     <>
       <div className="menu-item-card cursor-pointer group relative" onClick={handleCardClick}>
         {item.image_url && (
-          <div className="relative h-48 w-full overflow-hidden">
+          <div className="relative h-48 w-full overflow-hidden z-0">
             <img
               src={item.image_url}
               alt={item.item_name}
