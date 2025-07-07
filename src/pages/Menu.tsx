@@ -276,6 +276,7 @@ export default function Menu() {
     Proceed to Checkout
   </Link>
 </div>
+
           )}
         </div>
       )}
