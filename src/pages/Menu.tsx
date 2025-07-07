@@ -153,14 +153,14 @@ export default function Menu() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-32">
+    <div className="min-h-screen bg-gray-50 pb-32 pt-20">
       <Header 
         onClick={() => setSelectedCategory('Breakfast')} 
         onHowItWorksClick={() => setIsHowItWorksOpen(true)}
         className="cursor-pointer hover:opacity-90 transition-opacity" 
       />
 
-      <div className="max-w-7xl mx-auto px-4 pt-24">
+      <div className="max-w-7xl mx-auto px-4 pt-4">
         <div className="sticky top-20 bg-gray-50 z-10 py-4">
           <div className="flex items-center overflow-x-auto pb-4 gap-4 -mx-4 px-4">
             <button onClick={() => setIsCategoryDrawerOpen(true)} className="flex-shrink-0 p-2 hover:bg-gray-100 rounded-full transition-colors" aria-label="Open category menu">

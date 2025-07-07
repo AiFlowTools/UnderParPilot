@@ -63,7 +63,7 @@ export default function ThankYou() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-green-50 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-green-50 p-4 pt-24">
       {loading ? (
         <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-green-600" />
       ) : error ? (
