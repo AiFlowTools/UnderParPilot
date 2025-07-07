@@ -84,7 +84,7 @@ export default function MenuItemCard({ item, onClick }: MenuItemCardProps) {
             <img
               src={item.image_url}
               alt={item.item_name}
-              className="w-full h-full object-contain max-h-40 mx-auto transition-transform duration-300 group-hover:scale-105"
+              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
               loading="lazy"
             />
             
