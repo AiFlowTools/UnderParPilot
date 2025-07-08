@@ -259,7 +259,13 @@ export default function Menu() {
 
       {cart.length > 0 && (
         <div className={`cart-drawer ${isCartOpen ? 'animate-slideUp' : ''}`}>
-          <button onClick={() => setIsCartOpen(!isCartOpen)} className="w-full bg-[#28a745] text-white p-4 flex items-center justify-between hover:bg-[#218838] transition-colors">
+          <button
+  onClick={() => {
+    setIsCartOpen(!isCartOpen);
+    setIsCategoryDrawerOpen(false); // 👈 close category drawer if cart is opening
+  }}
+  className="w-full bg-[#28a745] text-white p-4 flex items-center justify-between hover:bg-[#218838] transition-colors"
+>
             <div className="flex items-center">
               <ShoppingBag className="w-5 h-5 mr-2" />
               <span className="font-medium">
