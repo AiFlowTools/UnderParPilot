@@ -287,4 +287,15 @@ export default function Menu() {
               <div className="flex justify-center">
                 <Link 
                   to="/checkout" 
-                  className="mobile-button bg-[#28a745] text
+                  className="mobile-button bg-[#28a745] text-white text-center hover:bg-[#218838] px-6 py-3 rounded-lg font-medium transition w-full max-w-xs"
+                >
+                  Proceed to Checkout
+                </Link>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
