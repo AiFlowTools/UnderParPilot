@@ -53,12 +53,6 @@ export default function Menu() {
   const isMobile = window.innerWidth < 768;
 
   useEffect(() => {
-  if (isCategoryDrawerOpen) {
-    document.body.style.overflow = 'hidden';
-  } else {
-    document.body.style.overflow = '';
-  }
-    useEffect(() => {
     const saved = localStorage.getItem('cart');
     if (saved) {
       try {
@@ -79,20 +73,31 @@ export default function Menu() {
       .eq('golf_course_id', course.id)
       .then(({ data, error: e }) => {
         if (e) throw e;
-        
-        // Parse tags from string to array if needed
+
         const processedData = (data || []).map(item => ({
           ...item,
           tags: typeof item.tags === 'string' 
             ? item.tags.split(',').map(tag => tag.trim()).filter(Boolean)
             : item.tags || []
         }));
-        
+
         setMenuItems(processedData);
       })
       .catch(err => setError(err.message))
       .finally(() => setLoading(false));
   }, [course?.id]);
+
+  useEffect(() => {
+    if (isCategoryDrawerOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isCategoryDrawerOpen]);
 
   const filteredItems = menuItems.filter(item => item.category === selectedCategory);
 
@@ -169,14 +174,14 @@ export default function Menu() {
       <div className="max-w-7xl mx-auto px-4 pt-24">
         <div className="sticky top-20 bg-gray-50 z-40 pt-2 pb-3">
           <div className="flex items-center overflow-x-auto pb-4 gap-4 -mx-4 px-4">
-           <button 
-  onClick={() => {
-    setIsCategoryDrawerOpen(true);
-    setIsCartOpen(false); // 👈 this closes the cart drawer
-  }}
-  className="flex-shrink-0 p-2 hover:bg-gray-100 rounded-full transition-colors"
-  aria-label="Open category menu"
->
+            <button 
+              onClick={() => {
+                setIsCategoryDrawerOpen(true);
+                setIsCartOpen(false);
+              }}
+              className="flex-shrink-0 p-2 hover:bg-gray-100 rounded-full transition-colors"
+              aria-label="Open category menu"
+            >
               <MenuIcon className="w-6 h-6" />
             </button>
             {categories.map(({ id, name, icon: Icon, color }) => (
@@ -199,20 +204,18 @@ export default function Menu() {
         </div>
       </div>
 
-      {/* How It Works Modal */}
       <HowItWorksModal 
         isOpen={isHowItWorksOpen}
         onClose={() => setIsHowItWorksOpen(false)}
       />
 
-      {/* Category Drawer */}
       {isCategoryDrawerOpen && (
         <>
           <div 
             className="fixed inset-0 bg-black bg-opacity-50 z-40"
             onClick={() => setIsCategoryDrawerOpen(false)}
           />
-          <div className="fixed inset-x-0 bottom-0 bg-white rounded-t-2xl z-40 max-h-[85vh] flex flex-col">
+          <div className="fixed inset-x-0 bottom-0 bg-white rounded-t-2xl z-40 max-h-[85vh] flex flex-col overflow-y-auto">
             <div className="flex items-center justify-between px-4 py-3 border-b">
               <h2 className="text-lg font-semibold">Menu Categories</h2>
               <button
@@ -284,15 +287,4 @@ export default function Menu() {
               <div className="flex justify-center">
                 <Link 
                   to="/checkout" 
-                  className="mobile-button bg-[#28a745] text-white text-center hover:bg-[#218838] px-6 py-3 rounded-lg font-medium transition w-full max-w-xs"
-                >
-                  Proceed to Checkout
-                </Link>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
+                  className="mobile-button bg-[#28a745] text
