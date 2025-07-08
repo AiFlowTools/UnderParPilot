@@ -196,10 +196,10 @@ export default function Menu() {
       {isCategoryDrawerOpen && (
         <>
           <div 
-            className="fixed inset-0 bg-black bg-opacity-50 z-50"
+            className="fixed inset-0 bg-black bg-opacity-50 z-40"
             onClick={() => setIsCategoryDrawerOpen(false)}
           />
-          <div className="fixed inset-x-0 bottom-0 bg-white rounded-t-2xl z-50 max-h-[85vh] flex flex-col">
+          <div className="fixed inset-x-0 bottom-0 bg-white rounded-t-2xl z-40 max-h-[85vh] flex flex-col">
             <div className="flex items-center justify-between px-4 py-3 border-b">
               <h2 className="text-lg font-semibold">Menu Categories</h2>
               <button
