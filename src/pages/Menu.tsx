@@ -53,6 +53,12 @@ export default function Menu() {
   const isMobile = window.innerWidth < 768;
 
   useEffect(() => {
+  if (isCategoryDrawerOpen) {
+    document.body.style.overflow = 'hidden';
+  } else {
+    document.body.style.overflow = '';
+  }
+    useEffect(() => {
     const saved = localStorage.getItem('cart');
     if (saved) {
       try {
