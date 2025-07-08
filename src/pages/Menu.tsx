@@ -163,7 +163,14 @@ export default function Menu() {
       <div className="max-w-7xl mx-auto px-4 pt-24">
         <div className="sticky top-20 bg-gray-50 z-40 pt-2 pb-3">
           <div className="flex items-center overflow-x-auto pb-4 gap-4 -mx-4 px-4">
-            <button onClick={() => setIsCategoryDrawerOpen(true)} className="flex-shrink-0 p-2 hover:bg-gray-100 rounded-full transition-colors" aria-label="Open category menu">
+           <button 
+  onClick={() => {
+    setIsCategoryDrawerOpen(true);
+    setIsCartOpen(false); // 👈 this closes the cart drawer
+  }}
+  className="flex-shrink-0 p-2 hover:bg-gray-100 rounded-full transition-colors"
+  aria-label="Open category menu"
+>
               <MenuIcon className="w-6 h-6" />
             </button>
             {categories.map(({ id, name, icon: Icon, color }) => (
