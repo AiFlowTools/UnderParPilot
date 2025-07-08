@@ -155,12 +155,7 @@ export default function Menu() {
   return (
     <div className="min-h-screen bg-gray-50 pb-32">
       <Header 
-       <button
-  key={id}
-  onClick={() => {
-    setSelectedCategory(id);
-    setIsCartOpen(false); // 👈 Closes cart when selecting category
-  }}
+        onClick={() => setSelectedCategory('Breakfast')} 
         onHowItWorksClick={() => setIsHowItWorksOpen(true)}
         className="cursor-pointer hover:opacity-90 transition-opacity" 
       />
