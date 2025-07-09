@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X, Minus, Plus, ChevronLeft } from 'lucide-react';
+import ItemTag from './ItemTag';
 
 interface MenuItemDetailProps {
   item: {
@@ -87,6 +88,23 @@ export default function MenuItemDetail({ item, onClose, onAddToCart, isMobile }:
                 style={{ backgroundImage: `url(${item.image_url})` }}
               />
             )}
+            <div className="mb-6">
+  <p className="text-gray-600">{item.description}</p>
+  <p className="text-xl font-bold mt-2">${item.price.toFixed(2)}</p>
+
+  {item.tags && (
+    <div className="flex flex-wrap gap-2 mt-3">
+      {item.tags.slice(0, 3).map((tag, idx) => (
+        <ItemTag key={idx} type={tag} />
+      ))}
+      {item.tags.length > 3 && (
+        <span className="text-xs bg-gray-300 text-gray-700 px-2 py-0.5 rounded-full shadow-sm">
+          +{item.tags.length - 3}
+        </span>
+      )}
+    </div>
+  )}
+</div>
 
             <div className="mb-6">
   <p className="text-gray-600">{item.description}</p>
