@@ -199,10 +199,7 @@ export default function Menu() {
             <MenuItemCard
               key={item.id}
               item={item}
-              onClick={() => {
-                setSelectedItem(item);
-                setIsCartOpen(false); // Close cart when item detail opens
-              }}
+              onClick={() => setSelectedItem(item)}
             />
           ))}
         </div>
@@ -262,14 +259,51 @@ export default function Menu() {
         />
       )}
 
-      <CartModal 
-        isOpen={isCartOpen} 
-        cart={cart} 
-        setIsCartOpen={setIsCartOpen} 
-        updateQuantity={updateQuantity} 
-        cartItemCount={cartItemCount} 
-        cartTotal={cartTotal}
-      />
+      {cart.length > 0 && (
+        <div className={`cart-drawer ${isCartOpen ? 'animate-slideUp' : ''}`}>
+          <button
+  onClick={() => {
+    setIsCartOpen(!isCartOpen);
+    setIsCategoryDrawerOpen(false); // 👈 close category drawer if cart is opening
+  }}
+  className="w-full bg-[#28a745] text-white p-4 flex items-center justify-between hover:bg-[#218838] transition-colors"
+>
+            <div className="flex items-center">
+              <ShoppingBag className="w-5 h-5 mr-2" />
+              <span className="font-medium">
+                {cartItemCount} {cartItemCount === 1 ? 'item' : 'items'} • ${cartTotal.toFixed(2)}
+              </span>
+            </div>
+            {isCartOpen ? <X className="w-5 h-5" /> : <ChevronUp className="w-5 h-5" />}
+          </button>
+
+          {isCartOpen && (
+            <div className="bg-white p-4 space-y-4">
+              {cart.map((item, index) => (
+                <div key={`${item.id}-${index}`} className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
+                  <div>
+                    <h4 className="font-medium">{item.item_name}</h4>
+                    <p className="text-sm text-gray-600">${item.price.toFixed(2)} each</p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <button onClick={(e) => { e.stopPropagation(); updateQuantity(item.id, -1); }} className="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-full">-</button>
+                    <span className="w-8 text-center">{item.quantity}</span>
+                    <button onClick={(e) => { e.stopPropagation(); updateQuantity(item.id, 1); }} className="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-full">+</button>
+                  </div>
+                </div>
+              ))}
+              <div className="flex justify-center">
+                <Link 
+                  to="/checkout" 
+                  className="mobile-button bg-[#28a745] text-white text-center hover:bg-[#218838] px-6 py-3 rounded-lg font-medium transition w-full max-w-xs"
+                >
+                  Proceed to Checkout
+                </Link>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
