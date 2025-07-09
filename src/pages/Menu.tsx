@@ -248,17 +248,15 @@ export default function Menu() {
         </>
       )}
 
-      {{selectedItem && (
-  <MenuItemDetail
-    item={selectedItem}
-    onClose={() => setSelectedItem(null)}
-    onAddToCart={(quantity, selectedModifiers) => 
-      addToCart(selectedItem, quantity, selectedModifiers)
-    }
-    onCloseCart={() => setIsCartOpen(false)} // ✅ Add this line
-    isMobile={isMobile}
-  />
-)}
+      {selectedItem && (
+        <MenuItemDetail
+          item={selectedItem}
+          onClose={() => setSelectedItem(null)}
+          onAddToCart={(quantity, selectedModifiers) => addToCart(selectedItem, quantity, selectedModifiers)}
+          onCloseCart={() => setIsCartOpen(false)} 
+          isMobile={isMobile}
+        />
+      )}
 
       {cart.length > 0 && (
         <div className={`cart-drawer ${isCartOpen ? 'animate-slideUp' : ''}`}>
