@@ -89,39 +89,23 @@ export default function MenuItemDetail({ item, onClose, onAddToCart, isMobile }:
               />
             )}
             <div className="mb-6">
-  <p className="text-gray-600">{item.description}</p>
-  <p className="text-xl font-bold mt-2">${item.price.toFixed(2)}</p>
+              <p className="text-gray-600">{item.description}</p>
+              <p className="text-xl font-bold mt-2">${item.price.toFixed(2)}</p>
 
-  {item.tags && (
-    <div className="flex flex-wrap gap-2 mt-3">
-      {item.tags.slice(0, 3).map((tag, idx) => (
-        <ItemTag key={idx} type={tag} />
-      ))}
-      {item.tags.length > 3 && (
-        <span className="text-xs bg-gray-300 text-gray-700 px-2 py-0.5 rounded-full shadow-sm">
-          +{item.tags.length - 3}
-        </span>
-      )}
-    </div>
-  )}
-</div>
-
-            <div className="mb-6">
-  <p className="text-gray-600">{item.description}</p>
-  <p className="text-xl font-bold mt-2">${item.price.toFixed(2)}</p>
-
-  {/* Tags */}
-  <div className="flex flex-wrap gap-2 mt-2">
-    {item.tags?.map((tag, index) => (
-      <span
-        key={index}
-        className={`inline-block rounded-full bg-yellow-100 text-yellow-800 text-xs font-medium px-3 py-1`}
-      >
-        {tag}
-      </span>
-    ))}
-  </div>
-</div>
+              {/* ✅ Emoji-enhanced Tags */}
+              {item.tags && (
+                <div className="flex flex-wrap gap-2 mt-3">
+                  {item.tags.slice(0, 3).map((tag, idx) => (
+                    <ItemTag key={idx} type={tag} />
+                  ))}
+                  {item.tags.length > 3 && (
+                    <span className="text-xs bg-gray-300 text-gray-700 px-2 py-0.5 rounded-full shadow-sm">
+                      +{item.tags.length - 3}
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
 
             {/* Modifiers */}
             {item.modifiers && item.modifiers.length > 0 && (
