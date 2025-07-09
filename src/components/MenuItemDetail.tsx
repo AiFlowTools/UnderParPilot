@@ -18,19 +18,21 @@ interface MenuItemDetailProps {
   };
   onClose: () => void;
   onAddToCart: (quantity: number, selectedModifiers: string[]) => void;
+  onCloseCart?: () => void; // ✅ Add this to props
   isMobile: boolean;
-  onCloseCart?: () => void; // Optional callback to close cart when detail opens
 }
 
-export default function MenuItemDetail({ item, onClose, onAddToCart, isMobile, onCloseCart }: MenuItemDetailProps) {
+export default function MenuItemDetail({ item, onClose, onAddToCart, onCloseCart, isMobile }: MenuItemDetailProps) {
   const [quantity, setQuantity] = useState(1);
   const [selectedModifiers, setSelectedModifiers] = useState<string[]>([]);
 
+  // ✅ Auto-close cart drawer when detail opens
   useEffect(() => {
     if (onCloseCart) {
+      console.log('[MenuItemDetail] Auto-closing cart...');
       onCloseCart();
     }
-  }, [onCloseCart]);
+  }, []);
 
   const updateQuantity = (delta: number) => {
     setQuantity(Math.max(1, quantity + delta));
@@ -99,7 +101,7 @@ export default function MenuItemDetail({ item, onClose, onAddToCart, isMobile, o
               <p className="text-gray-600">{item.description}</p>
               <p className="text-xl font-bold mt-2">${item.price.toFixed(2)}</p>
 
-              {/* Tags */}
+              {/* Tags (with icon styling) */}
               {item.tags && (
                 <div className="flex flex-wrap gap-2 mt-3">
                   {item.tags.slice(0, 3).map((tag, idx) => (
