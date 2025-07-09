@@ -126,9 +126,6 @@ export default function MenuItemCard({ item, onClick }: MenuItemCardProps) {
         className={`text-xs font-semibold px-2 py-1 rounded-full ${
           tag.toLowerCase() === 'best seller'
             ? 'bg-yellow-200 text-yellow-800'
-            : tag.toLowerCase() === 'most liked'
-            ? 'bg-green-200 text-green-800'
-            : 'bg-gray-200 text-gray-800'
         }`}
       >
         {tag}
