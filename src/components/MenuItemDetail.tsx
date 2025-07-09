@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Minus, Plus, ChevronLeft } from 'lucide-react';
 import ItemTag from './ItemTag';
 
@@ -19,11 +19,18 @@ interface MenuItemDetailProps {
   onClose: () => void;
   onAddToCart: (quantity: number, selectedModifiers: string[]) => void;
   isMobile: boolean;
+  onCloseCart?: () => void; // Optional callback to close cart when detail opens
 }
 
-export default function MenuItemDetail({ item, onClose, onAddToCart, isMobile }: MenuItemDetailProps) {
+export default function MenuItemDetail({ item, onClose, onAddToCart, isMobile, onCloseCart }: MenuItemDetailProps) {
   const [quantity, setQuantity] = useState(1);
   const [selectedModifiers, setSelectedModifiers] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (onCloseCart) {
+      onCloseCart();
+    }
+  }, [onCloseCart]);
 
   const updateQuantity = (delta: number) => {
     setQuantity(Math.max(1, quantity + delta));
@@ -69,7 +76,7 @@ export default function MenuItemDetail({ item, onClose, onAddToCart, isMobile }:
                   <ChevronLeft className="w-6 h-6" />
                 </button>
               ) : (
-                <div className="w-8" /> // Spacer for alignment
+                <div className="w-8" />
               )}
               <h2 className="text-lg font-semibold">{item.item_name}</h2>
               {!isMobile && (
@@ -92,7 +99,7 @@ export default function MenuItemDetail({ item, onClose, onAddToCart, isMobile }:
               <p className="text-gray-600">{item.description}</p>
               <p className="text-xl font-bold mt-2">${item.price.toFixed(2)}</p>
 
-              {/* ✅ Emoji-enhanced Tags */}
+              {/* Tags */}
               {item.tags && (
                 <div className="flex flex-wrap gap-2 mt-3">
                   {item.tags.slice(0, 3).map((tag, idx) => (
