@@ -108,7 +108,6 @@ export default function MenuItemCard({ item, onClick }: MenuItemCardProps) {
         
         <div className="p-4">
           <div className="mb-2">
-            {item.tags?.map(tag => <ItemTag key={tag} type={tag} />)}
           </div>
           <h3 className="text-xl font-semibold mb-2 group-hover:text-green-600 transition-colors duration-200">
             {item.item_name}
