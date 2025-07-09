@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { ZoomIn, Flame, Leaf, Trophy } from 'lucide-react';
-import TagDisplay from './TagDisplay';
 
 interface MenuItem {
   id: string;
@@ -13,7 +12,7 @@ interface MenuItem {
 
 interface MenuItemCardProps {
   item: MenuItem;
-  onClick: () => void;1
+  onClick: () => void;
 }
 
 const ItemTag = ({ type }: { type: string }) => {
@@ -25,7 +24,7 @@ const ItemTag = ({ type }: { type: string }) => {
     case 'bestseller':
       return <span className="item-tag tag-bestseller"><Trophy className="w-3 h-3 mr-1" />Best Seller</span>;
     default:
-      return null;
+      return <span className="item-tag tag-generic">{type.charAt(0).toUpperCase() + type.slice(1)}</span>;
   }
 };
 
@@ -76,6 +75,9 @@ export default function MenuItemCard({ item, onClick }: MenuItemCardProps) {
     onClick();
   };
 
+  const visibleTags = item.tags?.slice(0, 3) || [];
+  const remainingCount = (item.tags?.length || 0) - visibleTags.length;
+
   return (
     <>
       <div className="menu-item-card cursor-pointer group relative" onClick={handleCardClick}>
@@ -87,7 +89,6 @@ export default function MenuItemCard({ item, onClick }: MenuItemCardProps) {
               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
               loading="lazy"
             />
-            
             {/* Image zoom overlay */}
             <div 
               className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
@@ -97,18 +98,19 @@ export default function MenuItemCard({ item, onClick }: MenuItemCardProps) {
                 <ZoomIn className="w-4 h-4 text-gray-800" />
               </div>
             </div>
-            
-            {/* Tags Display */}
-            <TagDisplay tags={item.tags || []} />
-            
             {/* Hover overlay */}
             <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300" />
           </div>
         )}
-        
+
         <div className="p-4">
-          <div className="mb-2">
-            {item.tags?.map(tag => <ItemTag key={tag} type={tag} />)}
+          <div className="flex flex-wrap gap-2 mb-2">
+            {visibleTags.map(tag => <ItemTag key={tag} type={tag} />)}
+            {remainingCount > 0 && (
+              <span className="text-xs bg-gray-300 text-gray-700 px-2 py-0.5 rounded-full shadow-sm hover:bg-gray-400 transition-colors duration-200">
+                +{remainingCount}
+              </span>
+            )}
           </div>
           <h3 className="text-xl font-semibold mb-2 group-hover:text-green-600 transition-colors duration-200">
             {item.item_name}
