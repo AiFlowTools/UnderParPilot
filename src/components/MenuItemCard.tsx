@@ -118,6 +118,24 @@ export default function MenuItemCard({ item, onClick }: MenuItemCardProps) {
             <span className="text-2xl font-bold text-green-600">
               ${item.price.toFixed(2)}
             </span>
+            {item.tags?.length > 0 && (
+  <div className="mt-1 flex flex-wrap gap-1">
+    {item.tags.map((tag) => (
+      <span
+        key={tag}
+        className={`text-xs font-semibold px-2 py-1 rounded-full ${
+          tag.toLowerCase() === 'best seller'
+            ? 'bg-yellow-200 text-yellow-800'
+            : tag.toLowerCase() === 'most liked'
+            ? 'bg-green-200 text-green-800'
+            : 'bg-gray-200 text-gray-800'
+        }`}
+      >
+        {tag}
+      </span>
+    ))}
+  </div>
+)}
           </div>
         </div>
       </div>
