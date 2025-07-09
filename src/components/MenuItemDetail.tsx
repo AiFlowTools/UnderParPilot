@@ -8,6 +8,7 @@ interface MenuItemDetailProps {
     description: string;
     price: number;
     image_url?: string;
+    tags?: string[];
     modifiers?: {
       id: string;
       name: string;
@@ -88,9 +89,21 @@ export default function MenuItemDetail({ item, onClose, onAddToCart, isMobile }:
             )}
 
             <div className="mb-6">
-              <p className="text-gray-600">{item.description}</p>
-              <p className="text-xl font-bold mt-2">${item.price.toFixed(2)}</p>
-            </div>
+  <p className="text-gray-600">{item.description}</p>
+  <p className="text-xl font-bold mt-2">${item.price.toFixed(2)}</p>
+
+  {/* Tags */}
+  <div className="flex flex-wrap gap-2 mt-2">
+    {item.tags?.map((tag, index) => (
+      <span
+        key={index}
+        className={`inline-block rounded-full bg-yellow-100 text-yellow-800 text-xs font-medium px-3 py-1`}
+      >
+        {tag}
+      </span>
+    ))}
+  </div>
+</div>
 
             {/* Modifiers */}
             {item.modifiers && item.modifiers.length > 0 && (
