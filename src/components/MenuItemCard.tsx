@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ZoomIn, Flame, Leaf, Trophy } from 'lucide-react';
+import TagDisplay from './TagDisplay';
 
 interface MenuItem {
   id: string;
@@ -104,14 +105,7 @@ export default function MenuItemCard({ item, onClick }: MenuItemCardProps) {
         )}
 
         <div className="p-4">
-          <div className="flex flex-wrap gap-2 mb-2">
-            {visibleTags.map(tag => <ItemTag key={tag} type={tag} />)}
-            {remainingCount > 0 && (
-              <span className="text-xs bg-gray-300 text-gray-700 px-2 py-0.5 rounded-full shadow-sm hover:bg-gray-400 transition-colors duration-200">
-                +{remainingCount}
-              </span>
-            )}
-          </div>
+          <TagDisplay tags={item.tags || []} className="mb-2" />
           <h3 className="text-xl font-semibold mb-2 group-hover:text-green-600 transition-colors duration-200">
             {item.item_name}
           </h3>
