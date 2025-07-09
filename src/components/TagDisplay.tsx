@@ -12,9 +12,9 @@ const tagConfig: Record<string, { label: string; emoji: string; color: string }>
   glutenfree: { label: 'Gluten-Free', emoji: '🌾', color: 'bg-green-100 text-green-800' },
   dairyfree: { label: 'Dairy-Free', emoji: '🥛', color: 'bg-green-100 text-green-800' },
   vegan: { label: 'Vegan', emoji: '🥬', color: 'bg-green-100 text-green-800' },
-  keto: { label: 'Keto', emoji: '🥓', color: 'bg-green-100 text-green-800' },
+  keto: { label: 'Keto', emoji: '🥩', color: 'bg-green-100 text-green-800' },
   lowcarb: { label: 'Low-Carb', emoji: '📉', color: 'bg-green-100 text-green-800' },
-  organic: { label: 'Organic', emoji: '🌱', color: 'bg-green-100 text-green-800' },
+  organic: { label: 'Organic', emoji: '🍃', color: 'bg-green-100 text-green-800' },
   local: { label: 'Local', emoji: '📍', color: 'bg-green-100 text-green-800' },
 };
 
@@ -26,16 +26,18 @@ export default function TagDisplay({ tags, className = '' }: TagDisplayProps) {
 
   return (
     <div className={`flex flex-wrap gap-2 ${className}`}>
-      {visibleTags.map((tag, index) => {
-        const key = tag.toLowerCase().replace(/[-_ ]/g, '');
-        const config = tagConfig[key];
+      {visibleTags.map((rawTag, index) => {
+        const normalizedTag = rawTag.toLowerCase().replace(/[^a-z]/g, '');
+        const config = tagConfig[normalizedTag];
 
         return (
           <span
             key={index}
-            className={`text-xs px-2 py-0.5 rounded-full shadow-sm ${config?.color ?? 'bg-gray-200 text-gray-800'}`}
+            className={`text-xs px-2 py-0.5 rounded-full shadow-sm ${
+              config?.color ?? 'bg-gray-200 text-gray-800'
+            }`}
           >
-            {config ? `${config.emoji} ${config.label}` : tag}
+            {config ? `${config.emoji} ${config.label}` : rawTag}
           </span>
         );
       })}
