@@ -5,52 +5,17 @@ interface TagDisplayProps {
   className?: string;
 }
 
-const tagStyles: Record<
-  string,
-  { color: string; emoji: string; label: string }
-> = {
-  spicy: { color: 'bg-red-100 text-red-800', emoji: '🌶️', label: 'Spicy' },
-  vegetarian: {
-    color: 'bg-green-100 text-green-800',
-    emoji: '🥦',
-    label: 'Vegetarian',
-  },
-  bestseller: {
-    color: 'bg-yellow-100 text-yellow-800',
-    emoji: '🏆',
-    label: 'Best Seller',
-  },
-  glutenfree: {
-    color: 'bg-emerald-100 text-emerald-800',
-    emoji: '🌾',
-    label: 'Gluten-Free',
-  },
-  dairyfree: {
-    color: 'bg-emerald-100 text-emerald-800',
-    emoji: '🥛',
-    label: 'Dairy-Free',
-  },
-  vegan: {
-    color: 'bg-emerald-100 text-emerald-800',
-    emoji: '🌱',
-    label: 'Vegan',
-  },
-  keto: { color: 'bg-emerald-100 text-emerald-800', emoji: '🥩', label: 'Keto' },
-  lowcarb: {
-    color: 'bg-emerald-100 text-emerald-800',
-    emoji: '⚖️',
-    label: 'Low-Carb',
-  },
-  organic: {
-    color: 'bg-emerald-100 text-emerald-800',
-    emoji: '🍃',
-    label: 'Organic',
-  },
-  local: {
-    color: 'bg-emerald-100 text-emerald-800',
-    emoji: '📍',
-    label: 'Local',
-  },
+const tagConfig: Record<string, { label: string; emoji: string; color: string }> = {
+  spicy: { label: 'Spicy', emoji: '🌶️', color: 'bg-red-100 text-red-800' },
+  vegetarian: { label: 'Vegetarian', emoji: '🥦', color: 'bg-green-100 text-green-800' },
+  bestseller: { label: 'Best Seller', emoji: '🏆', color: 'bg-yellow-100 text-yellow-800' },
+  glutenfree: { label: 'Gluten-Free', emoji: '🌾', color: 'bg-green-100 text-green-800' },
+  dairyfree: { label: 'Dairy-Free', emoji: '🥛', color: 'bg-green-100 text-green-800' },
+  vegan: { label: 'Vegan', emoji: '🥬', color: 'bg-green-100 text-green-800' },
+  keto: { label: 'Keto', emoji: '🥓', color: 'bg-green-100 text-green-800' },
+  lowcarb: { label: 'Low-Carb', emoji: '📉', color: 'bg-green-100 text-green-800' },
+  organic: { label: 'Organic', emoji: '🌱', color: 'bg-green-100 text-green-800' },
+  local: { label: 'Local', emoji: '📍', color: 'bg-green-100 text-green-800' },
 };
 
 export default function TagDisplay({ tags, className = '' }: TagDisplayProps) {
@@ -60,38 +25,23 @@ export default function TagDisplay({ tags, className = '' }: TagDisplayProps) {
   const remainingCount = tags.length - 3;
 
   return (
-    <div
-      className={`absolute top-2 right-2 flex flex-wrap gap-1 ${className}`}
-      role="group"
-      aria-label="Item tags"
-    >
+    <div className={`flex flex-wrap gap-2 ${className}`}>
       {visibleTags.map((tag, index) => {
-        const normalized = tag.toLowerCase().replace(/[\s-]/g, '');
-        const { color, emoji, label } = tagStyles[normalized] || {
-          color: 'bg-gray-200 text-gray-800',
-          emoji: '',
-          label: tag,
-        };
+        const key = tag.toLowerCase().replace(/[-_ ]/g, '');
+        const config = tagConfig[key];
 
         return (
           <span
             key={index}
-            className={`text-xs px-2 py-0.5 rounded-full shadow-sm flex items-center gap-1 ${color}`}
-            role="badge"
-            aria-label={`Tag: ${label}`}
+            className={`text-xs px-2 py-0.5 rounded-full shadow-sm ${config?.color ?? 'bg-gray-200 text-gray-800'}`}
           >
-            {emoji && <span>{emoji}</span>}
-            {label}
+            {config ? `${config.emoji} ${config.label}` : tag}
           </span>
         );
       })}
 
       {remainingCount > 0 && (
-        <span
-          className="text-xs bg-gray-300 text-gray-700 px-2 py-0.5 rounded-full shadow-sm hover:bg-gray-400 transition-colors duration-200"
-          role="badge"
-          aria-label={`${remainingCount} more tags`}
-        >
+        <span className="text-xs bg-gray-300 text-gray-700 px-2 py-0.5 rounded-full shadow-sm">
           +{remainingCount}
         </span>
       )}
