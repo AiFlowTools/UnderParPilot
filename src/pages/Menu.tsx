@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Coffee, UtensilsCrossed, Pizza, Beer, Store, Wine,
-  ShoppingBag, ChevronUp, X, Wine, Menu as MenuIcon
+  ShoppingBag, ChevronUp, X, Menu as MenuIcon
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import MenuItemDetail from '../components/MenuItemDetail';
