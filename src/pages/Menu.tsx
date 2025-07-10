@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Coffee, UtensilsCrossed, Pizza, Beer, Store, Wine,
-  ShoppingBag, ChevronUp, X, Menu as MenuIcon
+  ShoppingBag, ChevronUp, X, Menu as MenuIcon, ChevronRight
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import MenuItemDetail from '../components/MenuItemDetail';
@@ -52,6 +52,8 @@ export default function Menu() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const [isHowItWorksOpen, setIsHowItWorksOpen] = useState(false);
+  const [showScrollHint, setShowScrollHint] = useState(true);
+  const [headerShadow, setHeaderShadow] = useState(false);
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
   useEffect(() => {
@@ -88,6 +90,26 @@ export default function Menu() {
       .catch(err => setError(err.message))
       .finally(() => setLoading(false));
   }, [course?.id]);
+
+  // Handle scroll effects
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      setHeaderShadow(scrollY > 10);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Hide scroll hint after initial interaction or timeout
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowScrollHint(false);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const persist = (newCart: CartItem[]) => {
     localStorage.setItem('cart', JSON.stringify(newCart));
@@ -163,35 +185,49 @@ export default function Menu() {
       <Header
         onClick={() => setSelectedCategory('Breakfast')}
         onHowItWorksClick={() => setIsHowItWorksOpen(true)}
-        className="cursor-pointer hover:opacity-90 transition-opacity"
+        className={`cursor-pointer hover:opacity-90 transition-all duration-300 ${
+          headerShadow ? 'shadow-md' : ''
+        }`}
       />
 
       <div className="max-w-7xl mx-auto px-4 pt-24">
         {/* Category Navigation Pills */}
-        <div className="sticky top-24 bg-gray-50/95 backdrop-blur-sm z-40 py-4 -mx-4 px-4">
-          <div className="flex items-center overflow-x-auto scrollbar-hide pb-2 gap-3 scroll-smooth snap-x snap-mandatory">
+        <div className="sticky top-24 bg-gray-50/95 backdrop-blur-sm z-40 py-4 -mx-4 px-4 border-b border-gray-100">
+          <div className="relative">
+            <div 
+              className="flex items-center overflow-x-auto scrollbar-hide pb-2 gap-3 scroll-smooth snap-x snap-mandatory"
+              onScroll={() => setShowScrollHint(false)}
+            >
             {categories.map(({ id, name, emoji }) => (
               <button
                 key={id}
                 onClick={() => setSelectedCategory(id)}
                 className={`flex-shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-full font-medium text-sm transition-all duration-200 snap-start ${
                   selectedCategory === id
-                    ? 'bg-green-600 text-white shadow-lg shadow-green-600/25 scale-105'
-                    : 'bg-white text-gray-700 hover:bg-gray-50 hover:shadow-md border border-gray-200 hover:border-gray-300'
+                    ? 'bg-green-600 text-white shadow-md font-semibold'
+                    : 'bg-white text-gray-700 border border-gray-200 shadow-sm hover:bg-gray-100 hover:border-gray-300'
                 }`}
               >
                 <span className="text-base">{emoji}</span>
                 <span className="whitespace-nowrap">{name}</span>
               </button>
             ))}
+            </div>
+            
+            {/* Scroll hint gradient and arrow */}
+            {showScrollHint && (
+              <div className="absolute right-0 top-0 bottom-2 w-16 bg-gradient-to-l from-gray-50 via-gray-50/80 to-transparent pointer-events-none flex items-center justify-end pr-2">
+                <div className="animate-pulse">
+                  <ChevronRight className="w-4 h-4 text-gray-400" />
+                  <ChevronRight className="w-4 h-4 text-gray-400 -ml-2" />
+                </div>
+              </div>
+            )}
           </div>
           
-          {/* Subtle gradient line under active category */}
-          <div className="mt-3 h-0.5 bg-gradient-to-r from-transparent via-green-600 to-transparent opacity-30"></div>
-          
           {/* Pagination indicator */}
-          <div className="flex items-center justify-center mt-4 py-2">
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-white/80 backdrop-blur-sm rounded-full border border-gray-200 shadow-sm">
+          <div className="flex items-center justify-center mt-3">
+            <div className="text-sm text-gray-500 py-2">
               <span className="text-sm font-medium text-gray-700">
                 {categories.findIndex(cat => cat.id === selectedCategory) + 1}
               </span>
@@ -204,7 +240,7 @@ export default function Menu() {
         </div>
 
         {/* Menu Items Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
           {filteredItems.map(item => (
             <MenuItemCard
               key={item.id}

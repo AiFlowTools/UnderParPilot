@@ -82,7 +82,7 @@
 
 /* Menu Item Cards */
 .menu-item-card {
-  @apply bg-white rounded-xl shadow-md overflow-hidden border border-gray-100;
+  @apply bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 hover:shadow-md transition-shadow duration-200;
 }
 
 .menu-item-card img {
