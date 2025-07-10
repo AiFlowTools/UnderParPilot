@@ -1,6 +1,8 @@
 import React from 'react';
 import { X } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useLanguage } from '../hooks/useLanguage';
+import { useTranslation } from '../lib/translations';
 
 interface CartItem {
   id: string;
@@ -26,6 +28,9 @@ const CartModal: React.FC<Props> = ({
   onToggle,
   onUpdateQuantity
 }) => {
+  const { language } = useLanguage();
+  const { t } = useTranslation(language);
+
   if (!isOpen) return null;
 
   return (
@@ -33,7 +38,7 @@ const CartModal: React.FC<Props> = ({
       <div className="bg-white rounded-t-2xl w-full max-w-md h-[80vh] overflow-hidden shadow-lg flex flex-col">
         {/* Header */}
         <div className="flex justify-between items-center p-4 border-b">
-          <h2 className="text-lg font-semibold">Your Cart</h2>
+          <h2 className="text-lg font-semibold">{t('ui.yourCart')}</h2>
           <button onClick={onToggle} className="p-2 hover:bg-gray-100 rounded-full">
             <X className="w-5 h-5" />
           </button>
@@ -72,14 +77,14 @@ const CartModal: React.FC<Props> = ({
         {/* Footer */}
         <div className="border-t p-4 space-y-3">
           <div className="flex justify-between text-base font-medium">
-            <span>Total</span>
+            <span>{t('ui.subtotal')}</span>
             <span>${cartTotal.toFixed(2)}</span>
           </div>
           <Link
             to="/checkout"
             className="block w-full bg-green-600 text-white text-center py-3 rounded-lg hover:bg-green-700 transition"
           >
-            Proceed to Checkout
+            {t('ui.proceedToCheckout')}
           </Link>
         </div>
       </div>

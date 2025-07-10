@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { X, Minus, Plus, ChevronLeft } from 'lucide-react';
 import ItemTag from './ItemTag';
+import { useLanguage } from '../hooks/useLanguage';
+import { useTranslation } from '../lib/translations';
 
 interface MenuItemDetailProps {
   item: {
@@ -23,6 +25,8 @@ interface MenuItemDetailProps {
 }
 
 export default function MenuItemDetail({ item, onClose, onAddToCart, onCloseCart, isMobile }: MenuItemDetailProps) {
+  const { language } = useLanguage();
+  const { t } = useTranslation(language);
   const [quantity, setQuantity] = useState(1);
   const [selectedModifiers, setSelectedModifiers] = useState<string[]>([]);
 
@@ -119,7 +123,7 @@ export default function MenuItemDetail({ item, onClose, onAddToCart, onCloseCart
             {/* Modifiers */}
             {item.modifiers && item.modifiers.length > 0 && (
               <div className="mb-6">
-                <h3 className="text-lg font-semibold mb-4">Customize</h3>
+                <h3 className="text-lg font-semibold mb-4">{t('ui.customize')}</h3>
                 <div className="space-y-3">
                   {item.modifiers.map(modifier => (
                     <label
@@ -170,7 +174,7 @@ export default function MenuItemDetail({ item, onClose, onAddToCart, onCloseCart
               onClick={handleAddToCart}
               className="w-full bg-green-600 text-white py-4 rounded-xl font-semibold hover:bg-green-700 transition-colors"
             >
-              Add to Order • ${totalPrice.toFixed(2)}
+              {t('ui.addToOrder')} • ${totalPrice.toFixed(2)}
             </button>
           </div>
         </div>
