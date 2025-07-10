@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Coffee, UtensilsCrossed, Pizza, Beer, Store,
   ShoppingBag, ChevronUp, X, Wine, Menu as MenuIcon
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
@@ -10,6 +9,7 @@ import MenuItemCard from '../components/MenuItemCard';
 import Header from '../components/Header';
 import HowItWorksModal from '../components/HowItWorksModal';
 import CartModal from '../components/CartModal';
+import { RulerCarousel, type CarouselItem } from '../components/ui/ruler-carousel';
 import { useCourse } from '../hooks/useCourse';
 
 interface MenuItem {
@@ -33,13 +33,13 @@ interface CartItem extends MenuItem {
   selectedModifiers?: string[];
 }
 
-const categories = [
-  { id: 'Breakfast', name: 'Breakfast', icon: Coffee, color: 'bg-amber-100' },
-  { id: 'Lunch & Dinner', name: 'Lunch &\nDinner', icon: UtensilsCrossed, color: 'bg-blue-100' },
-  { id: 'Snacks', name: 'Snacks', icon: Pizza, color: 'bg-red-100' },
-  { id: 'Drinks', name: 'Drinks', icon: Wine, color: 'bg-purple-100' },
-  { id: 'Beer', name: 'Beer', icon: Beer, color: 'bg-yellow-100' },
-  { id: 'Pro Shop', name: 'Pro Shop', icon: Store, color: 'bg-purple-100' },
+const categoryItems: CarouselItem[] = [
+  { id: 1, title: 'Breakfast' },
+  { id: 2, title: 'Lunch & Dinner' },
+  { id: 3, title: 'Snacks' },
+  { id: 4, title: 'Drinks' },
+  { id: 5, title: 'Beer' },
+  { id: 6, title: 'Pro Shop' },
 ];
 
 export default function Menu() {
@@ -51,7 +51,6 @@ export default function Menu() {
   const [error, setError] = useState<string | null>(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
-  const [isCategoryDrawerOpen, setIsCategoryDrawerOpen] = useState(false);
   const [isHowItWorksOpen, setIsHowItWorksOpen] = useState(false);
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
@@ -90,13 +89,6 @@ export default function Menu() {
       .finally(() => setLoading(false));
   }, [course?.id]);
 
-  useEffect(() => {
-    document.body.style.overflow = isCategoryDrawerOpen ? 'hidden' : '';
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [isCategoryDrawerOpen]);
-
   const persist = (newCart: CartItem[]) => {
     localStorage.setItem('cart', JSON.stringify(newCart));
   };
@@ -131,6 +123,10 @@ export default function Menu() {
       .filter(c => c.quantity > 0);
     setCart(newCart);
     persist(newCart);
+  };
+
+  const handleCategorySelect = (item: CarouselItem) => {
+    setSelectedCategory(item.title);
   };
 
   const filteredItems = menuItems.filter(
@@ -176,30 +172,11 @@ export default function Menu() {
 
       <div className="max-w-7xl mx-auto px-4 pt-24">
         <div className="sticky top-20 bg-gray-50 z-40 pt-2 pb-3">
-          <div className="flex items-center overflow-x-auto pb-4 gap-4 -mx-4 px-4">
-            <button
-              onClick={() => {
-                setIsCategoryDrawerOpen(true);
-                setIsCartOpen(false);
-              }}
-              className="flex-shrink-0 p-2 hover:bg-gray-100 rounded-full transition-colors"
-              aria-label="Open category menu"
-            >
-              <MenuIcon className="w-6 h-6" />
-            </button>
-            {categories.map(({ id, name, icon: Icon, color }) => (
-              <button
-                key={id}
-                onClick={() => setSelectedCategory(id)}
-                className={`category-icon flex-shrink-0 ${color} ${selectedCategory === id ? 'active' : ''}`}
-              >
-                <Icon className="w-6 h-6 mb-2" />
-                <span className="text-sm font-medium whitespace-pre-line">
-                  {name}
-                </span>
-              </button>
-            ))}
-          </div>
+          <RulerCarousel
+            originalItems={categoryItems}
+            onItemSelect={handleCategorySelect}
+            selectedItem={selectedCategory}
+          />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -221,48 +198,6 @@ export default function Menu() {
         onClose={() => setIsHowItWorksOpen(false)}
       />
 
-      {isCategoryDrawerOpen && (
-        <>
-          <div
-            className="fixed inset-0 bg-black bg-opacity-50 z-40"
-            onClick={() => setIsCategoryDrawerOpen(false)}
-          />
-          <div className="fixed inset-x-0 bottom-0 bg-white rounded-t-2xl z-40 max-h-[85vh] flex flex-col overflow-y-auto">
-            <div className="flex items-center justify-between px-4 py-3 border-b">
-              <h2 className="text-lg font-semibold">Menu Categories</h2>
-              <button
-                onClick={() => setIsCategoryDrawerOpen(false)}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                aria-label="Close menu"
-              >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-
-            <div className="flex-1 overflow-y-auto overscroll-contain pb-safe">
-              {categories.map(({ id, name, icon: Icon }) => (
-                <button
-                  key={id}
-                  onClick={() => {
-                    setSelectedCategory(id);
-                    setIsCategoryDrawerOpen(false);
-                  }}
-                  className={`w-full flex items-center px-6 py-4 hover:bg-gray-50 transition-colors ${
-                    selectedCategory === id
-                      ? 'bg-green-50 text-green-600 font-medium border-l-4 border-green-600'
-                      : ''
-                  }`}
-                >
-                  <Icon className="w-6 h-6 mr-4" />
-                  <span className="text-base">{id}</span>
-                </button>
-              ))}
-              <div className="h-safe" />
-            </div>
-          </div>
-        </>
-      )}
-
       {selectedItem && (
         <MenuItemDetail
           item={selectedItem}
@@ -280,7 +215,6 @@ export default function Menu() {
         cartTotal={cartTotal}
         onToggle={() => {
           setIsCartOpen(!isCartOpen);
-          setIsCategoryDrawerOpen(false);
         }}
         onUpdateQuantity={updateQuantity}
       />
