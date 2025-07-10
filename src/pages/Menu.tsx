@@ -11,8 +11,6 @@ import Header from '../components/Header';
 import HowItWorksModal from '../components/HowItWorksModal';
 import CartModal from '../components/CartModal';
 import { useCourse } from '../hooks/useCourse';
-import { useLanguage } from '../hooks/useLanguage';
-import { useTranslation } from '../lib/translations';
 
 interface MenuItem {
   id: string;
@@ -46,8 +44,6 @@ const categories = [
 
 export default function Menu() {
   const { course, loading: courseLoading, error: courseError } = useCourse();
-  const { language } = useLanguage();
-  const { t } = useTranslation(language);
   const [selectedCategory, setSelectedCategory] = useState('Breakfast');
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -174,9 +170,7 @@ export default function Menu() {
         {/* Category Navigation Pills */}
         <div className="sticky top-24 bg-gray-50/95 backdrop-blur-sm z-40 py-4 -mx-4 px-4">
           <div className="flex items-center overflow-x-auto scrollbar-hide pb-2 gap-3 scroll-smooth snap-x snap-mandatory">
-            {categories.map(({ id, name, emoji }) => {
-              const translatedName = t(`categories.${id}`) || name;
-              return (
+            {categories.map(({ id, name, emoji }) => (
               <button
                 key={id}
                 onClick={() => setSelectedCategory(id)}
@@ -187,10 +181,9 @@ export default function Menu() {
                 }`}
               >
                 <span className="text-base">{emoji}</span>
-                <span className="whitespace-nowrap">{translatedName}</span>
+                <span className="whitespace-nowrap">{name}</span>
               </button>
-              );
-            })}
+            ))}
           </div>
           
           {/* Subtle gradient line under active category */}
@@ -259,7 +252,7 @@ export default function Menu() {
       <div className="flex items-center">
         <ShoppingBag className="w-5 h-5 mr-2" />
         <span className="font-medium">
-          {cartItemCount} {cartItemCount === 1 ? t('ui.item') : t('ui.items')} • ${cartTotal.toFixed(2)}
+          {cartItemCount} {cartItemCount === 1 ? 'item' : 'items'} • ${cartTotal.toFixed(2)}
         </span>
       </div>
       <ChevronUp className="w-5 h-5" />
