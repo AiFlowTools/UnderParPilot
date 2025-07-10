@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
+  Coffee, UtensilsCrossed, Pizza, Beer, Store, Wine,
   ShoppingBag, ChevronUp, X, Wine, Menu as MenuIcon
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
@@ -9,7 +10,6 @@ import MenuItemCard from '../components/MenuItemCard';
 import Header from '../components/Header';
 import HowItWorksModal from '../components/HowItWorksModal';
 import CartModal from '../components/CartModal';
-import { RulerCarousel, type CarouselItem } from '../components/ui/ruler-carousel';
 import { useCourse } from '../hooks/useCourse';
 
 interface MenuItem {
@@ -33,13 +33,13 @@ interface CartItem extends MenuItem {
   selectedModifiers?: string[];
 }
 
-const categoryItems: CarouselItem[] = [
-  { id: 1, title: 'Breakfast' },
-  { id: 2, title: 'Lunch & Dinner' },
-  { id: 3, title: 'Snacks' },
-  { id: 4, title: 'Drinks' },
-  { id: 5, title: 'Beer' },
-  { id: 6, title: 'Pro Shop' },
+const categories = [
+  { id: 'Breakfast', name: 'Breakfast', icon: Coffee, emoji: '🍳' },
+  { id: 'Lunch & Dinner', name: 'Lunch & Dinner', icon: UtensilsCrossed, emoji: '🍽️' },
+  { id: 'Snacks', name: 'Snacks', icon: Pizza, emoji: '🥨' },
+  { id: 'Drinks', name: 'Drinks', icon: Wine, emoji: '🥤' },
+  { id: 'Beer', name: 'Beer', icon: Beer, emoji: '🍺' },
+  { id: 'Pro Shop', name: 'Pro Shop', icon: Store, emoji: '⛳' },
 ];
 
 export default function Menu() {
@@ -125,10 +125,6 @@ export default function Menu() {
     persist(newCart);
   };
 
-  const handleCategorySelect = (item: CarouselItem) => {
-    setSelectedCategory(item.title);
-  };
-
   const filteredItems = menuItems.filter(
     item => item.category === selectedCategory
   );
@@ -171,15 +167,44 @@ export default function Menu() {
       />
 
       <div className="max-w-7xl mx-auto px-4 pt-24">
-        <div className="sticky top-20 bg-gray-50 z-40 pt-2 pb-3">
-          <RulerCarousel
-            originalItems={categoryItems}
-            onItemSelect={handleCategorySelect}
-            selectedItem={selectedCategory}
-          />
+        {/* Category Navigation Pills */}
+        <div className="sticky top-24 bg-gray-50/95 backdrop-blur-sm z-40 py-4 -mx-4 px-4">
+          <div className="flex items-center overflow-x-auto scrollbar-hide pb-2 gap-3 scroll-smooth snap-x snap-mandatory">
+            {categories.map(({ id, name, emoji }) => (
+              <button
+                key={id}
+                onClick={() => setSelectedCategory(id)}
+                className={`flex-shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-full font-medium text-sm transition-all duration-200 snap-start ${
+                  selectedCategory === id
+                    ? 'bg-green-600 text-white shadow-lg shadow-green-600/25 scale-105'
+                    : 'bg-white text-gray-700 hover:bg-gray-50 hover:shadow-md border border-gray-200 hover:border-gray-300'
+                }`}
+              >
+                <span className="text-base">{emoji}</span>
+                <span className="whitespace-nowrap">{name}</span>
+              </button>
+            ))}
+          </div>
+          
+          {/* Subtle gradient line under active category */}
+          <div className="mt-3 h-0.5 bg-gradient-to-r from-transparent via-green-600 to-transparent opacity-30"></div>
+          
+          {/* Pagination indicator */}
+          <div className="flex items-center justify-center mt-4 py-2">
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-white/80 backdrop-blur-sm rounded-full border border-gray-200 shadow-sm">
+              <span className="text-sm font-medium text-gray-700">
+                {categories.findIndex(cat => cat.id === selectedCategory) + 1}
+              </span>
+              <span className="text-sm text-gray-500">/</span>
+              <span className="text-sm font-medium text-gray-700">
+                {categories.length}
+              </span>
+            </div>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Menu Items Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
           {filteredItems.map(item => (
             <MenuItemCard
               key={item.id}
