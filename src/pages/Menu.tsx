@@ -279,22 +279,23 @@ export default function Menu() {
         }}
         onUpdateQuantity={updateQuantity}
       />
+      {/* Floating Cart Pill */}
       {cart.length > 0 && !isCartOpen && (
-  <div className="fixed bottom-0 inset-x-0 z-40">
-    <button
-      onClick={() => setIsCartOpen(true)}
-      className="w-full bg-green-600 text-white p-4 flex items-center justify-between hover:bg-green-700 transition-colors"
-    >
-      <div className="flex items-center">
-        <ShoppingBag className="w-5 h-5 mr-2" />
-        <span className="font-medium">
-          {cartItemCount} {cartItemCount === 1 ? 'item' : 'items'} • ${cartTotal.toFixed(2)}
-        </span>
-      </div>
-      <ChevronUp className="w-5 h-5" />
-    </button>
-  </div>
-)}
+        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 w-[90%] max-w-md">
+          <button
+            onClick={() => setIsCartOpen(true)}
+            className="w-full bg-green-600 text-white rounded-full shadow-lg px-4 py-3 flex items-center justify-between cursor-pointer transition-all duration-300 ease-out animate-slideUp hover:shadow-xl active:scale-95"
+          >
+            <div className="flex items-center gap-2">
+              <ShoppingBag className="w-5 h-5" />
+              <span className="font-medium text-sm">
+                {cartItemCount} {cartItemCount === 1 ? 'item' : 'items'} • ${cartTotal.toFixed(2)}
+              </span>
+            </div>
+            <ChevronUp className="w-5 h-5" />
+          </button>
+        </div>
+      )}
     </div>
   );
 }
