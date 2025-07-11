@@ -54,6 +54,8 @@ export default function Menu() {
   const [isHowItWorksOpen, setIsHowItWorksOpen] = useState(false);
   const [showScrollHint, setShowScrollHint] = useState(true);
   const [headerShadow, setHeaderShadow] = useState(false);
+  const [isScrollingDown, setIsScrollingDown] = useState(false);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
   useEffect(() => {
@@ -96,11 +98,19 @@ export default function Menu() {
     const handleScroll = () => {
       const scrollY = window.scrollY;
       setHeaderShadow(scrollY > 10);
+      
+      const currentScrollY = window.scrollY;
+      if (currentScrollY > lastScrollY) {
+        setIsScrollingDown(true);
+      } else {
+        setIsScrollingDown(false);
+      }
+      setLastScrollY(currentScrollY);
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [lastScrollY]);
 
   // Hide scroll hint after initial interaction or timeout
   useEffect(() => {
@@ -280,7 +290,7 @@ export default function Menu() {
         onUpdateQuantity={updateQuantity}
       />
       {/* Floating Cart Pill */}
-      {cart.length > 0 && !isCartOpen && (
+      {cart.length > 0 && !isCartOpen && !isScrollingDown && (
         <div className="fixed bottom-4 left-1/2 z-50 w-[90%] max-w-md animate-slideUpPill">
           <button
             onClick={() => setIsCartOpen(true)}
