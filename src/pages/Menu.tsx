@@ -11,7 +11,7 @@ import Header from '../components/Header';
 import HowItWorksModal from '../components/HowItWorksModal';
 import CartModal from '../components/CartModal';
 import { useCourse } from '../hooks/useCourse';
-import { ShoppingCart, ChevronUp } from 'lucide-react';
+import { ShoppingCart } from 'lucide-react';
 
 interface MenuItem {
   id: string;
