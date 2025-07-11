@@ -11,7 +11,6 @@ import Header from '../components/Header';
 import HowItWorksModal from '../components/HowItWorksModal';
 import CartModal from '../components/CartModal';
 import { useCourse } from '../hooks/useCourse';
-import { ShoppingCart } from 'lucide-react';
 
 interface MenuItem {
   id: string;
@@ -280,24 +279,22 @@ export default function Menu() {
         }}
         onUpdateQuantity={updateQuantity}
       />
-      {/* Floating Cart Pill */}
       {cart.length > 0 && !isCartOpen && (
-        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 w-[90%] max-w-md">
-          <button
-            onClick={() => setIsCartOpen(true)}
-            className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50
-             bg-green-600 text-white px-4 py-3 rounded-full shadow-lg
-             flex items-center justify-between w-72 text-sm
-             transition-transform duration-300 ease-out"
-          >
-            <div className="flex items-center gap-2 mx-auto">
-  <ShoppingCart className="w-5 h-5 text-white" />
-  <span className="font-medium">{cartItems.length} items • ${totalPrice.toFixed(2)}</span>
-</div> 
-            <ChevronUp className="w-5 h-5" />
-          </button>
-        </div>
-      )}
+  <div className="fixed bottom-0 inset-x-0 z-40">
+    <button
+      onClick={() => setIsCartOpen(true)}
+      className="w-full bg-green-600 text-white p-4 flex items-center justify-between hover:bg-green-700 transition-colors"
+    >
+      <div className="flex items-center">
+        <ShoppingBag className="w-5 h-5 mr-2" />
+        <span className="font-medium">
+          {cartItemCount} {cartItemCount === 1 ? 'item' : 'items'} • ${cartTotal.toFixed(2)}
+        </span>
+      </div>
+      <ChevronUp className="w-5 h-5" />
+    </button>
+  </div>
+)}
     </div>
   );
 }
