@@ -53,6 +53,22 @@
   animation: slideUpPill 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* Cart modal slide-up animation */
+.animate-slideUp {
+  animation: slideUp 0.3s ease-out forwards;
+}
+
+@keyframes slideUp {
+  from { 
+    transform: translateY(100%); 
+    opacity: 0; 
+  }
+  to { 
+    transform: translateY(0); 
+    opacity: 1; 
+  }
+}
+
 /* Enhanced cart pill animations */
 .cart-pill-enter {
   animation: cartPillEnter 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
