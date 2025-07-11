@@ -57,7 +57,6 @@ export default function Menu() {
   const [isScrollingDown, setIsScrollingDown] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [showCartPill, setShowCartPill] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
   useEffect(() => {
