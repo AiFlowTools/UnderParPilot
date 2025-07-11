@@ -57,6 +57,7 @@ export default function Menu() {
   const [isScrollingDown, setIsScrollingDown] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [showCartPill, setShowCartPill] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
   useEffect(() => {
@@ -115,7 +116,7 @@ export default function Menu() {
 
   // Handle cart pill visibility with animations
   useEffect(() => {
-    const shouldShow = cart.length > 0 && !isCartOpen && !isScrollingDown && !isHowItWorksOpen;
+    const shouldShow = cart.length > 0 && !isCartOpen && !isScrollingDown && !isHowItWorksOpen && !selectedItem;
     
     if (shouldShow && !showCartPill) {
       // Show immediately when modal closes, regardless of scroll
@@ -124,7 +125,7 @@ export default function Menu() {
       // Hide with delay for smooth animation
       setShowCartPill(false);
     }
-  }, [cart.length, isCartOpen, isScrollingDown, isHowItWorksOpen, showCartPill]);
+  }, [cart.length, isCartOpen, isScrollingDown, isHowItWorksOpen, selectedItem, showCartPill]);
 
   // Hide scroll hint after initial interaction or timeout
   useEffect(() => {

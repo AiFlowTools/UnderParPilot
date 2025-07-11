@@ -7,6 +7,7 @@ interface CartItem {
   item_name: string;
   price: number;
   quantity: number;
+  image_url?: string;
 }
 
 interface Props {
@@ -71,9 +72,20 @@ const CartModal: React.FC<Props> = ({
                   key={`${item.id}-${index}`}
                   className="bg-white border border-gray-100 rounded-xl p-4 shadow-md transition-all duration-300"
                 >
+                  <div className="flex items-start space-x-4 mb-3">
+                    {/* Item Image */}
+                    {item.image_url && (
+                      <div className="flex-shrink-0">
+                        <img
+                          src={item.image_url}
+                          alt={item.item_name}
+                          className="w-12 h-12 rounded-lg object-cover shadow-sm"
+                        />
+                      </div>
+                    )}
+                    
                   {/* Item Info */}
-                  <div className="flex justify-between items-start mb-3">
-                    <div className="flex-1 pr-4">
+                    <div className="flex-1 min-w-0">
                       <h4 className="font-semibold text-gray-900 text-base leading-tight">
                         {item.item_name}
                       </h4>
@@ -81,7 +93,9 @@ const CartModal: React.FC<Props> = ({
                         ${item.price.toFixed(2)} each
                       </p>
                     </div>
-                    <div className="text-right">
+                    
+                    {/* Item Total */}
+                    <div className="flex-shrink-0 text-right">
                       <p className="font-bold text-gray-900 text-base">
                         ${(item.price * item.quantity).toFixed(2)}
                       </p>
