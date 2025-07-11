@@ -281,22 +281,21 @@ export default function Menu() {
       />
       {/* Floating Cart Pill */}
       {cart.length > 0 && !isCartOpen && (
-        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 w-[90%] max-w-md">
-          <button
-            onClick={() => setIsCartOpen(true)}
-            className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50
-             bg-green-600 text-white px-4 py-3 rounded-full shadow-lg
-             flex items-center justify-between w-72 text-sm
-             transition-transform duration-300 ease-out"
-          >
-            <div className="flex items-center gap-2 mx-auto">
-  <ShoppingCart className="w-5 h-5 text-white" />
-  <span className="font-medium">{cartItems.length} items • ${totalPrice.toFixed(2)}</span>
-</div> 
-            <ChevronUp className="w-5 h-5" />
-          </button>
-        </div>
-      )}
+  <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 w-[90%] max-w-md">
+    <button
+      onClick={() => setIsCartOpen(true)}
+      className="bg-green-600 text-white px-4 py-4 rounded-full shadow-lg
+                 flex items-center justify-between text-sm w-full
+                 transition-transform duration-300 ease-out"
+    >
+      <div className="flex items-center gap-2 mx-auto">
+        <ShoppingCart className="w-5 h-5 text-white" />
+        <span className="font-medium">{cartItemCount} items • ${cartTotal.toFixed(2)}</span>
+      </div>
+      <ChevronUp className="w-5 h-5 ml-2" />
+    </button>
+  </div>
+)}
     </div>
   );
 }
