@@ -11,6 +11,7 @@ import Header from '../components/Header';
 import HowItWorksModal from '../components/HowItWorksModal';
 import CartModal from '../components/CartModal';
 import { useCourse } from '../hooks/useCourse';
+import { ShoppingCart, ChevronUp } from 'lucide-react';
 
 interface MenuItem {
   id: string;
@@ -290,7 +291,7 @@ export default function Menu() {
              transition-transform duration-300 ease-out"
           >
             <div className="flex items-center gap-2 mx-auto">
-  <ShoppingCartIcon className="w-5 h-5 text-white" />
+  <ShoppingCart className="w-5 h-5 text-white" />
   <span className="font-medium">{cartItems.length} items • ${totalPrice.toFixed(2)}</span>
 </div> 
             <ChevronUp className="w-5 h-5" />
