@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Coffee, UtensilsCrossed, Pizza, Beer, Store, Wine,
-  ShoppingBag, ChevronUp, X, Menu as MenuIcon, ChevronRight
+  ShoppingBag, ChevronUp, X, Menu as MenuIcon, ChevronRight, ShoppingCart
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import MenuItemDetail from '../components/MenuItemDetail';
@@ -11,7 +11,6 @@ import Header from '../components/Header';
 import HowItWorksModal from '../components/HowItWorksModal';
 import CartModal from '../components/CartModal';
 import { useCourse } from '../hooks/useCourse';
-import { ShoppingCart } from 'lucide-react';
 
 interface MenuItem {
   id: string;
