@@ -285,8 +285,8 @@ export default function Menu() {
           <button
             onClick={() => setIsCartOpen(true)}
             className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50
-             bg-green-600 text-white px-4 py-2 rounded-full shadow-lg
-             flex items-center justify-between w-[95%] max-w-sm text-sm
+             bg-green-600 text-white px-4 py-3 rounded-full shadow-lg
+             flex items-center justify-between w-72 text-sm
              transition-transform duration-300 ease-out"
           >
             <div className="flex items-center gap-2">
