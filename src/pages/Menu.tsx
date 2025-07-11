@@ -289,12 +289,10 @@ export default function Menu() {
              flex items-center justify-between w-72 text-sm
              transition-transform duration-300 ease-out"
           >
-            <div className="flex items-center gap-2">
-              <ShoppingBag className="w-5 h-5" />
-              <span className="font-medium text-sm">
-                {cartItemCount} {cartItemCount === 1 ? 'item' : 'items'} • ${cartTotal.toFixed(2)}
-              </span>
-            </div>
+            <div className="flex items-center gap-2 mx-auto">
+  <ShoppingCartIcon className="w-5 h-5 text-white" />
+  <span className="font-medium">{cartItems.length} items • ${totalPrice.toFixed(2)}</span>
+</div>
             <ChevronUp className="w-5 h-5" />
           </button>
         </div>
