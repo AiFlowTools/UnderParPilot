@@ -292,7 +292,7 @@ export default function Menu() {
             <div className="flex items-center gap-2 mx-auto">
   <ShoppingCartIcon className="w-5 h-5 text-white" />
   <span className="font-medium">{cartItems.length} items • ${totalPrice.toFixed(2)}</span>
-</div>
+</div> 
             <ChevronUp className="w-5 h-5" />
           </button>
         </div>
