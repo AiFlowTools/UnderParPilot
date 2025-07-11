@@ -56,6 +56,7 @@ export default function Menu() {
   const [headerShadow, setHeaderShadow] = useState(false);
   const [isScrollingDown, setIsScrollingDown] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [showCartPill, setShowCartPill] = useState(false);
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
   useEffect(() => {
@@ -111,6 +112,12 @@ export default function Menu() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, [lastScrollY]);
+
+  // Handle cart pill visibility with modal and scroll behavior
+  useEffect(() => {
+    const shouldShow = cart.length > 0 && !isCartOpen && !isHowItWorksOpen && !isScrollingDown;
+    setShowCartPill(shouldShow);
+  }, [cart.length, isCartOpen, isHowItWorksOpen, isScrollingDown]);
 
   // Hide scroll hint after initial interaction or timeout
   useEffect(() => {
@@ -290,11 +297,15 @@ export default function Menu() {
         onUpdateQuantity={updateQuantity}
       />
       {/* Floating Cart Pill */}
-      {cart.length > 0 && !isCartOpen && !isScrollingDown && (
-        <div className="fixed bottom-4 left-1/2 z-50 w-[90%] max-w-md animate-slideUpPill">
+      <div className={`fixed bottom-4 left-1/2 z-50 w-[90%] max-w-md transition-all duration-300 ease-out ${
+        showCartPill 
+          ? 'opacity-100 scale-100 translate-x-[-50%] translate-y-0' 
+          : 'opacity-0 scale-95 translate-x-[-50%] translate-y-2 pointer-events-none'
+      }`}>
+        {cart.length > 0 && (
           <button
             onClick={() => setIsCartOpen(true)}
-            className="w-full bg-green-600 text-white rounded-full shadow-lg cursor-pointer transition-all duration-200 ease-out active:scale-95 active:bg-green-700"
+            className="w-full bg-green-600 text-white rounded-full shadow-lg cursor-pointer transition-all duration-200 ease-out active:scale-95 active:bg-green-700 animate-slideUpPill"
           >
             <div className="flex justify-between items-center gap-4 px-6 py-3">
               <div className="flex items-center gap-3">
@@ -310,8 +321,9 @@ export default function Menu() {
               </div>
             </div>
           </button>
-        </div>
-      )}
+        )}
+      </div>
+
     </div>
   );
 }
