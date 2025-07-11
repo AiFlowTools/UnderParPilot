@@ -284,7 +284,10 @@ export default function Menu() {
         <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 w-[90%] max-w-md">
           <button
             onClick={() => setIsCartOpen(true)}
-            className="w-full bg-green-600 text-white rounded-full shadow-lg px-4 py-3 flex items-center justify-between cursor-pointer transition-all duration-300 ease-out animate-slideUp hover:shadow-xl active:scale-95"
+            className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50
+             bg-green-600 text-white px-4 py-2 rounded-full shadow-lg
+             flex items-center justify-between w-[95%] max-w-sm text-sm
+             transition-transform duration-300 ease-out"
           >
             <div className="flex items-center gap-2">
               <ShoppingBag className="w-5 h-5" />
