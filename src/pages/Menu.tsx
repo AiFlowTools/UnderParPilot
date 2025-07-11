@@ -56,6 +56,7 @@ export default function Menu() {
   const [headerShadow, setHeaderShadow] = useState(false);
   const [isScrollingDown, setIsScrollingDown] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [showCartPill, setShowCartPill] = useState(false);
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
   useEffect(() => {
@@ -111,6 +112,19 @@ export default function Menu() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, [lastScrollY]);
+
+  // Handle cart pill visibility with animations
+  useEffect(() => {
+    const shouldShow = cart.length > 0 && !isCartOpen && !isScrollingDown && !isHowItWorksOpen;
+    
+    if (shouldShow && !showCartPill) {
+      // Show immediately when modal closes, regardless of scroll
+      setShowCartPill(true);
+    } else if (!shouldShow && showCartPill) {
+      // Hide with delay for smooth animation
+      setShowCartPill(false);
+    }
+  }, [cart.length, isCartOpen, isScrollingDown, isHowItWorksOpen, showCartPill]);
 
   // Hide scroll hint after initial interaction or timeout
   useEffect(() => {
@@ -290,8 +304,12 @@ export default function Menu() {
         onUpdateQuantity={updateQuantity}
       />
       {/* Floating Cart Pill */}
-      {cart.length > 0 && !isCartOpen && !isScrollingDown && (
-        <div className="fixed bottom-4 left-1/2 z-50 w-[90%] max-w-md animate-slideUpPill">
+      {showCartPill && (
+        <div className={`fixed bottom-4 left-1/2 z-50 w-[90%] max-w-md transition-all duration-300 ease-out ${
+          cart.length > 0 && !isCartOpen && !isScrollingDown && !isHowItWorksOpen
+            ? 'opacity-100 scale-100 translate-x-[-50%]'
+            : 'opacity-0 scale-90 translate-x-[-50%] translate-y-2'
+        }`}>
           <button
             onClick={() => setIsCartOpen(true)}
             className="w-full bg-green-600 text-white rounded-full shadow-lg cursor-pointer transition-all duration-200 ease-out active:scale-95 active:bg-green-700"

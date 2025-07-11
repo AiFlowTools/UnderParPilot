@@ -53,6 +53,37 @@
   animation: slideUpPill 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* Enhanced cart pill animations */
+.cart-pill-enter {
+  animation: cartPillEnter 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.cart-pill-exit {
+  animation: cartPillExit 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes cartPillEnter {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 0.5rem) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+@keyframes cartPillExit {
+  from {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, 0.5rem) scale(0.9);
+  }
+}
+
 .animate-bounce-subtle {
   animation: bounce 0.3s ease-in-out;
 }
