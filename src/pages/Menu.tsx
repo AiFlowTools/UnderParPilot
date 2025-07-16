@@ -291,27 +291,28 @@ export default function Menu() {
         onUpdateQuantity={updateQuantity}
       />
       {/* Floating Cart Pill */}
-     {cart.length > 0 && !isCartOpen && (
-  <div className="fixed bottom-0 left-0 w-full z-50 bg-white border-t p-3">
-    <button
-      onClick={() => setIsCartOpen(true)}
-      className="w-full bg-green-600 text-white rounded-full shadow-lg cursor-pointer py-3 text-lg font-bold transition-all duration-200 ease-out active:scale-95 active:bg-green-700"
-    >
-      <div className="flex justify-between items-center gap-4 px-6">
-        <div className="flex items-center gap-3">
-          <div className="bg-white/20 rounded-full p-1.5">
-            <ShoppingBag className="w-4 h-4" />
+    {cart.length > 0 && !isCartOpen && (
+      <div className="fixed bottom-0 left-0 w-full z-50 bg-white border-t p-3">
+        <button
+          onClick={() => setIsCartOpen(true)}
+          className="w-full bg-green-600 text-white rounded-full shadow-lg cursor-pointer py-3 text-lg font-bold transition-all duration-200 ease-out active:scale-95 active:bg-green-700"
+        >
+          <div className="flex justify-between items-center gap-4 px-6">
+            <div className="flex items-center gap-3">
+              <div className="bg-white/20 rounded-full p-1.5">
+                <ShoppingBag className="w-4 h-4" />
+              </div>
+              <span className="font-semibold text-sm">
+                {cartItemCount} {cartItemCount === 1 ? 'item' : 'items'} • ${cartTotal.toFixed(2)}
+              </span>
+            </div>
+            <div className="bg-white/20 rounded-full p-1">
+              <ChevronUp className="w-4 h-4" />
+            </div>
           </div>
-          <span className="font-semibold text-sm">
-            {cartItemCount} {cartItemCount === 1 ? 'item' : 'items'} • ${cartTotal.toFixed(2)}
-          </span>
-        </div>
-        <div className="bg-white/20 rounded-full p-1">
-          <ChevronUp className="w-4 h-4" />
-        </div>
+        </button>
       </div>
-    </button>
+    )}
+
   </div>
-)}
-    </div>
-    );
+);
