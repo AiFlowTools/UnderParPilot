@@ -306,7 +306,7 @@ export default function Menu() {
       {/* Floating Cart Pill */}
       {showCartPill && (
         <div className={`fixed bottom-4 left-1/2 z-50 w-[90%] max-w-md transition-all duration-300 ease-out ${
-          cart.length > 0 && !isCartOpen && !isScrollingDown && !isHowItWorksOpen
+          cart.length > 0 && !isCartOpen && !isHowItWorksOpen
             ? 'opacity-100 scale-100 translate-x-[-50%]'
             : 'opacity-0 scale-90 translate-x-[-50%] translate-y-2'
         }`}>
