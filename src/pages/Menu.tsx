@@ -191,126 +191,126 @@ export default function Menu() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-32">
-      <Header
-        onClick={() => setSelectedCategory('Breakfast')}
-        onHowItWorksClick={() => setIsHowItWorksOpen(true)}
-        className={`cursor-pointer hover:opacity-90 transition-all duration-300 ${
-          headerShadow ? 'shadow-md' : ''
-        }`}
-      />
+  <div className="min-h-screen bg-gray-50 pb-32">
+    <Header
+      onClick={() => setSelectedCategory('Breakfast')}
+      onHowItWorksClick={() => setIsHowItWorksOpen(true)}
+      className={`cursor-pointer hover:opacity-90 transition-all duration-300 ${
+        headerShadow ? 'shadow-md' : ''
+      }`}
+    />
 
-      <div className="max-w-7xl mx-auto px-4 pt-24">
-        {/* Category Navigation Pills */}
-        <div className="sticky top-24 bg-gray-50/95 backdrop-blur-sm z-40 py-4 -mx-4 px-4 border-b border-gray-100">
-          <div className="relative">
-            <div 
-              className="flex items-center overflow-x-auto scrollbar-hide pb-2 gap-3 scroll-smooth snap-x snap-mandatory"
-              onScroll={() => setShowScrollHint(false)}
-            >
+    <div className="max-w-7xl mx-auto px-4 pt-24">
+      {/* Category Navigation Pills */}
+      <div className="sticky top-24 bg-gray-50/95 backdrop-blur-sm z-40 py-4 -mx-4 px-4 border-b border-gray-100">
+        <div className="relative">
+          <div 
+            className="flex items-center overflow-x-auto scrollbar-hide pb-2 gap-3 scroll-smooth snap-x snap-mandatory"
+            onScroll={() => setShowScrollHint(false)}
+          >
             {categories.map(({ id, name, emoji }) => (
               <button
                 key={id}
                 onClick={() => setSelectedCategory(id)}
                 className={`flex-shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-full font-medium text-sm transition-all duration-200 snap-start ${
-  selectedCategory === id
-    ? 'bg-green-600 text-white shadow-md font-semibold'
-    : 'bg-white text-gray-700 border border-gray-200 shadow-sm hover:bg-gray-100 hover:border-gray-300'
-}`}
+                  selectedCategory === id
+                    ? 'bg-green-600 text-white shadow-md font-semibold'
+                    : 'bg-white text-gray-700 border border-gray-200 shadow-sm hover:bg-gray-100 hover:border-gray-300'
+                }`}
               >
                 <span className="text-base">{emoji}</span>
                 <span className="whitespace-nowrap">{name}</span>
               </button>
             ))}
-            </div>
-            
-            {/* Scroll hint gradient and arrow */}
-            {showScrollHint && (
-              <div className="absolute right-0 top-0 bottom-2 w-16 bg-gradient-to-l from-gray-50 via-gray-50/80 to-transparent pointer-events-none flex items-center justify-end pr-2">
-                <div className="animate-pulse">
-                  <ChevronRight className="w-4 h-4 text-gray-400" />
-                  <ChevronRight className="w-4 h-4 text-gray-400 -ml-2" />
-                </div>
+          </div>
+          {/* Scroll hint gradient and arrow */}
+          {showScrollHint && (
+            <div className="absolute right-0 top-0 bottom-2 w-16 bg-gradient-to-l from-gray-50 via-gray-50/80 to-transparent pointer-events-none flex items-center justify-end pr-2">
+              <div className="animate-pulse">
+                <ChevronRight className="w-4 h-4 text-gray-400" />
+                <ChevronRight className="w-4 h-4 text-gray-400 -ml-2" />
               </div>
-            )}
+            </div>
+          )}
+        </div>
+        {/* Pagination indicator */}
+        <div className="flex items-center justify-center mt-3">
+          <div className="text-sm text-gray-500 py-2">
+            <span className="text-sm font-medium text-gray-700">
+              {categories.findIndex(cat => cat.id === selectedCategory) + 1}
+            </span>
+            <span className="text-sm text-gray-500">/</span>
+            <span className="text-sm font-medium text-gray-700">
+              {categories.length}
+            </span>
           </div>
-          
-          {/* Pagination indicator */}
-          <div className="flex items-center justify-center mt-3">
-            <div className="text-sm text-gray-500 py-2">
-              <span className="text-sm font-medium text-gray-700">
-                {categories.findIndex(cat => cat.id === selectedCategory) + 1}
-              </span>
-              <span className="text-sm text-gray-500">/</span>
-              <span className="text-sm font-medium text-gray-700">
-                {categories.length}
+        </div>
+      </div>
+
+      {/* Menu Items Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+        {filteredItems.map(item => (
+          <MenuItemCard
+            key={item.id}
+            item={item}
+            onClick={() => {
+              setSelectedItem(item);
+              setIsCartOpen(false); // auto-close cart when viewing item
+            }}
+          />
+        ))}
+      </div>
+    </div>
+
+    <HowItWorksModal
+      isOpen={isHowItWorksOpen}
+      onClose={() => setIsHowItWorksOpen(false)}
+    />
+
+    {selectedItem && (
+      <MenuItemDetail
+        item={selectedItem}
+        onClose={() => setSelectedItem(null)}
+        onAddToCart={(qty, modifiers) => addToCart(selectedItem, qty, modifiers)}
+        onCloseCart={() => setIsCartOpen(false)}
+        isMobile={isMobile}
+      />
+    )}
+
+    <CartModal
+      isOpen={isCartOpen}
+      cart={cart}
+      cartItemCount={cartItemCount}
+      cartTotal={cartTotal}
+      onToggle={() => {
+        setIsCartOpen(!isCartOpen);
+      }}
+      onUpdateQuantity={updateQuantity}
+    />
+
+    {/* Floating Cart Pill */}
+    {cart.length > 0 && !isCartOpen && (
+      <div className="fixed bottom-0 left-0 w-full z-50 bg-white border-t p-3">
+        <button
+          onClick={() => setIsCartOpen(true)}
+          className="w-full bg-green-600 text-white rounded-full shadow-lg cursor-pointer py-3 text-lg font-bold transition-all duration-200 ease-out active:scale-95 active:bg-green-700"
+        >
+          <div className="flex justify-between items-center gap-4 px-6">
+            <div className="flex items-center gap-3">
+              <div className="bg-white/20 rounded-full p-1.5">
+                <ShoppingBag className="w-4 h-4" />
+              </div>
+              <span className="font-semibold text-sm">
+                {cartItemCount} {cartItemCount === 1 ? 'item' : 'items'} • ${cartTotal.toFixed(2)}
               </span>
             </div>
+            <div className="bg-white/20 rounded-full p-1">
+              <ChevronUp className="w-4 h-4" />
+            </div>
           </div>
-        </div>
-
-        {/* Menu Items Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
-          {filteredItems.map(item => (
-            <MenuItemCard
-              key={item.id}
-              item={item}
-              onClick={() => {
-                setSelectedItem(item);
-                setIsCartOpen(false); // auto-close cart when viewing item
-              }}
-            />
-          ))}
-        </div>
+        </button>
       </div>
+    )}
 
-      <HowItWorksModal
-        isOpen={isHowItWorksOpen}
-        onClose={() => setIsHowItWorksOpen(false)}
-      />
-
-      {selectedItem && (
-        <MenuItemDetail
-          item={selectedItem}
-          onClose={() => setSelectedItem(null)}
-          onAddToCart={(qty, modifiers) => addToCart(selectedItem, qty, modifiers)}
-          onCloseCart={() => setIsCartOpen(false)}
-          isMobile={isMobile}
-        />
-      )}
-
-      <CartModal
-        isOpen={isCartOpen}
-        cart={cart}
-        cartItemCount={cartItemCount}
-        cartTotal={cartTotal}
-        onToggle={() => {
-          setIsCartOpen(!isCartOpen);
-        }}
-        onUpdateQuantity={updateQuantity}
-      />
-      {/* Floating Cart Pill */}
-   {cart.length > 0 && !isCartOpen && (
-  <div className="fixed bottom-0 left-0 w-full z-50 bg-white border-t p-3">
-    <button
-      onClick={() => setIsCartOpen(true)}
-      className="w-full bg-green-600 text-white rounded-full shadow-lg cursor-pointer py-3 text-lg font-bold transition-all duration-200 ease-out active:scale-95 active:bg-green-700"
-    >
-      <div className="flex justify-between items-center gap-4 px-6">
-        <div className="flex items-center gap-3">
-          <div className="bg-white/20 rounded-full p-1.5">
-            <ShoppingBag className="w-4 h-4" />
-          </div>
-          <span className="font-semibold text-sm">
-            {cartItemCount} {cartItemCount === 1 ? 'item' : 'items'} • ${cartTotal.toFixed(2)}
-          </span>
-        </div>
-        <div className="bg-white/20 rounded-full p-1">
-          <ChevronUp className="w-4 h-4" />
-        </div>
-      </div>
-    </button>
   </div>
-)}
-    </div>
-    );
+);
