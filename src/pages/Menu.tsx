@@ -290,7 +290,7 @@ export default function Menu() {
 
     {/* Floating Cart Pill */}
     {cart.length > 0 && !isCartOpen && (
-      <div className="fixed bottom-0 left-0 w-full z-50 bg-white border-t p-3">
+      <div className="fixed bottom-0 left-0 w-full z-50 p-3">
         <button
           onClick={() => setIsCartOpen(true)}
           className="w-full bg-green-600 text-white rounded-full shadow-lg cursor-pointer py-3 text-lg font-bold transition-all duration-200 ease-out active:scale-95 active:bg-green-700"
