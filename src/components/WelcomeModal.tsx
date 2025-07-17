@@ -11,7 +11,7 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ onHowItWorks, onClose }) =>
       <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 text-center animate-fadeIn">
         <h2 className="text-xl font-bold mb-2">👋 Welcome to FairwayMate!</h2>
         <p className="text-gray-600 mb-6 text-sm">
-          Order food, drinks, and more — right from your phone. No apps. No waiting.
+          We know your wife did her best...but we'll take it from here.
         </p>
         <div className="flex gap-3 justify-center">
           <button
