@@ -265,10 +265,7 @@ const closeHowItWorks = () => {
           <MenuItemCard
             key={item.id}
             item={item}
-            onClick={() => {
-              setSelectedItem(item);
-              setIsCartOpen(false); // auto-close cart when viewing item
-            }}
+            onClick={() => setSelectedItem(item)}
           />
         ))}
       </div>
