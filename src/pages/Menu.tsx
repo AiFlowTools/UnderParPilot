@@ -290,7 +290,7 @@ export default function Menu() {
     />
 
     {/* Floating Cart Pill */}
-    {cart.length > 0 && !isCartOpen && (
+    {cart.length > 0 && !isCartOpen && !isInfoOpen &&(
       <div className="fixed bottom-0 left-0 w-full z-50 p-3">
         <button
           onClick={() => setIsCartOpen(true)}
