@@ -167,6 +167,11 @@ export default function Menu() {
   const cartTotal = cart.reduce((sum, c) => sum + c.price * c.quantity, 0);
   const cartItemCount = cart.reduce((sum, c) => sum + c.quantity, 0);
 
+  const openHowItWorks = () => {
+  setIsHowItWorksOpen(true);
+  setIsCartOpen(false);
+};
+
   if (courseLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
