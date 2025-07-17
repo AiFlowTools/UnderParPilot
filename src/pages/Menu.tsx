@@ -11,6 +11,7 @@ import Header from '../components/Header';
 import HowItWorksModal from '../components/HowItWorksModal';
 import CartModal from '../components/CartModal';
 import { useCourse } from '../hooks/useCourse';
+import WelcomeModal from '../components/WelcomeModal';
 
 interface MenuItem {
   id: string;
@@ -57,7 +58,9 @@ export default function Menu() {
   const [isScrollingDown, setIsScrollingDown] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  const [showWelcome, setShowWelcome] = useState(true);
 
+  
   useEffect(() => {
     const saved = localStorage.getItem('cart');
     if (saved) {
@@ -192,6 +195,16 @@ export default function Menu() {
 
   return (
   <div className="min-h-screen bg-gray-50 pb-32">
+
+    {/* Show Welcome Card */}
+   
+    {showWelcome && (
+      <WelcomeModal
+        onHowItWorks={openHowItWorks}
+        onClose={() => setShowWelcome(false)}
+      />
+    )}
+    
     <Header
       onClick={() => setSelectedCategory('Breakfast')}
       onHowItWorksClick={() => setIsHowItWorksOpen(true)}
