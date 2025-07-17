@@ -7,11 +7,11 @@ interface WelcomeModalProps {
 
 const WelcomeModal: React.FC<WelcomeModalProps> = ({ onHowItWorks, onClose }) => {
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-xl shadow-xl max-w-sm w-full p-6 text-center">
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-4">
+      <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 text-center animate-fadeIn">
         <h2 className="text-xl font-bold mb-2">👋 Welcome to FairwayMate!</h2>
-        <p className="text-gray-600 mb-6">
-          Order food and drinks right from your phone — no apps or accounts needed.
+        <p className="text-gray-600 mb-6 text-sm">
+          Order food, drinks, and more — right from your phone. No apps. No waiting.
         </p>
         <div className="flex gap-3 justify-center">
           <button
@@ -19,13 +19,13 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ onHowItWorks, onClose }) =>
               onClose();
               onHowItWorks();
             }}
-            className="bg-gray-100 text-gray-800 rounded-full px-4 py-2 font-medium hover:bg-gray-200"
+            className="bg-gray-100 text-gray-800 rounded-full px-4 py-2 font-medium hover:bg-gray-200 transition"
           >
             How It Works
           </button>
           <button
             onClick={onClose}
-            className="bg-green-600 text-white rounded-full px-4 py-2 font-medium hover:bg-green-700"
+            className="bg-green-600 text-white rounded-full px-4 py-2 font-medium hover:bg-green-700 transition"
           >
             Browse Menu
           </button>
