@@ -56,6 +56,7 @@ export default function Menu() {
   const [headerShadow, setHeaderShadow] = useState(false);
   const [isScrollingDown, setIsScrollingDown] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [isInfoOpen, setIsInfoOpen] = useState(false);
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
   useEffect(() => {
