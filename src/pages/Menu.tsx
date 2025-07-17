@@ -165,6 +165,17 @@ export default function Menu() {
   const cartTotal = cart.reduce((sum, c) => sum + c.price * c.quantity, 0);
   const cartItemCount = cart.reduce((sum, c) => sum + c.quantity, 0);
 
+  const openHowItWorks = () => {
+  setIsHowItWorksOpen(true);
+  setIsCartOpen(false); // hide cart when opening modal
+};
+
+const closeHowItWorks = () => {
+  setIsHowItWorksOpen(false);
+  // Optionally: setIsCartOpen(true); // re-show cart after modal closes
+};
+
+
   if (courseLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -264,9 +275,9 @@ export default function Menu() {
     </div>
 
     <HowItWorksModal
-      isOpen={isHowItWorksOpen}
-      onClose={() => setIsHowItWorksOpen(false)}
-    />
+  isOpen={isHowItWorksOpen}
+  onClose={closeHowItWorks}
+/>
 
     {selectedItem && (
       <MenuItemDetail
