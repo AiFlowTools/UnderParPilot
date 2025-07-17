@@ -56,7 +56,6 @@ export default function Menu() {
   const [headerShadow, setHeaderShadow] = useState(false);
   const [isScrollingDown, setIsScrollingDown] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
-  const [isInfoOpen, setIsInfoOpen] = useState(false);
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
   useEffect(() => {
@@ -165,17 +164,6 @@ export default function Menu() {
   const cartTotal = cart.reduce((sum, c) => sum + c.price * c.quantity, 0);
   const cartItemCount = cart.reduce((sum, c) => sum + c.quantity, 0);
 
-  const openHowItWorks = () => {
-  setIsHowItWorksOpen(true);
-  setIsCartOpen(false); // hide cart when opening modal
-};
-
-const closeHowItWorks = () => {
-  setIsHowItWorksOpen(false);
-  // Optionally: setIsCartOpen(true); // re-show cart after modal closes
-};
-
-
   if (courseLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -206,7 +194,7 @@ const closeHowItWorks = () => {
   <div className="min-h-screen bg-gray-50 pb-32">
     <Header
       onClick={() => setSelectedCategory('Breakfast')}
-      onHowItWorksClick={openHowItWorks}
+      onHowItWorksClick={() => setIsHowItWorksOpen(true)}
       className={`cursor-pointer hover:opacity-90 transition-all duration-300 ${
         headerShadow ? 'shadow-md' : ''
       }`}
@@ -265,16 +253,19 @@ const closeHowItWorks = () => {
           <MenuItemCard
             key={item.id}
             item={item}
-            onClick={() => setSelectedItem(item)}
+            onClick={() => {
+              setSelectedItem(item);
+              setIsCartOpen(false); // auto-close cart when viewing item
+            }}
           />
         ))}
       </div>
     </div>
 
     <HowItWorksModal
-  isOpen={isHowItWorksOpen}
-  onClose={closeHowItWorks}
-/>
+      isOpen={isHowItWorksOpen}
+      onClose={() => setIsHowItWorksOpen(false)}
+    />
 
     {selectedItem && (
       <MenuItemDetail
@@ -298,7 +289,7 @@ const closeHowItWorks = () => {
     />
 
     {/* Floating Cart Pill */}
-    {cart.length > 0 && isCartOpen && !isHowItWorksOpen &&(
+    {cart.length > 0 && !isCartOpen && (
       <div className="fixed bottom-0 left-0 w-full z-50 p-3">
         <button
           onClick={() => setIsCartOpen(true)}
