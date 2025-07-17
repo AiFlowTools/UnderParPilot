@@ -15,7 +15,7 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ onHowItWorks, onClose }) =>
           We know your wife did her best... but we'll take it from here.
         </p>
 
-        <p className="text-gray-600 text-sm leading-relaxed">
+        <p className="text-black text-sm leading-relaxed font-extrabold">
           Welcome to the app that fills in the blanks. Drinks, snacks and whatever else
           your round is missing — delivered right to you on the course.
         </p>
