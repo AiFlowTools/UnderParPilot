@@ -206,7 +206,7 @@ const closeHowItWorks = () => {
   <div className="min-h-screen bg-gray-50 pb-32">
     <Header
       onClick={() => setSelectedCategory('Breakfast')}
-      onHowItWorksClick={() => setIsHowItWorksOpen(true)}
+      onHowItWorksClick={openHowItWorks}
       className={`cursor-pointer hover:opacity-90 transition-all duration-300 ${
         headerShadow ? 'shadow-md' : ''
       }`}
