@@ -37,10 +37,6 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ onHowItWorks, onClose }) =>
             👋 Welcome to <span className="block">FairwayMate!</span>
           </h2>
 
-          <p className="text-gray-700 text-base font-medium">
-            We know your wife did her best... but we'll take it from here.
-          </p>
-
           <p className="text-black text-sm leading-relaxed font-extrabold">
             Welcome to the app that fills in the blanks.
             <br />
