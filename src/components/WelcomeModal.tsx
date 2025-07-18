@@ -74,7 +74,6 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ onHowItWorks, onClose }) =>
           </div>
         </div>
       </div>
-    </div>
   );
 };
 
