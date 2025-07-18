@@ -1,5 +1,4 @@
 import React from 'react';
-import fairwayMateLogo from 'figma:asset/0a38e5061bc0d89605ea379409ffee4f59a3dc65.png';
 
 interface WelcomeModalProps {
   onHowItWorks: () => void;
@@ -10,6 +9,12 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ onHowItWorks, onClose }) =>
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-4">
       <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden animate-fadeIn">
+
+         <img
+          src="/fairwaymate-logo.svg"
+          alt="FairwayMate Logo"
+          className="mx-auto w-28 h-auto mb-2"
+        />
         
         {/* Full-width logo header with fade effect */}
         <div className="relative w-full">
