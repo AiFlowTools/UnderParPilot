@@ -7,24 +7,17 @@ interface WelcomeModalProps {
 
 const WelcomeModal: React.FC<WelcomeModalProps> = ({ onHowItWorks, onClose }) => {
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-xl text-center max-w-sm w-full">
-  
-  {/* Logo at the top */}
-  <img
-    src="/fairwaymate-logo.svg"
-    alt="FairwayMate Logo"
-    className="w-20 h-auto mx-auto mb-4"
-  />
-
-  <h2 className="text-xl font-extrabold text-black mb-2">
-    👋 Welcome to FairwayMate!
-  </h2>
-  
-  {/* ...rest of your modal content */}
-
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-4">
-      <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 text-center space-y-4 animate-fadeIn">
-        <h2 className="text-2xl font-extrabold">👋 Welcome to FairwayMate!</h2>
+      <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 text-center space-y-5 animate-fadeIn">
+        
+        {/* Logo at the top */}
+        <img
+          src="/fairwaymate-logo.svg"
+          alt="FairwayMate Logo"
+          className="w-20 h-auto mx-auto mb-1"
+        />
+
+        <h2 className="text-2xl font-extrabold text-black">👋 Welcome to FairwayMate!</h2>
 
         <p className="text-gray-700 text-base font-medium">
           We know your wife did her best... but we'll take it from here.
@@ -57,4 +50,4 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ onHowItWorks, onClose }) =>
   );
 };
 
-export default WelcomeModal
+export default WelcomeModal;
