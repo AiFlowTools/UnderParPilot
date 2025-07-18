@@ -46,7 +46,7 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ onHowItWorks, onClose }) =>
           </p>
 
           <div className="flex gap-4 justify-center pt-2">
-            <button\
+            <button></button>
               onClick={() => {
                 onClose();
                 onHowItWorks();
