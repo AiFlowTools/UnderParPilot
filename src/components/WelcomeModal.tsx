@@ -26,7 +26,8 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ onHowItWorks, onClose }) =>
             <img 
               src={fairwayMateLogo} 
               alt="FairwayMate Logo"
-              className="h-20 w-auto object-contain"
+              className="w-full h-24
+            w-auto object-contain"
             />
           </div>
         </div>
