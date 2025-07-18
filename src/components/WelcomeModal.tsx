@@ -1,7 +1,6 @@
 import React from 'react';
 
-// Replace with your actual image path (ensure it's in the public folder or use import if using assets)
-const fairwayMateLogo = '/fairwaymate-logo.svg'; // Make sure this is the correct path to your logo
+const fairwayMateLogo = '/fairwaymate-logo.svg'; // ensure this file has a transparent background
 
 interface WelcomeModalProps {
   onHowItWorks: () => void;
@@ -13,32 +12,23 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ onHowItWorks, onClose }) =>
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-4">
       <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden animate-fadeIn">
         
-        {/* Header with gradient and logo */}
+        {/* Header with gradient and full-width logo */}
         <div className="relative w-full">
           {/* Gradient background */}
-          <div className="absolute inset-0 bg-gradient-to-b from-green-50 via-green-100 to-transparent"></div>
-          
-          {/* White fade at bottom */}
-          <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-b from-transparent to-white"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-green-50 via-green-100 to-transparent z-0"></div>
 
-          {/* Logo container */}
-         <div className="relative w-full">
-  {/* Background gradient */}
-  <div className="absolute inset-0 bg-gradient-to-b from-green-50 via-green-100 to-transparent z-0"></div>
+          {/* Fade at bottom of logo */}
+          <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-b from-transparent to-white z-20"></div>
 
-  {/* Logo full-width */}
-  <img 
-    src="/fairwaymate-logo.png" 
-    alt="FairwayMate Logo" 
-    className="w-full h-auto object-contain z-10 relative"
-  />
+          {/* Full-width logo */}
+          <img 
+            src={fairwayMateLogo} 
+            alt="FairwayMate Logo"
+            className="relative w-full h-auto object-contain z-10"
+          />
+        </div>
 
-  {/* Optional fade into white below */}
-  <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-b from-transparent to-white z-20"></div>
-</div>
-
-
-        {/* Content */}
+        {/* Modal content */}
         <div className="px-8 pb-8 pt-2 text-center space-y-5">
           <h2 className="text-2xl font-extrabold text-black">
             👋 Welcome to <span className="block">FairwayMate!</span>
@@ -56,7 +46,7 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ onHowItWorks, onClose }) =>
           </p>
 
           <div className="flex gap-4 justify-center pt-2">
-            <button
+            <button\
               onClick={() => {
                 onClose();
                 onHowItWorks();
@@ -74,6 +64,7 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ onHowItWorks, onClose }) =>
           </div>
         </div>
       </div>
+    </div>
   );
 };
 
