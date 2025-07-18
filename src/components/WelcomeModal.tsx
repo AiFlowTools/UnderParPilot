@@ -9,13 +9,6 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ onHowItWorks, onClose }) =>
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-4">
       <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 text-center space-y-5 animate-fadeIn">
-        
-        {/* Logo from public folder */}
-        <img
-          src="/fairwaymate-logo.svg"
-          alt="FairwayMate Logo"
-          className="mx-auto w-28 h-auto mb-2"
-        />
 
         <h2 className="text-2xl font-extrabold text-black">
           👋 Welcome to <span className="block">FairwayMate!</span>
