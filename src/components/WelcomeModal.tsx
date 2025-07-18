@@ -22,14 +22,21 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ onHowItWorks, onClose }) =>
           <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-b from-transparent to-white"></div>
 
           {/* Logo container */}
-          <div className="relative py-8 flex justify-center items-center">
-            <img 
-              src={fairwayMateLogo} 
-              alt="FairwayMate Logo"
-              className="h-32 w-auto object-contain"
-            />
-          </div>
-        </div>
+         <div className="relative w-full">
+  {/* Background gradient */}
+  <div className="absolute inset-0 bg-gradient-to-b from-green-50 via-green-100 to-transparent z-0"></div>
+
+  {/* Logo full-width */}
+  <img 
+    src="/fairwaymate-logo.png" 
+    alt="FairwayMate Logo" 
+    className="w-full h-auto object-contain z-10 relative"
+  />
+
+  {/* Optional fade into white below */}
+  <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-b from-transparent to-white z-20"></div>
+</div>
+
 
         {/* Content */}
         <div className="px-8 pb-8 pt-2 text-center space-y-5">
