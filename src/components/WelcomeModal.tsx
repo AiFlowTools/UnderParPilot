@@ -22,7 +22,7 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ onHowItWorks, onClose }) =>
           <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-b from-transparent to-white"></div>
 
           {/* Logo container */}
-          <div className="relative py-8 flex justify-center items-center">
+          <div className="relative py-6 px-6">
             <img 
               src={fairwayMateLogo} 
               alt="FairwayMate Logo"
