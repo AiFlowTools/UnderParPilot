@@ -7,33 +7,53 @@ interface WelcomeModalProps {
 
 const WelcomeModal: React.FC<WelcomeModalProps> = ({ onHowItWorks, onClose }) => {
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-4">
-      <div className="bg-white rounded-full shadow-[inset_0_0_20px_rgba(0,0,0,0.1)] border-2 border-gray-200 w-[340px] h-[340px] flex flex-col justify-center items-center text-center p-6 space-y-3">
-        <h2 className="text-xl font-extrabold text-black leading-tight">
-          👋 Welcome to FairwayMate!
-        </h2>
+    <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center px-4">
+      <div className="relative flex flex-col items-center space-y-4">
+        
+        {/* Golf Ball */}
+        <div
+          className="w-[320px] h-[320px] rounded-full border-2 border-gray-300 flex flex-col items-center justify-center text-center px-6 shadow-xl"
+          style={{
+            backgroundImage: `
+              radial-gradient(circle at 10% 10%, #e5e5e5 2px, transparent 2px),
+              radial-gradient(circle at 30% 30%, #e5e5e5 2px, transparent 2px),
+              radial-gradient(circle at 50% 50%, #e5e5e5 2px, transparent 2px),
+              radial-gradient(circle at 70% 70%, #e5e5e5 2px, transparent 2px),
+              radial-gradient(circle at 90% 90%, #e5e5e5 2px, transparent 2px)
+            `,
+            backgroundSize: '40px 40px',
+            backgroundColor: '#fff',
+          }}
+        >
+          <h2 className="text-xl font-extrabold text-black mb-2 leading-tight">
+            👋 Welcome to FairwayMate!
+          </h2>
+          <p className="text-gray-700 text-sm font-medium mb-1">
+            We know your wife did her best...<br />but we’ll take it from here.
+          </p>
+          <p className="text-gray-500 text-xs leading-snug">
+            Drinks, snacks, and whatever your round is missing —<br />
+            delivered right to you on the course.
+          </p>
+        </div>
 
-        <p className="text-gray-700 text-sm font-medium px-4">
-          We know your wife did her best...<br />but we’ll take it from here.
-        </p>
+        {/* Tee */}
+        <div className="w-0 h-0 border-l-[20px] border-r-[20px] border-t-[40px] border-t-red-600"></div>
 
-        <p className="text-gray-500 text-xs leading-snug px-6">
-          Drinks, snacks, and whatever your round is missing — delivered right to you on the course.
-        </p>
-
-        <div className="flex gap-3 pt-3">
+        {/* Buttons */}
+        <div className="flex gap-4 pt-2 justify-center">
           <button
             onClick={() => {
               onClose();
               onHowItWorks();
             }}
-            className="bg-gray-100 text-gray-800 rounded-full px-3 py-1.5 text-sm font-semibold hover:bg-gray-200 transition"
+            className="bg-gray-100 text-gray-800 rounded-full px-5 py-2 text-sm font-semibold hover:bg-gray-200 transition"
           >
             How It Works
           </button>
           <button
             onClick={onClose}
-            className="bg-green-600 text-white rounded-full px-3 py-1.5 text-sm font-semibold hover:bg-green-700 transition"
+            className="bg-green-600 text-white rounded-full px-5 py-2 text-sm font-semibold hover:bg-green-700 transition"
           >
             Browse Menu
           </button>
