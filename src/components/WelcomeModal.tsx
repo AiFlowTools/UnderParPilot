@@ -1,5 +1,5 @@
 import React from 'react';
-import FairwayMateLogo from '../assets/fairwaymate-logo.svg'; // adjust path if needed
+import FairwayMateLogo from '../public/fairwaymate-logo.svg'; // adjust path if needed
 
 interface WelcomeModalProps {
   onHowItWorks: () => void;
