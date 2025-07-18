@@ -50,7 +50,7 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ onHowItWorks, onClose }) =>
                 onClose();
                 onHowItWorks();
               }}
-              className="bg-gray-100 text-gray-300 rounded-full px-5 py-2 font-semibold hover:bg-gray-200 transition"
+              className="bg-gray-100 text-gray-800 rounded-full px-5 py-2 font-semibold hover:bg-gray-200 transition"
             >
               How It Works
             </button>
