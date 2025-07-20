@@ -28,7 +28,7 @@ export function useCourse(): UseCourseResult {
       setError(null)
 
       try {
-        let subdomain = 'testcourse' // fallback default
+        let subdomain = 'testcourse'
 
         if (typeof window !== 'undefined') {
           const hostname = window.location.hostname
@@ -36,86 +36,68 @@ export function useCourse(): UseCourseResult {
 
           console.log('[useCourse] Full URL:', fullUrl)
           console.log('[useCourse] Hostname:', hostname)
-          console.log('[useCourse] Protocol:', window.location.protocol)
-          console.log('[useCourse] Port:', window.location.port)
 
           if (hostname === 'localhost' || hostname === '127.0.0.1') {
-            console.log('[useCourse] Local development detected')
+            console.log('[useCourse] Detected local environment')
             subdomain = 'testcourse'
           } else if (
-            hostname.includes('aiflowtools.com') ||
-            hostname.includes('fairwaymate.com')
+            hostname.includes('fairwaymate.com') ||
+            hostname.includes('aiflowtools.com')
           ) {
             const parts = hostname.split('.')
-            console.log('[useCourse] Domain parts:', parts)
 
-            if (parts.length >= 3) {
+            if (parts.length === 2) {
+              console.log('[useCourse] Root domain detected')
+              subdomain = 'main' // <- this must exist in your Supabase golf_courses table
+            } else if (parts.length >= 3) {
               subdomain = parts[0].toLowerCase()
-              console.log('[useCourse] Extracted subdomain from domain:', subdomain)
+              console.log('[useCourse] Subdomain detected:', subdomain)
             } else {
-              console.log('[useCourse] Main domain detected - using fallback')
+              console.log('[useCourse] Unknown hostname structure, falling back')
               subdomain = 'testcourse'
             }
-          } else if (
-            hostname.includes('netlify.app') ||
-            hostname.includes('netlify.com')
-          ) {
-            console.log('[useCourse] Netlify deployment detected')
-            subdomain = 'testcourse'
           } else {
-            console.log('[useCourse] Unknown domain - using fallback')
+            console.log('[useCourse] Unknown domain fallback')
             subdomain = 'testcourse'
           }
         }
 
-        console.log('[useCourse] Final subdomain for query:', subdomain)
+        console.log('[useCourse] Final subdomain:', subdomain)
 
-        // Test Supabase connection
-        console.log('[useCourse] Testing Supabase connection...')
-        const { data: testData, error: testError } = await supabase
+        // Optional: quick Supabase connection test
+        const { error: connectionError } = await supabase
           .from('golf_courses')
-          .select('count')
+          .select('id')
           .limit(1)
 
-        if (testError) {
-          console.error('[useCourse] Supabase connection test failed:', testError)
-          setError(`Database connection failed: ${testError.message}`)
+        if (connectionError) {
+          console.error('[useCourse] Supabase test failed:', connectionError)
+          setError('Unable to connect to Supabase.')
           return
         }
 
-        console.log('[useCourse] Supabase connection successful')
-
-        // Fetch course based on subdomain
         const { data, error: fetchError } = await supabase
           .from('golf_courses')
           .select('id, name, logo_url, subdomain, slug, contact_email, location')
-          .eq('subdomain', subdomain.toLowerCase())
+          .eq('subdomain', subdomain)
           .maybeSingle()
 
-        console.log('[useCourse] Query result:', { data, error: fetchError })
-
         if (fetchError) {
-          console.error('[useCourse] Supabase fetch error:', fetchError)
-          setError(`Failed to load golf course data: ${fetchError.message}`)
+          console.error('[useCourse] Fetch error:', fetchError)
+          setError(`Failed to load course: ${fetchError.message}`)
           setCourse(null)
         } else if (!data) {
-          console.warn('[useCourse] No course found for subdomain:', subdomain)
-
-          const { data: allCourses } = await supabase
-            .from('golf_courses')
-            .select('subdomain, name')
-
-          console.log('[useCourse] Available courses:', allCourses)
-          setError(`Golf course not found for subdomain "${subdomain}". Available courses: ${allCourses?.map(c => c.subdomain).join(', ') || 'none'}`)
+          console.warn('[useCourse] No course found for:', subdomain)
+          setError(`No golf course found for subdomain "${subdomain}".`)
           setCourse(null)
         } else {
-          console.log('[useCourse] Course loaded successfully:', data)
+          console.log('[useCourse] Course loaded:', data)
           setCourse(data)
           setError(null)
         }
       } catch (err) {
         console.error('[useCourse] Unexpected error:', err)
-        setError(`An unexpected error occurred: ${err instanceof Error ? err.message : 'Unknown error'}`)
+        setError('Unexpected error occurred while loading course.')
         setCourse(null)
       } finally {
         setLoading(false)
