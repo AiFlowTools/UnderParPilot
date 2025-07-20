@@ -49,9 +49,17 @@ export function useCourse(): UseCourseResult {
               console.log('[useCourse] Root domain detected')
               subdomain = 'main' // <- this must exist in your Supabase golf_courses table
             } else if (parts.length >= 3) {
-              subdomain = parts[0].toLowerCase()
-              console.log('[useCourse] Subdomain detected:', subdomain)
-            } else {
+  subdomain = parts[0].toLowerCase()
+
+  // Fallback override: force 'menu' subdomain to use 'testcourse'
+  if (subdomain === 'menu') {
+    console.log('[useCourse] Overriding "menu" subdomain to use testcourse')
+    subdomain = 'testcourse'
+  }
+
+  console.log('[useCourse] Subdomain detected:', subdomain)
+}
+ else {
               console.log('[useCourse] Unknown hostname structure, falling back')
               subdomain = 'testcourse'
             }
