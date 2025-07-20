@@ -41,8 +41,7 @@ export function useCourse(): UseCourseResult {
             console.log('[useCourse] Detected local environment')
             subdomain = 'testcourse'
           } else if (
-            hostname.includes('fairwaymate.com') ||
-            hostname.includes('aiflowtools.com')
+            hostname.includes('fairwaymate.com')
           ) {
             const parts = hostname.split('.')
 
