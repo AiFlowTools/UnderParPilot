@@ -24,7 +24,20 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { line_items, success_url, cancel_url, metadata } = await req.json();
+    const {
+      line_items,
+      success_url,
+      cancel_url,
+      course_id,
+      hole_number,
+      notes,
+      subtotal_price,
+      convenience_fee,
+      gst,
+      qst,
+      total_price,
+      ordered_items,
+    } = await req.json();
 
     // Create Stripe Checkout Session
     const session = await stripe.checkout.sessions.create({
@@ -35,7 +48,17 @@ Deno.serve(async (req) => {
       cancel_url,
       customer_creation: 'always',
       billing_address_collection: 'auto',
-      metadata
+      metadata: {
+        course_id,
+        hole_number,
+        notes,
+        subtotal: subtotal_price,
+        convenience_fee,
+        gst,
+        qst,
+        total_price,
+        ordered_items,
+      },
     });
 
     return new Response(JSON.stringify({ url: session.url }), {
