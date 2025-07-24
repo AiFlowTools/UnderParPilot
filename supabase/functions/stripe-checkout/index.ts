@@ -48,6 +48,9 @@ Deno.serve(async (req) => {
       cancel_url,
       customer_creation: 'always',
       billing_address_collection: 'auto',
+      phone_number_collection: {
+    enabled: true
+  },
       metadata: {
         course_id,
         hole_number,
