@@ -1,6 +1,3 @@
-// Full rewritten Checkout.tsx file with updated mobile UI, geolocation fallback,
-// Stripe integration, and improved note handling as discussed.
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -48,6 +45,11 @@ export default function Checkout() {
   const [selectedHole, setSelectedHole] = useState<number>(0);
   const [showHoleSelect, setShowHoleSelect] = useState(false);
 
+  // FEE + TAX LOGIC
+  const CONVENIENCE_FEE = 2.5;
+  const GST_RATE = 0.05;
+  const QST_RATE = 0.09975;
+
   useEffect(() => {
     const saved = localStorage.getItem('cart');
     if (saved) setCart(JSON.parse(saved));
@@ -92,7 +94,22 @@ export default function Checkout() {
     });
   };
 
+  // TAX CALCULATIONS
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  const gstOnSubtotal = subtotal * GST_RATE;
+  const qstOnSubtotal = subtotal * QST_RATE;
+  const gstOnFee = CONVENIENCE_FEE * GST_RATE;
+  const qstOnFee = CONVENIENCE_FEE * QST_RATE;
+
+  const gstTotal = gstOnSubtotal + gstOnFee;
+  const qstTotal = qstOnSubtotal + qstOnFee;
+
+  const total =
+    subtotal +
+    CONVENIENCE_FEE +
+    gstTotal +
+    qstTotal;
 
   const clearCart = () => {
     localStorage.removeItem('cart');
@@ -229,9 +246,28 @@ export default function Checkout() {
           </div>
 
           <div className="fixed bottom-0 left-0 right-0 bg-white p-4 border-t shadow-md z-10">
-            <div className="flex justify-between items-center mb-4">
-              <span className="font-medium text-gray-800">Total</span>
-              <span className="text-xl font-bold text-gray-900">${subtotal.toFixed(2)}</span>
+            <div className="space-y-1 mb-3 text-sm">
+              <div className="flex justify-between">
+                <span>Order Subtotal</span>
+                <span>${subtotal.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Convenience Fee</span>
+                <span>${CONVENIENCE_FEE.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>GST (5%)</span>
+                <span>${gstTotal.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>QST (9.98%)</span>
+                <span>${qstTotal.toFixed(2)}</span>
+              </div>
+              <hr className="my-1" />
+              <div className="flex justify-between font-bold text-lg">
+                <span>Total</span>
+                <span>${total.toFixed(2)}</span>
+              </div>
             </div>
             <div className="flex gap-2">
               <button
@@ -247,6 +283,9 @@ export default function Checkout() {
               >
                 {isSubmitting ? 'Processing...' : 'Place Order'}
               </button>
+            </div>
+            <div className="text-xs text-gray-400 mt-2 text-center">
+              * A $2.50 mobile ordering fee & taxes are included in your total.
             </div>
           </div>
         </>
