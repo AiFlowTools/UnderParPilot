@@ -142,14 +142,21 @@ export default function Checkout() {
       ].filter(Boolean).join('\n');
 
       const { url } = await createCheckoutSession(
-        lineItems,
-        `${window.location.origin}/thank-you?session_id={CHECKOUT_SESSION_ID}`,
-        `${window.location.origin}/checkout`,
-        course.id,
-        combinedNotes,
-        options.location,
-        options.hole
-      );
+  lineItems,
+  `${window.location.origin}/thank-you?session_id={CHECKOUT_SESSION_ID}`,
+  `${window.location.origin}/checkout`,
+  course.id,
+  combinedNotes,
+  options.location,
+  options.hole,
+  {
+    subtotal: subtotal.toFixed(2),
+    convenience_fee: CONVENIENCE_FEE.toFixed(2),
+    gst: gstTotal.toFixed(2),
+    qst: qstTotal.toFixed(2),
+    total: total.toFixed(2),
+  }
+);
 
       if (!url) throw new Error('Failed to create checkout session.');
       window.location.href = url;
