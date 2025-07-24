@@ -1,10 +1,20 @@
-// Updated Checkout.tsx with tax, fee, and order detail breakdown
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Plus, Minus, Pen } from 'lucide-react';
+import {
+  ShoppingBag,
+  AlertCircle,
+  CheckCircle2,
+  ArrowLeft,
+  Plus,
+  Minus,
+  Pen,
+  Check,
+} from 'lucide-react';
+import { createCheckoutSession } from '../lib/stripe';
+import { requestGeolocation, GeolocationError } from '../lib/geolocation';
 import { useCourse } from '../hooks/useCourse';
 
+// Interfaces
 interface CartItem {
   id: string;
   item_name: string;
@@ -13,139 +23,273 @@ interface CartItem {
   image_url?: string;
   note?: string;
 }
+interface OrderStatus {
+  success: boolean;
+  message: string;
+}
+interface SubmitOrderOptions {
+  location?: { lat: number; lng: number };
+  hole?: number;
+}
 
 export default function Checkout() {
   const navigate = useNavigate();
-  const { course } = useCourse();
+  const { course, loading: courseLoading, error: courseError } = useCourse();
+
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [submitting, setSubmitting] = useState(false);
+  const [notes, setNotes] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [orderStatus, setOrderStatus] = useState<OrderStatus | null>(null);
+  const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
+  const [tempNotes, setTempNotes] = useState<Record<string, string>>({});
+  const [selectedHole, setSelectedHole] = useState<number>(0);
+  const [showHoleSelect, setShowHoleSelect] = useState(false);
+
+  // FEE + TAX LOGIC
+  const CONVENIENCE_FEE = 2.5;
+  const GST_RATE = 0.05;
+  const QST_RATE = 0.09975;
 
   useEffect(() => {
-    const savedCart = localStorage.getItem('cart');
-    if (savedCart) setCart(JSON.parse(savedCart));
+    const saved = localStorage.getItem('cart');
+    if (saved) setCart(JSON.parse(saved));
   }, []);
 
-  const updateQuantity = (id: string, delta: number) => {
-    setCart((prev) => {
-      const updated = prev.map((item) =>
-        item.id === id ? { ...item, quantity: Math.max(1, item.quantity + delta) } : item
-      );
-      localStorage.setItem('cart', JSON.stringify(updated));
+  const updateCart = (newCart: CartItem[]) => {
+    setCart(newCart);
+    localStorage.setItem('cart', JSON.stringify(newCart));
+  };
+
+  const updateQuantity = (itemId: string, delta: number) => {
+    const updated = cart
+      .map(item =>
+        item.id === itemId
+          ? { ...item, quantity: Math.max(0, item.quantity + delta) }
+          : item
+      )
+      .filter(item => item.quantity > 0);
+    updateCart(updated);
+  };
+
+  const updateItemNote = (itemId: string, note: string) => {
+    const updated = cart.map(item =>
+      item.id === itemId ? { ...item, note: note.trim() || undefined } : item
+    );
+    updateCart(updated);
+  };
+
+  const startEditingNote = (itemId: string, currentNote: string = '') => {
+    setEditingNoteId(itemId);
+    setTempNotes(prev => ({ ...prev, [itemId]: currentNote }));
+  };
+
+  const saveNote = (itemId: string) => {
+    const note = tempNotes[itemId] || '';
+    updateItemNote(itemId, note);
+    setEditingNoteId(null);
+    setTempNotes(prev => {
+      const updated = { ...prev };
+      delete updated[itemId];
       return updated;
     });
   };
+
+  // TAX CALCULATIONS
+  const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  const gstOnSubtotal = subtotal * GST_RATE;
+  const qstOnSubtotal = subtotal * QST_RATE;
+  const gstOnFee = CONVENIENCE_FEE * GST_RATE;
+  const qstOnFee = CONVENIENCE_FEE * QST_RATE;
+
+  const gstTotal = gstOnSubtotal + gstOnFee;
+  const qstTotal = qstOnSubtotal + qstOnFee;
+
+  const total =
+    subtotal +
+    CONVENIENCE_FEE +
+    gstTotal +
+    qstTotal;
 
   const clearCart = () => {
     localStorage.removeItem('cart');
     setCart([]);
   };
 
-  const subtotal = cart.reduce((sum, item) => sum + item.quantity * item.price, 0);
-  const fee = 2.5;
-  const gst = (subtotal + fee) * 0.05;
-  const qst = (subtotal + fee) * 0.09975;
-  const total = subtotal + fee + gst + qst;
+  const submitOrder = async (options: SubmitOrderOptions = {}) => {
+    if (!course?.id || cart.length === 0) return;
+    setIsSubmitting(true);
+    setOrderStatus(null);
 
-  const placeOrder = async () => {
-    setSubmitting(true);
+    try {
+      const lineItems = cart.map(item => ({
+        price_data: {
+          currency: 'cad',
+          product_data: {
+            name: item.item_name,
+            images: item.image_url ? [item.image_url] : undefined,
+          },
+          unit_amount: Math.round(item.price * 100),
+        },
+        quantity: item.quantity,
+      }));
 
-    const order = {
-      items: cart,
-      subtotal,
-      convenience_fee: fee,
-      gst,
-      qst,
-      total,
-      course_id: course?.id || null,
-      created_at: new Date().toISOString(),
-    };
+      const combinedNotes = [
+        notes,
+        ...cart
+          .filter(item => item.note)
+          .map(item => `${item.item_name}: ${item.note}`)
+      ].filter(Boolean).join('\n');
 
-    const res = await fetch('/api/place-order', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(order),
-    });
+      const { url } = await createCheckoutSession(
+        lineItems,
+        `${window.location.origin}/thank-you?session_id={CHECKOUT_SESSION_ID}`,
+        `${window.location.origin}/checkout`,
+        course.id,
+        combinedNotes,
+        options.location,
+        options.hole
+      );
 
-    if (res.ok) {
-      clearCart();
-      navigate('/thank-you');
-    } else {
-      alert('Failed to place order.');
+      if (!url) throw new Error('Failed to create checkout session.');
+      window.location.href = url;
+    } catch (err: any) {
+      setOrderStatus({
+        success: false,
+        message: err.message || 'Unexpected error.',
+      });
+      setIsSubmitting(false);
     }
-
-    setSubmitting(false);
   };
 
+  const handlePlaceOrder = async () => {
+    try {
+      const location = await requestGeolocation();
+      await submitOrder({ location: { lat: location.latitude, lng: location.longitude } });
+    } catch (err) {
+      if (err instanceof GeolocationError && err.code === GeolocationError.PERMISSION_DENIED) {
+        setShowHoleSelect(true);
+      } else {
+        await submitOrder();
+      }
+    }
+  };
+
+  if (courseLoading) return <div className="p-10 text-center">Loading...</div>;
+  if (courseError || !course) return <div className="p-10 text-center">Error loading course</div>;
+
   return (
-    <div className="p-4">
-      <button onClick={() => navigate(-1)} className="text-sm text-gray-500 flex items-center mb-4">
-        <ArrowLeft className="w-4 h-4 mr-1" /> Back to Menu
+    <div className="min-h-screen bg-gray-50 px-4 py-6">
+      <button
+        onClick={() => navigate('/menu')}
+        className="mb-4 flex items-center text-gray-600"
+      >
+        <ArrowLeft className="w-5 h-5 mr-1" /> Back to Menu
       </button>
 
-      <h2 className="text-xl font-semibold mb-4">Your Order</h2>
+      <h1 className="text-2xl font-bold mb-4">Your Order</h1>
 
-      {cart.map((item) => (
-        <div key={item.id} className="border rounded p-3 mb-3 flex items-center justify-between">
-          <div>
-            <div className="font-semibold">{item.item_name}</div>
-            <div className="text-sm text-gray-500">${item.price.toFixed(2)} each</div>
-            {item.note && <div className="text-sm italic">Note: {item.note}</div>}
+      {cart.length === 0 ? (
+        <div className="text-center mt-20 text-gray-500">
+          <ShoppingBag className="w-12 h-12 mx-auto mb-2" />
+          Your cart is empty
+        </div>
+      ) : (
+        <>
+          <div className="space-y-4 mb-28">
+            {cart.map(item => (
+              <div key={item.id} className="bg-white p-4 rounded-xl shadow-sm border">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-3">
+                    <img src={item.image_url} className="w-12 h-12 rounded-md" />
+                    <div>
+                      <p className="font-semibold">{item.item_name}</p>
+                      <p className="text-sm text-gray-500">${item.price.toFixed(2)} each</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => updateQuantity(item.id, -1)} className="p-2 rounded-full bg-gray-100">
+                      <Minus className="w-4 h-4" />
+                    </button>
+                    <span className="w-6 text-center">{item.quantity}</span>
+                    <button onClick={() => updateQuantity(item.id, 1)} className="p-2 rounded-full bg-gray-100">
+                      <Plus className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+                {editingNoteId === item.id ? (
+                  <div className="mt-3 space-y-2">
+                    <textarea
+                      value={tempNotes[item.id] || ''}
+                      onChange={e => setTempNotes(prev => ({ ...prev, [item.id]: e.target.value }))}
+                      className="w-full border rounded-md p-2 text-sm"
+                      placeholder="Add note (e.g. No onions)"
+                      rows={2}
+                    />
+                    <button
+                      onClick={() => saveNote(item.id)}
+                      className="text-green-600 flex items-center gap-1 text-sm font-medium"
+                    >
+                      <Check className="w-4 h-4" /> Save Note
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => startEditingNote(item.id, item.note)}
+                    className="mt-2 flex items-center gap-2 text-sm text-gray-700 hover:text-green-600"
+                  >
+                    <Pen className="w-4 h-4" /> {item.note ? 'Edit Note' : 'Add Note'}
+                  </button>
+                )}
+              </div>
+            ))}
           </div>
-          <div className="flex items-center gap-2">
-            <button onClick={() => updateQuantity(item.id, -1)} className="px-2 py-1 bg-gray-100 rounded">
-              <Minus className="w-4 h-4" />
-            </button>
-            <span>{item.quantity}</span>
-            <button onClick={() => updateQuantity(item.id, 1)} className="px-2 py-1 bg-gray-100 rounded">
-              <Plus className="w-4 h-4" />
-            </button>
+
+          <div className="fixed bottom-0 left-0 right-0 bg-white p-4 border-t shadow-md z-10">
+            <div className="space-y-1 mb-3 text-sm">
+              <div className="flex justify-between">
+                <span>Order Subtotal</span>
+                <span>${subtotal.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Convenience Fee</span>
+                <span>${CONVENIENCE_FEE.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>GST (5%)</span>
+                <span>${gstTotal.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>QST (9.98%)</span>
+                <span>${qstTotal.toFixed(2)}</span>
+              </div>
+              <hr className="my-1" />
+              <div className="flex justify-between font-bold text-lg">
+                <span>Total</span>
+                <span>${total.toFixed(2)}</span>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={clearCart}
+                className="flex-1 py-3 border rounded-md text-gray-700"
+              >
+                Clear Cart
+              </button>
+              <button
+                onClick={handlePlaceOrder}
+                disabled={isSubmitting}
+                className="flex-1 py-3 rounded-md bg-green-600 text-white font-medium hover:bg-green-700 transition"
+              >
+                {isSubmitting ? 'Processing...' : 'Place Order'}
+              </button>
+            </div>
+            <div className="text-xs text-gray-400 mt-2 text-center">
+              * A $2.50 mobile ordering fee & taxes are included in your total.
+            </div>
           </div>
-        </div>
-      ))}
-
-      <div className="border-t pt-4 space-y-1 text-sm">
-        <div className="flex justify-between">
-          <span>Order Subtotal</span>
-          <span>${subtotal.toFixed(2)}</span>
-        </div>
-        <div className="flex justify-between">
-          <span>Convenience Fee</span>
-          <span>${fee.toFixed(2)}</span>
-        </div>
-        <div className="flex justify-between">
-          <span>GST (5%)</span>
-          <span>${gst.toFixed(2)}</span>
-        </div>
-        <div className="flex justify-between">
-          <span>QST (9.98%)</span>
-          <span>${qst.toFixed(2)}</span>
-        </div>
-        <div className="flex justify-between font-bold text-lg">
-          <span>Total</span>
-          <span>${total.toFixed(2)}</span>
-        </div>
-      </div>
-
-      <div className="mt-4 space-x-2">
-        <button
-          onClick={clearCart}
-          className="w-1/2 border border-gray-300 px-4 py-2 rounded text-gray-700"
-          disabled={submitting}
-        >
-          Clear Cart
-        </button>
-        <button
-          onClick={placeOrder}
-          className="w-1/2 bg-green-600 text-white px-4 py-2 rounded"
-          disabled={submitting}
-        >
-          {submitting ? 'Submitting...' : 'Place Order'}
-        </button>
-      </div>
-
-      <p className="text-xs text-gray-500 mt-2">
-        * A $2.50 mobile ordering fee & taxes are included in your total.
-      </p>
+        </>
+      )}
     </div>
   );
 }
