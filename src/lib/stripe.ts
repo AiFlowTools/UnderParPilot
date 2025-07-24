@@ -66,7 +66,7 @@ export async function createCheckoutSession(
   convenience_fee: convenienceFee.toFixed(2),
   gst: gst.toFixed(2),
   qst: qst.toFixed(2),
-}
+},
         mode: 'payment',
       }),
     }
