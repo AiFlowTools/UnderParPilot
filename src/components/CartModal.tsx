@@ -74,70 +74,70 @@ const CartModal: React.FC<Props> = ({
           <>
             {/* Scrollable Item List */}
             <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
-              {cart.map((item, index) => (
-                const localizedContent = getLocalizedContent(item, language);
-                            alt={localizedContent.name}
-                <div
-                  key={`${item.id}-${index}`}
-                  className="bg-white border border-gray-100 rounded-xl p-4 shadow-md transition-all duration-300"
-                >
-                  <div className="flex items-start space-x-4 mb-3">
-                    {/* Item Image */}
-                    {item.image_url && (
-                      <div className="flex-shrink-0">
-                          {localizedContent.name}
-                          src={item.image_url}
-                          alt={item.item_name}
-                          ${item.price.toFixed(2)} {t('each')}
-                        />
-                      </div>
-                    )}
-                    
-                  {/* Item Info */}
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-gray-900 text-base leading-tight">
-                        {item.item_name}
-                      </h4>
-                      <p className="text-sm text-gray-600 mt-1">
-                        ${item.price.toFixed(2)} each
-                      </p>
-                    </div>
-                    
-                    {/* Item Total */}
-                    <div className="flex-shrink-0 text-right">
-                      <p className="font-bold text-gray-900 text-base">
-                        ${(item.price * item.quantity).toFixed(2)}
-                      </p>
-                    </div>
-                          aria-label={t('decreaseQuantity') || 'Decrease quantity'}
-                  
-                  {/* Quantity Controls */}
-                  <div className="flex items-center justify-center">
-                    <div className="flex items-center bg-gray-50 rounded-full p-1">
-                      <button
-                        onClick={() => onUpdateQuantity(item.id, -1)}
-                        className="w-10 h-10 flex items-center justify-center bg-white rounded-full shadow-sm border border-gray-200 hover:bg-gray-50 transition-all duration-200 active:scale-95"
-                        aria-label="Decrease quantity"
-                      >
-                        <Minus className="w-4 h-4 text-gray-600" />
-                      </button>
-                      <span className="w-12 text-center font-semibold text-gray-900 text-lg">
-                        {item.quantity}
-                      </span>
-                      <button
-                        onClick={() => onUpdateQuantity(item.id, 1)}
-                          aria-label={t('increaseQuantity') || 'Increase quantity'}
-                        aria-label="Increase quantity"
-                      >
-                        <Plus className="w-4 h-4 text-gray-600" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+{cart.map((item, index) => {
+  const localizedContent = getLocalizedContent(item, language);
+  return (
+    <div
+      key={`${item.id}-${index}`}
+      className="bg-white border border-gray-100 rounded-xl p-4 shadow-md transition-all duration-300"
+    >
+      <div className="flex items-start space-x-4 mb-3">
+        {/* Item Image */}
+        {item.image_url && (
+          <div className="flex-shrink-0">
+            <img
+              src={item.image_url}
+              alt={localizedContent.name}
+              className="w-20 h-20 object-cover rounded-lg"
+            />
+          </div>
+        )}
 
-            {/* Sticky Footer - Total & Checkout */}
+        {/* Item Info */}
+        <div className="flex-1 min-w-0">
+          <h4 className="font-semibold text-gray-900 text-base leading-tight">
+            {localizedContent.name}
+          </h4>
+          <p className="text-sm text-gray-600 mt-1">
+            ${item.price.toFixed(2)} {t('each')}
+          </p>
+        </div>
+
+        {/* Item Total */}
+        <div className="flex-shrink-0 text-right">
+          <p className="font-bold text-gray-900 text-base">
+            ${(item.price * item.quantity).toFixed(2)}
+          </p>
+        </div>
+      </div>
+
+      {/* Quantity Controls */}
+      <div className="flex items-center justify-center">
+        <div className="flex items-center bg-gray-50 rounded-full p-1">
+          <button
+            onClick={() => onUpdateQuantity(item.id, -1)}
+            className="w-10 h-10 flex items-center justify-center bg-white rounded-full shadow-sm border border-gray-200 hover:bg-gray-50 transition-all duration-200 active:scale-95"
+            aria-label={t('decreaseQuantity') || 'Decrease quantity'}
+          >
+            <Minus className="w-4 h-4 text-gray-600" />
+          </button>
+          <span className="w-12 text-center font-semibold text-gray-900 text-lg">
+            {item.quantity}
+          </span>
+          <button
+            onClick={() => onUpdateQuantity(item.id, 1)}
+            className="w-10 h-10 flex items-center justify-center bg-white rounded-full shadow-sm border border-gray-200 hover:bg-gray-50 transition-all duration-200 active:scale-95"
+            aria-label={t('increaseQuantity') || 'Increase quantity'}
+          >
+            <Plus className="w-4 h-4 text-gray-600" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+})}
+
+              {/* Sticky Footer - Total & Checkout */}
             <div className="bg-white border-t border-gray-100 px-6 py-6 shadow-lg">
               {/* Total Row */}
               <div className="flex justify-between items-center mb-6">
