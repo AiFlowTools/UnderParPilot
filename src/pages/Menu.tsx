@@ -53,7 +53,9 @@ export default function Menu() {
   const [isScrollingDown, setIsScrollingDown] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-  const [showWelcome, setShowWelcome] = useState(true);
+  const [showWelcome, setShowWelcome] = useState(() => {
+  return localStorage.getItem('showWelcome') !== 'false';
+});
 
   // Dynamic categories with translations
   const categories = [
