@@ -136,6 +136,7 @@ const CartModal: React.FC<Props> = ({
     </div>
   );
 })}
+            </div>
 
               {/* Sticky Footer - Total & Checkout */}
             <div className="bg-white border-t border-gray-100 px-6 py-6 shadow-lg">
@@ -156,7 +157,6 @@ const CartModal: React.FC<Props> = ({
               </Link>
             </div>
           </>
-        )}
         )}
         </div>
       </div>
