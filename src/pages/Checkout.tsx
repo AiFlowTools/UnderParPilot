@@ -13,11 +13,14 @@ import {
 import { createCheckoutSession } from '../lib/stripe';
 import { requestGeolocation, GeolocationError } from '../lib/geolocation';
 import { useCourse } from '../hooks/useCourse';
+import { useLanguage, getLocalizedContent } from '../hooks/useLanguage';
 
 // Interfaces
 interface CartItem {
   id: string;
   item_name: string;
+  item_name_fr?: string;
+  description_fr?: string;
   quantity: number;
   price: number;
   image_url?: string;
@@ -35,6 +38,7 @@ interface SubmitOrderOptions {
 export default function Checkout() {
   const navigate = useNavigate();
   const { course, loading: courseLoading, error: courseError } = useCourse();
+  const { language, t } = useLanguage();
 
   const [cart, setCart] = useState<CartItem[]>([]);
   const [notes, setNotes] = useState('');
@@ -191,27 +195,29 @@ export default function Checkout() {
         onClick={() => navigate('/menu')}
         className="mb-4 flex items-center text-gray-600"
       >
-        <ArrowLeft className="w-5 h-5 mr-1" /> Back to Menu
+        <ArrowLeft className="w-5 h-5 mr-1" /> {t('backToMenu')}
       </button>
 
-      <h1 className="text-2xl font-bold mb-4">Your Order</h1>
+      <h1 className="text-2xl font-bold mb-4">{t('yourOrder')}</h1>
 
       {cart.length === 0 ? (
         <div className="text-center mt-20 text-gray-500">
           <ShoppingBag className="w-12 h-12 mx-auto mb-2" />
-          Your cart is empty
+          {t('cartEmpty')}
         </div>
       ) : (
         <>
           <div className="space-y-4 mb-28">
             {cart.map(item => (
+              const localizedContent = getLocalizedContent(item, language);
+              
               <div key={item.id} className="bg-white p-4 rounded-xl shadow-sm border">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-3">
-                    <img src={item.image_url} className="w-12 h-12 rounded-md" />
+                    <img src={item.image_url} alt={localizedContent.name} className="w-12 h-12 rounded-md" />
                     <div>
-                      <p className="font-semibold">{item.item_name}</p>
-                      <p className="text-sm text-gray-500">${item.price.toFixed(2)} each</p>
+                      <p className="font-semibold">{localizedContent.name}</p>
+                      <p className="text-sm text-gray-500">${item.price.toFixed(2)} {t('each')}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -230,14 +236,14 @@ export default function Checkout() {
                       value={tempNotes[item.id] || ''}
                       onChange={e => setTempNotes(prev => ({ ...prev, [item.id]: e.target.value }))}
                       className="w-full border rounded-md p-2 text-sm"
-                      placeholder="Add note (e.g. No onions)"
+                      placeholder={t('notePlaceholder')}
                       rows={2}
                     />
                     <button
                       onClick={() => saveNote(item.id)}
                       className="text-green-600 flex items-center gap-1 text-sm font-medium"
                     >
-                      <Check className="w-4 h-4" /> Save Note
+                      <Check className="w-4 h-4" /> {t('saveNote')}
                     </button>
                   </div>
                 ) : (
@@ -245,21 +251,22 @@ export default function Checkout() {
                     onClick={() => startEditingNote(item.id, item.note)}
                     className="mt-2 flex items-center gap-2 text-sm text-gray-700 hover:text-green-600"
                   >
-                    <Pen className="w-4 h-4" /> {item.note ? 'Edit Note' : 'Add Note'}
+                    <Pen className="w-4 h-4" /> {item.note ? t('editNote') : t('addNote')}
                   </button>
                 )}
               </div>
-            ))}
+              );
+            })}
           </div>
 
           <div className="fixed bottom-0 left-0 right-0 bg-white p-4 border-t shadow-md z-10">
             <div className="space-y-1 mb-3 text-sm">
               <div className="flex justify-between">
-                <span>Order Subtotal</span>
+                <span>{t('orderSubtotal')}</span>
                 <span>${subtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
-                <span>Convenience Fee</span>
+                <span>{t('convenienceFee')}</span>
                 <span>${CONVENIENCE_FEE.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
@@ -272,7 +279,7 @@ export default function Checkout() {
               </div>
               <hr className="my-1" />
               <div className="flex justify-between font-bold text-lg">
-                <span>Total</span>
+                <span>{t('total')}</span>
                 <span>${total.toFixed(2)}</span>
               </div>
             </div>
@@ -281,18 +288,18 @@ export default function Checkout() {
                 onClick={clearCart}
                 className="flex-1 py-3 border rounded-md text-gray-700"
               >
-                Clear Cart
+                {t('clearCart')}
               </button>
               <button
                 onClick={handlePlaceOrder}
                 disabled={isSubmitting}
                 className="flex-1 py-3 rounded-md bg-green-600 text-white font-medium hover:bg-green-700 transition"
               >
-                {isSubmitting ? 'Processing...' : 'Place Order'}
+                {isSubmitting ? t('processing') : t('placeOrder')}
               </button>
             </div>
             <div className="text-xs text-gray-400 mt-2 text-center">
-              * A $2.50 mobile ordering fee & taxes are included in your total.
+              {t('mobileOrderingFee')}
             </div>
           </div>
         </>

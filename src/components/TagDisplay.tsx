@@ -1,27 +1,33 @@
 import React from 'react';
+import { Language, useLanguage } from '../hooks/useLanguage';
 
 interface TagDisplayProps {
   tags: string[];
+  language?: Language;
   className?: string;
 }
 
-const tagConfig: Record<
-  string,
-  { label: string; emoji: string; bg: string; text: string }
-> = {
-  spicy: { label: 'Spicy', emoji: '🌶️', bg: 'bg-red-100', text: 'text-red-800' },
-  vegetarian: { label: 'Vegetarian', emoji: '🥦', bg: 'bg-green-100', text: 'text-green-800' },
-  bestseller: { label: 'Best Seller', emoji: '🏆', bg: 'bg-yellow-100', text: 'text-yellow-800' },
-  glutenfree: { label: 'Gluten-Free', emoji: '🌾', bg: 'bg-green-100', text: 'text-green-800' },
-  dairyfree: { label: 'Dairy-Free', emoji: '🥛', bg: 'bg-green-100', text: 'text-green-800' },
-  vegan: { label: 'Vegan', emoji: '🥬', bg: 'bg-green-100', text: 'text-green-800' },
-  keto: { label: 'Keto', emoji: '🥓', bg: 'bg-green-100', text: 'text-green-800' },
-  lowcarb: { label: 'Low-Carb', emoji: '📉', bg: 'bg-green-100', text: 'text-green-800' },
-  organic: { label: 'Organic', emoji: '🌱', bg: 'bg-green-100', text: 'text-green-800' },
-  local: { label: 'Local', emoji: '📍', bg: 'bg-green-100', text: 'text-green-800' },
+const getTagConfig = (type: string, t: (key: string) => string) => {
+  const configs: Record<string, { labelKey: string; emoji: string; bg: string; text: string }> = {
+    spicy: { labelKey: 'spicy', emoji: '🌶️', bg: 'bg-red-100', text: 'text-red-800' },
+    vegetarian: { labelKey: 'vegetarian', emoji: '🥦', bg: 'bg-green-100', text: 'text-green-800' },
+    bestseller: { labelKey: 'bestseller', emoji: '🏆', bg: 'bg-yellow-100', text: 'text-yellow-800' },
+    glutenfree: { labelKey: 'glutenFree', emoji: '🌾', bg: 'bg-green-100', text: 'text-green-800' },
+    dairyfree: { labelKey: 'dairyFree', emoji: '🥛', bg: 'bg-green-100', text: 'text-green-800' },
+    vegan: { labelKey: 'vegan', emoji: '🥬', bg: 'bg-green-100', text: 'text-green-800' },
+    keto: { labelKey: 'keto', emoji: '🥓', bg: 'bg-green-100', text: 'text-green-800' },
+    lowcarb: { labelKey: 'lowCarb', emoji: '📉', bg: 'bg-green-100', text: 'text-green-800' },
+    organic: { labelKey: 'organic', emoji: '🌱', bg: 'bg-green-100', text: 'text-green-800' },
+    local: { labelKey: 'local', emoji: '📍', bg: 'bg-green-100', text: 'text-green-800' },
+  };
+
+  const config = configs[type.toLowerCase().replace(/[^a-z]/g, '')];
+  return config ? { ...config, label: t(config.labelKey) } : null;
 };
 
-export default function TagDisplay({ tags, className = '' }: TagDisplayProps) {
+export default function TagDisplay({ tags, language, className = '' }: TagDisplayProps) {
+  const { t } = useLanguage();
+  
   if (!tags || tags.length === 0) return null;
 
   const visibleTags = tags.slice(0, 3);
@@ -31,7 +37,7 @@ export default function TagDisplay({ tags, className = '' }: TagDisplayProps) {
     <div className={`flex flex-wrap gap-2 ${className}`}>
       {visibleTags.map((rawTag, index) => {
         const normalizedTag = rawTag.toLowerCase().replace(/[^a-z]/g, '');
-        const config = tagConfig[normalizedTag];
+        const config = getTagConfig(normalizedTag, t);
 
         return (
           <span

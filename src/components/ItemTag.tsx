@@ -12,9 +12,11 @@ import {
   Circle,
   Globe
 } from 'lucide-react';
+import { Language, useLanguage } from '../hooks/useLanguage';
 
 interface ItemTagProps {
   type: string;
+  language?: Language;
 }
 
 const getEmojiIcon = (type: string) => {
@@ -44,11 +46,33 @@ const getEmojiIcon = (type: string) => {
   }
 };
 
-export default function ItemTag({ type }: ItemTagProps) {
+const getLocalizedTagLabel = (type: string, t: (key: string) => string): string => {
+  const tagMap: Record<string, string> = {
+    'spicy': t('spicy'),
+    'vegetarian': t('vegetarian'),
+    'bestseller': t('bestseller'),
+    'gluten-free': t('glutenFree'),
+    'glutenfree': t('glutenFree'),
+    'dairy-free': t('dairyFree'),
+    'dairyfree': t('dairyFree'),
+    'vegan': t('vegan'),
+    'keto': t('keto'),
+    'low-carb': t('lowCarb'),
+    'lowcarb': t('lowCarb'),
+    'organic': t('organic'),
+    'local': t('local'),
+  };
+  
+  return tagMap[type.toLowerCase()] || type.charAt(0).toUpperCase() + type.slice(1);
+};
+
+export default function ItemTag({ type, language }: ItemTagProps) {
+  const { t } = useLanguage();
+  
   return (
     <span className="item-tag tag-generic flex items-center gap-1 text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded-full shadow-sm">
       {getEmojiIcon(type)}
-      {type.charAt(0).toUpperCase() + type.slice(1)}
+      {getLocalizedTagLabel(type, t)}
     </span>
   );
 }

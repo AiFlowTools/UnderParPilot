@@ -1,33 +1,36 @@
 import React from 'react';
 import { X, MapPin, ShoppingCart, Truck, CheckCircle } from 'lucide-react';
+import { useLanguage } from '../hooks/useLanguage';
 
 interface HowItWorksModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const steps = [
-  {
-    icon: MapPin,
-    title: 'No App. No Account. Just Order.',
-    description: 'You\'re already in — no downloads or signups needed. Just tap and go.',
-    emoji: '⛳'
-  },
-  {
-    icon: ShoppingCart,
-    title: 'Place Your Order',
-    description: 'Add items to your cart and check out with your phone. We\'ll receive your order in the clubhouse right away.',
-    emoji: '🛒'
-  },
-  {
-    icon: Truck,
-    title: 'Delivered Right to Your Hole',
-    description: 'Our staff prepares your order and brings it directly to your location on the course.',
-    emoji: '🧺'
-  }
-];
-
 export default function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProps) {
+  const { t } = useLanguage();
+  
+  const steps = [
+    {
+      icon: MapPin,
+      title: t('step1Title'),
+      description: t('step1Description'),
+      emoji: '⛳'
+    },
+    {
+      icon: ShoppingCart,
+      title: t('step2Title'),
+      description: t('step2Description'),
+      emoji: '🛒'
+    },
+    {
+      icon: Truck,
+      title: t('step3Title'),
+      description: t('step3Description'),
+      emoji: '🧺'
+    }
+  ];
+  
   if (!isOpen) return null;
 
   return (
@@ -43,11 +46,11 @@ export default function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProp
         <div className="bg-white rounded-2xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto animate-fadeIn">
           {/* Header */}
           <div className="sticky top-0 bg-white rounded-t-2xl border-b border-gray-100 px-6 py-4 flex items-center justify-between z-10">
-            <h2 className="text-xl font-bold text-gray-900">How FairwayMate Works</h2>
+            <h2 className="text-xl font-bold text-gray-900">{t('howItWorksTitle')}</h2>
             <button
               onClick={onClose}
               className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-              aria-label="Close modal"
+              aria-label={t('close')}
             >
               <X className="w-5 h-5 text-gray-500" />
             </button>
@@ -72,7 +75,7 @@ export default function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProp
                   {/* Step Content */}
                   <div className="flex-1 min-w-0">
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      Step {index + 1}: {step.title}
+                      {t('step')} {index + 1}: {step.title}
                     </h3>
                     <p className="text-gray-600 leading-relaxed">
                       {step.description}
@@ -90,11 +93,10 @@ export default function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProp
                 </div>
                 <div>
                   <h4 className="text-sm font-medium text-blue-900 mb-1">
-                    Privacy Notice
+                    {t('privacyNotice')}
                   </h4>
                   <p className="text-sm text-blue-700">
-                    We use your location only at the time of ordering to help us deliver to the correct hole. 
-                    Your data is never stored or shared.
+                    {t('privacyDescription')}
                   </p>
                 </div>
               </div>
@@ -105,7 +107,7 @@ export default function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProp
               <div className="flex items-center space-x-3">
                 <CheckCircle className="w-5 h-5 text-green-600" />
                 <p className="text-sm text-green-700 font-medium">
-                  Ready to start ordering? It's that simple!
+                  {t('readyToOrder')}
                 </p>
               </div>
             </div>
@@ -117,7 +119,7 @@ export default function HowItWorksModal({ isOpen, onClose }: HowItWorksModalProp
               onClick={onClose}
               className="w-full bg-green-600 text-white py-3 px-4 rounded-xl font-semibold hover:bg-green-700 transition-colors duration-200 flex items-center justify-center space-x-2"
             >
-              <span>Got it – Back to Menu</span>
+              <span>{t('gotItBackToMenu')}</span>
               <span>→</span>
             </button>
           </div>

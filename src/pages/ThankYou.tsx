@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CheckCircle2, AlertCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { useLanguage } from '../hooks/useLanguage';
 
 interface Order {
   id: string;
@@ -14,6 +15,7 @@ interface Order {
 
 export default function ThankYou() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get('session_id');
   const [loading, setLoading] = useState(true);
@@ -71,13 +73,13 @@ export default function ThankYou() {
           <div className="flex justify-center mb-6">
             <AlertCircle className="text-red-600 w-20 h-20" />
           </div>
-          <h1 className="text-3xl font-serif text-charcoal mb-4">Oops! Something went wrong</h1>
+          <h1 className="text-3xl font-serif text-charcoal mb-4">{t('oopsSomethingWrong')}</h1>
           <p className="text-charcoal mb-6">{error}</p>
           <button
             onClick={() => navigate('/')}
             className="bg-primary-green hover:bg-primary-dark text-white px-6 py-3 rounded-lg font-medium transition"
           >
-            Return to Menu
+            {t('returnToMenu')}
           </button>
         </div>
       ) : (
@@ -85,22 +87,22 @@ export default function ThankYou() {
           <div className="flex justify-center mb-6">
             <CheckCircle2 className="text-green-600 w-20 h-20 animate-bounce-subtle" />
           </div>
-          <h1 className="text-3xl font-serif text-charcoal mb-4">Thank you for your order!</h1>
+          <h1 className="text-3xl font-serif text-charcoal mb-4">{t('thankYou')}</h1>
           {order ? (
             <p className="text-charcoal mb-6">
-              Order <strong>#{order.id.slice(0, 8)}</strong> confirmed!<br />
+              {t('order')} <strong>#{order.id.slice(0, 8)}</strong> {t('orderConfirmed')}<br />
               {getOrderSummary()}<br />
-              We'll deliver it to hole <strong>#{order.hole_number}</strong> shortly.
+              {t('deliverToHole')} <strong>#{order.hole_number}</strong> {t('shortly')}
             </p>
           ) : (
             <p className="text-charcoal mb-6">
-              Your payment was successful. Your order will be prepared shortly!
+              {t('paymentSuccessful')}
             </p>
           )}
           <div className="mt-4 text-sm text-center">
-            <p className="font-bold text-black">🎉 Help us improve!</p>
+            <p className="font-bold text-black">🎉 {t('helpUsImprove')}</p>
             <p className="text-charcoal">
-              A short survey will arrive in your inbox soon — and it only takes 30 seconds 🕒
+              {t('surveyDescription')} 🕒
             </p>
           </div>
 
@@ -108,7 +110,7 @@ export default function ThankYou() {
             onClick={() => navigate('/')}
             className="mt-6 bg-primary-green hover:bg-primary-dark text-white px-6 py-3 rounded-lg font-medium transition w-full max-w-xs mx-auto"
           >
-            Back to Menu
+            {t('backToMenu')}
           </button>
         </div>
       )}

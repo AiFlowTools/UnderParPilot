@@ -12,13 +12,16 @@ import HowItWorksModal from '../components/HowItWorksModal';
 import CartModal from '../components/CartModal';
 import { useCourse } from '../hooks/useCourse';
 import WelcomeModal from '../components/WelcomeModal';
+import { useLanguage } from '../hooks/useLanguage';
 
 interface MenuItem {
   id: string;
   golf_course_id: string;
   category: string;
   item_name: string;
+  item_name_fr?: string;
   description: string;
+  description_fr?: string;
   price: number;
   image_url: string;
   tags?: string[];
@@ -34,17 +37,9 @@ interface CartItem extends MenuItem {
   selectedModifiers?: string[];
 }
 
-const categories = [
-  { id: 'Breakfast', name: 'Breakfast', icon: Coffee, emoji: '🍳' },
-  { id: 'Lunch & Dinner', name: 'Lunch & Dinner', icon: UtensilsCrossed, emoji: '🍽️' },
-  { id: 'Snacks', name: 'Snacks', icon: Pizza, emoji: '🥨' },
-  { id: 'Drinks', name: 'Drinks', icon: Wine, emoji: '🥤' },
-  { id: 'Beer', name: 'Beer', icon: Beer, emoji: '🍺' },
-  { id: 'Pro Shop', name: 'Pro Shop', icon: Store, emoji: '⛳' },
-];
-
 export default function Menu() {
   const { course, loading: courseLoading, error: courseError } = useCourse();
+  const { language, t } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState('Breakfast');
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -59,6 +54,16 @@ export default function Menu() {
   const [lastScrollY, setLastScrollY] = useState(0);
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
   const [showWelcome, setShowWelcome] = useState(true);
+
+  // Dynamic categories with translations
+  const categories = [
+    { id: 'Breakfast', name: t('breakfast'), icon: Coffee, emoji: '🍳' },
+    { id: 'Lunch & Dinner', name: t('lunchDinner'), icon: UtensilsCrossed, emoji: '🍽️' },
+    { id: 'Snacks', name: t('snacks'), icon: Pizza, emoji: '🥨' },
+    { id: 'Drinks', name: t('drinks'), icon: Wine, emoji: '🥤' },
+    { id: 'Beer', name: t('beer'), icon: Beer, emoji: '🍺' },
+    { id: 'Pro Shop', name: t('proShop'), icon: Store, emoji: '⛳' },
+  ];
 
   
   useEffect(() => {
@@ -78,7 +83,7 @@ export default function Menu() {
     setLoading(true);
     supabase
       .from('menu_items')
-      .select('*')
+      .select('*, item_name_fr, description_fr')
       .eq('golf_course_id', course.id)
       .then(({ data, error: e }) => {
         if (e) throw e;
@@ -175,7 +180,10 @@ export default function Menu() {
   if (courseLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin h-12 w-12 border-b-2 border-green-600 rounded-full" />
+        <div className="text-center">
+          <div className="animate-spin h-12 w-12 border-b-2 border-green-600 rounded-full mx-auto mb-4" />
+          <p className="text-gray-600">{t('loading')}</p>
+        </div>
       </div>
     );
   }
@@ -191,7 +199,7 @@ export default function Menu() {
             onClick={() => window.location.reload()}
             className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
           >
-            Try Again
+            {t('tryAgain')}
           </button>
         </div>
       </div>
@@ -271,6 +279,7 @@ export default function Menu() {
           <MenuItemCard
             key={item.id}
             item={item}
+            language={language}
             onClick={() => {
               setSelectedItem(item);
               setIsCartOpen(false); // auto-close cart when viewing item
@@ -288,6 +297,7 @@ export default function Menu() {
     {selectedItem && (
       <MenuItemDetail
         item={selectedItem}
+        language={language}
         onClose={() => setSelectedItem(null)}
         onAddToCart={(qty, modifiers) => addToCart(selectedItem, qty, modifiers)}
         onCloseCart={() => setIsCartOpen(false)}
@@ -300,6 +310,7 @@ export default function Menu() {
       cart={cart}
       cartItemCount={cartItemCount}
       cartTotal={cartTotal}
+      language={language}
       onToggle={() => {
         setIsCartOpen(!isCartOpen);
       }}
@@ -319,7 +330,7 @@ export default function Menu() {
                 <ShoppingBag className="w-4 h-4" />
               </div>
               <span className="font-semibold text-sm">
-                {cartItemCount} {cartItemCount === 1 ? 'item' : 'items'} • ${cartTotal.toFixed(2)}
+                {cartItemCount} {cartItemCount === 1 ? t('item') : t('items')} • ${cartTotal.toFixed(2)}
               </span>
             </div>
             <div className="bg-white/20 rounded-full p-1">

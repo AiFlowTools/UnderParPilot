@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { ZoomIn, Flame, Leaf, Trophy } from 'lucide-react';
 import TagDisplay from './TagDisplay';
+import { Language, getLocalizedContent } from '../hooks/useLanguage';
 
 interface MenuItem {
   id: string;
   item_name: string;
+  item_name_fr?: string;
   description: string;
+  description_fr?: string;
   price: number;
   image_url?: string;
   tags?: string[];
@@ -13,6 +16,7 @@ interface MenuItem {
 
 interface MenuItemCardProps {
   item: MenuItem;
+  language: Language;
   onClick: () => void;
 }
 
@@ -64,8 +68,10 @@ const ImageModal = ({ imageUrl, alt, isOpen, onClose }: {
   );
 };
 
-export default function MenuItemCard({ item, onClick }: MenuItemCardProps) {
+export default function MenuItemCard({ item, language, onClick }: MenuItemCardProps) {
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+
+  const localizedContent = getLocalizedContent(item, language);
 
   const handleImageClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -86,7 +92,7 @@ export default function MenuItemCard({ item, onClick }: MenuItemCardProps) {
           <div className="relative h-48 w-full overflow-hidden rounded-t-xl z-0">
             <img
               src={item.image_url}
-              alt={item.item_name}
+              alt={localizedContent.name}
               className="w-full h-full object-cover"
               loading="lazy"
             />
@@ -103,11 +109,11 @@ export default function MenuItemCard({ item, onClick }: MenuItemCardProps) {
         )}
 
         <div className="p-5">
-          <TagDisplay tags={item.tags || []} className="mb-2" />
+          <TagDisplay tags={item.tags || []} language={language} className="mb-2" />
           <h3 className="text-xl font-semibold mb-3 line-clamp-1">
-            {item.item_name}
+            {localizedContent.name}
           </h3>
-          <p className="text-gray-600 mb-4 line-clamp-2 text-sm leading-relaxed">{item.description}</p>
+          <p className="text-gray-600 mb-4 line-clamp-2 text-sm leading-relaxed">{localizedContent.description}</p>
           <div className="flex justify-between items-center">
             <span className="text-2xl font-bold text-green-600">
               ${item.price.toFixed(2)}
@@ -120,7 +126,7 @@ export default function MenuItemCard({ item, onClick }: MenuItemCardProps) {
       {item.image_url && (
         <ImageModal
           imageUrl={item.image_url}
-          alt={item.item_name}
+          alt={localizedContent.name}
           isOpen={isImageModalOpen}
           onClose={() => setIsImageModalOpen(false)}
         />
