@@ -158,7 +158,6 @@ const CartModal: React.FC<Props> = ({
             </div>
           </>
         )}
-        </div>
       </div>
     </>
   );
