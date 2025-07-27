@@ -54,7 +54,7 @@ export default function Menu() {
   const [lastScrollY, setLastScrollY] = useState(0);
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
   const [showWelcome, setShowWelcome] = useState(() => {
-  return localStorage.getItem('showWelcome') !== 'false';
+  return localStorage.getItem('welcome_shown') !== 'true';
 });
 
   // Dynamic categories with translations
