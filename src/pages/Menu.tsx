@@ -210,18 +210,17 @@ export default function Menu() {
 
   return (
   <div className="min-h-screen bg-gray-50 pb-32">
-
     {/* Show Welcome Card */}
-   
     {showWelcome && (
       <WelcomeModal
-  onHowItWorks={openHowItWorks}
-  onClose={() => {
-    localStorage.setItem('welcome_shown', 'true');
-    setShowWelcome(false);
-  }}
-/>
-    
+        onHowItWorks={openHowItWorks}
+        onClose={() => {
+          localStorage.setItem('welcome_shown', 'true');
+          setShowWelcome(false);
+        }}
+      />
+    )}
+
     <Header
       onClick={() => setSelectedCategory('Breakfast')}
       onHowItWorksClick={() => setIsHowItWorksOpen(true)}
@@ -229,6 +228,9 @@ export default function Menu() {
         headerShadow ? 'shadow-md' : ''
       }`}
     />
+
+    <div className="max-w-7xl mx-auto px-4 pt-24">
+      {/* Category Navigation Pills */}
 
     <div className="max-w-7xl mx-auto px-4 pt-24">
       {/* Category Navigation Pills */}
