@@ -54,7 +54,7 @@ export default function Menu() {
   const [lastScrollY, setLastScrollY] = useState(0);
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
   const [showWelcome, setShowWelcome] = useState(() => {
-  return localStorage.getItem('welcome_shown') !== 'true';
+  return sessionStorage.getItem('welcome_shown') !== 'true';
 });
 
   // Dynamic categories with translations
@@ -215,7 +215,7 @@ export default function Menu() {
       <WelcomeModal
         onHowItWorks={openHowItWorks}
         onClose={() => {
-          localStorage.setItem('welcome_shown', 'true');
+          sessionStorage.setItem('welcome_shown', 'true');
           setShowWelcome(false);
         }}
       />
