@@ -12,7 +12,7 @@ import {
   Circle,
   Globe
 } from 'lucide-react';
-import { Language, useLanguage } from '../hooks/useLanguage';
+import { Language, useLanguage } from '../contexts/LanguageContext';
 
 interface ItemTagProps {
   type: string;

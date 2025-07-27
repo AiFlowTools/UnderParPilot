@@ -1,7 +1,7 @@
 import React from 'react';
 import { X, Minus, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { Language, getLocalizedContent, useLanguage } from '../hooks/useLanguage';
+import { Language, getLocalizedContent, useLanguage } from '../contexts/LanguageContext';
 
 interface CartItem {
   id: string;

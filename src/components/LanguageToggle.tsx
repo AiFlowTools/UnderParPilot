@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Globe, ChevronDown } from 'lucide-react';
-import { useLanguage, Language } from '../hooks/useLanguage';
+import { useLanguage, Language } from '../contexts/LanguageContext';
 
 interface LanguageToggleProps {
   className?: string;

@@ -12,7 +12,7 @@ import HowItWorksModal from '../components/HowItWorksModal';
 import CartModal from '../components/CartModal';
 import { useCourse } from '../hooks/useCourse';
 import WelcomeModal from '../components/WelcomeModal';
-import { useLanguage } from '../hooks/useLanguage';
+import { useLanguage, getLocalizedContent } from '../contexts/LanguageContext';
 
 interface MenuItem {
   id: string;

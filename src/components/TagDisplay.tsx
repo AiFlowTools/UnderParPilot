@@ -1,5 +1,5 @@
 import React from 'react';
-import { Language, useLanguage } from '../hooks/useLanguage';
+import { Language, useLanguage } from '../contexts/LanguageContext';
 
 interface TagDisplayProps {
   tags: string[];

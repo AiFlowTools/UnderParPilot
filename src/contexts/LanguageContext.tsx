@@ -1,12 +1,14 @@
-import { useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 export type Language = 'en' | 'fr';
 
-interface UseLanguageResult {
+interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
   t: (key: string) => string;
 }
+
+const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 // Translation dictionary
 const translations: Record<Language, Record<string, string>> = {
@@ -35,6 +37,8 @@ const translations: Record<Language, Record<string, string>> = {
     'total': 'Total',
     'item': 'item',
     'items': 'items',
+    'decreaseQuantity': 'Decrease quantity',
+    'increaseQuantity': 'Increase quantity',
     
     // Menu Item Detail
     'customize': 'Customize',
@@ -66,9 +70,11 @@ const translations: Record<Language, Record<string, string>> = {
     'privacyDescription': 'We use your location only at the time of ordering to help us deliver to the correct hole. Your data is never stored or shared.',
     'readyToOrder': 'Ready to start ordering? It\'s that simple!',
     'gotItBackToMenu': 'Got it – Back to Menu',
+    'step': 'Step',
     
     // Thank You Page
     'thankYou': 'Thank you for your order!',
+    'order': 'Order',
     'orderConfirmed': 'confirmed!',
     'deliverToHole': 'We\'ll deliver it to hole',
     'shortly': 'shortly.',
@@ -124,6 +130,8 @@ const translations: Record<Language, Record<string, string>> = {
     'total': 'Total',
     'item': 'article',
     'items': 'articles',
+    'decreaseQuantity': 'Diminuer la quantité',
+    'increaseQuantity': 'Augmenter la quantité',
     
     // Menu Item Detail
     'customize': 'Personnaliser',
@@ -155,6 +163,7 @@ const translations: Record<Language, Record<string, string>> = {
     'privacyDescription': 'Nous utilisons votre emplacement uniquement au moment de la commande pour nous aider à livrer au bon trou. Vos données ne sont jamais stockées ou partagées.',
     'readyToOrder': 'Prêt à commencer? C\'est aussi simple que ça!',
     'gotItBackToMenu': 'Compris – Retour au menu',
+    'step': 'Étape',
     
     // Thank You Page
     'thankYou': 'Merci pour votre commande!',
@@ -188,9 +197,6 @@ const translations: Record<Language, Record<string, string>> = {
     'lowCarb': 'Faible en glucides',
     'organic': 'Biologique',
     'local': 'Local',
-    
-    // Additional translations
-    'step': 'Étape',
   }
 };
 
@@ -208,7 +214,11 @@ const detectBrowserLanguage = (): Language => {
   return 'en';
 };
 
-export function useLanguage(): UseLanguageResult {
+interface LanguageProviderProps {
+  children: ReactNode;
+}
+
+export function LanguageProvider({ children }: LanguageProviderProps) {
   const [language, setLanguageState] = useState<Language>(() => {
     if (typeof window === 'undefined') return 'en';
     
@@ -231,7 +241,19 @@ export function useLanguage(): UseLanguageResult {
     return translations[language][key] || translations.en[key] || key;
   };
 
-  return { language, setLanguage, t };
+  return (
+    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+      {children}
+    </LanguageContext.Provider>
+  );
+}
+
+export function useLanguage(): LanguageContextType {
+  const context = useContext(LanguageContext);
+  if (context === undefined) {
+    throw new Error('useLanguage must be used within a LanguageProvider');
+  }
+  return context;
 }
 
 // Helper function to get localized menu item content

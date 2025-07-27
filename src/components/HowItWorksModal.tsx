@@ -1,6 +1,6 @@
 import React from 'react';
 import { X, MapPin, ShoppingCart, Truck, CheckCircle } from 'lucide-react';
-import { useLanguage } from '../hooks/useLanguage';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface HowItWorksModalProps {
   isOpen: boolean;

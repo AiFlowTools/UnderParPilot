@@ -3,7 +3,7 @@ import { Info } from 'lucide-react';
 import { useCourse } from '../hooks/useCourse';
 import Logo from './Logo';
 import LanguageToggle from './LanguageToggle';
-import { useLanguage } from '../hooks/useLanguage';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface HeaderProps {
   className?: string;

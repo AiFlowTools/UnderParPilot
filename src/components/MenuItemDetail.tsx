@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Minus, Plus, ChevronLeft } from 'lucide-react';
 import ItemTag from './ItemTag';
-import { Language, getLocalizedContent, useLanguage } from '../hooks/useLanguage';
+import { Language, getLocalizedContent, useLanguage } from '../contexts/LanguageContext';
 
 interface MenuItemDetailProps {
   item: {

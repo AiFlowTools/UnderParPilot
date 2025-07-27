@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLanguage } from '../hooks/useLanguage';
+import { useLanguage } from '../contexts/LanguageContext';
 
 // Replace with your actual image path (ensure it's in the public folder or use import if using assets)
 const fairwayMateLogo = '/fairwaymate-logo.svg'; // Make sure this is the correct path to your logo

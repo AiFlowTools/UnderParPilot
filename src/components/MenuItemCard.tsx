@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ZoomIn, Flame, Leaf, Trophy } from 'lucide-react';
 import TagDisplay from './TagDisplay';
-import { Language, getLocalizedContent } from '../hooks/useLanguage';
+import { Language, getLocalizedContent } from '../contexts/LanguageContext';
 
 interface MenuItem {
   id: string;

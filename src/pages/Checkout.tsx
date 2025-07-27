@@ -13,7 +13,7 @@ import {
 import { createCheckoutSession } from '../lib/stripe';
 import { requestGeolocation, GeolocationError } from '../lib/geolocation';
 import { useCourse } from '../hooks/useCourse';
-import { useLanguage, getLocalizedContent } from '../hooks/useLanguage';
+import { useLanguage, getLocalizedContent } from '../contexts/LanguageContext';
 
 // Interfaces
 interface CartItem {
