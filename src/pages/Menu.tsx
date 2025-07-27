@@ -231,9 +231,6 @@ export default function Menu() {
 
     <div className="max-w-7xl mx-auto px-4 pt-24">
       {/* Category Navigation Pills */}
-
-    <div className="max-w-7xl mx-auto px-4 pt-24">
-      {/* Category Navigation Pills */}
       <div className="sticky top-24 bg-gray-50/95 backdrop-blur-sm z-40 py-4 -mx-4 px-4 border-b border-gray-100">
         <div className="relative">
           <div 
