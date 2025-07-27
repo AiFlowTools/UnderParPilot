@@ -208,53 +208,54 @@ export default function Checkout() {
       ) : (
         <>
           <div className="space-y-4 mb-28">
-            {cart.map(item => (
+            {cart.map(item => {
               const localizedContent = getLocalizedContent(item, language);
               
-              <div key={item.id} className="bg-white p-4 rounded-xl shadow-sm border">
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-3">
-                    <img src={item.image_url} alt={localizedContent.name} className="w-12 h-12 rounded-md" />
-                    <div>
-                      <p className="font-semibold">{localizedContent.name}</p>
-                      <p className="text-sm text-gray-500">${item.price.toFixed(2)} {t('each')}</p>
+              return (
+                <div key={item.id} className="bg-white p-4 rounded-xl shadow-sm border">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-3">
+                      <img src={item.image_url} alt={localizedContent.name} className="w-12 h-12 rounded-md" />
+                      <div>
+                        <p className="font-semibold">{localizedContent.name}</p>
+                        <p className="text-sm text-gray-500">${item.price.toFixed(2)} {t('each')}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => updateQuantity(item.id, -1)} className="p-2 rounded-full bg-gray-100">
+                        <Minus className="w-4 h-4" />
+                      </button>
+                      <span className="w-6 text-center">{item.quantity}</span>
+                      <button onClick={() => updateQuantity(item.id, 1)} className="p-2 rounded-full bg-gray-100">
+                        <Plus className="w-4 h-4" />
+                      </button>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <button onClick={() => updateQuantity(item.id, -1)} className="p-2 rounded-full bg-gray-100">
-                      <Minus className="w-4 h-4" />
-                    </button>
-                    <span className="w-6 text-center">{item.quantity}</span>
-                    <button onClick={() => updateQuantity(item.id, 1)} className="p-2 rounded-full bg-gray-100">
-                      <Plus className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-                {editingNoteId === item.id ? (
-                  <div className="mt-3 space-y-2">
-                    <textarea
-                      value={tempNotes[item.id] || ''}
-                      onChange={e => setTempNotes(prev => ({ ...prev, [item.id]: e.target.value }))}
-                      className="w-full border rounded-md p-2 text-sm"
-                      placeholder={t('notePlaceholder')}
-                      rows={2}
-                    />
+                  {editingNoteId === item.id ? (
+                    <div className="mt-3 space-y-2">
+                      <textarea
+                        value={tempNotes[item.id] || ''}
+                        onChange={e => setTempNotes(prev => ({ ...prev, [item.id]: e.target.value }))}
+                        className="w-full border rounded-md p-2 text-sm"
+                        placeholder={t('notePlaceholder')}
+                        rows={2}
+                      />
+                      <button
+                        onClick={() => saveNote(item.id)}
+                        className="text-green-600 flex items-center gap-1 text-sm font-medium"
+                      >
+                        <Check className="w-4 h-4" /> {t('saveNote')}
+                      </button>
+                    </div>
+                  ) : (
                     <button
-                      onClick={() => saveNote(item.id)}
-                      className="text-green-600 flex items-center gap-1 text-sm font-medium"
+                      onClick={() => startEditingNote(item.id, item.note)}
+                      className="mt-2 flex items-center gap-2 text-sm text-gray-700 hover:text-green-600"
                     >
-                      <Check className="w-4 h-4" /> {t('saveNote')}
+                      <Pen className="w-4 h-4" /> {item.note ? t('editNote') : t('addNote')}
                     </button>
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => startEditingNote(item.id, item.note)}
-                    className="mt-2 flex items-center gap-2 text-sm text-gray-700 hover:text-green-600"
-                  >
-                    <Pen className="w-4 h-4" /> {item.note ? t('editNote') : t('addNote')}
-                  </button>
-                )}
-              </div>
+                  )}
+                </div>
               );
             })}
           </div>
