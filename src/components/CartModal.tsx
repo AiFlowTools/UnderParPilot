@@ -155,7 +155,6 @@ const CartModal: React.FC<Props> = ({
                 {t('proceedToCheckout')}
               </Link>
             </div>
-          </>
         )}
         </div>
       </div>
