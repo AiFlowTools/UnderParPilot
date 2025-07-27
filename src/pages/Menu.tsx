@@ -215,10 +215,12 @@ export default function Menu() {
    
     {showWelcome && (
       <WelcomeModal
-        onHowItWorks={openHowItWorks}
-        onClose={() => setShowWelcome(false)}
-      />
-    )}
+  onHowItWorks={openHowItWorks}
+  onClose={() => {
+    localStorage.setItem('welcome_shown', 'true');
+    setShowWelcome(false);
+  }}
+/>
     
     <Header
       onClick={() => setSelectedCategory('Breakfast')}
